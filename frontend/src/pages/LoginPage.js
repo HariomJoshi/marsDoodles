@@ -13,10 +13,10 @@ function LoginPage(){
                     <input  className="inp"/>
                     <legend className = "login">Password: </legend>
                     <input className = "inp" type = {passType}/>
-                    {/* <div className="showPassword">
+                    <div className="showPassword">
                         <p className = "lightText">Show password: </p>
                         <input className="checkbox" type="checkbox" onClick={() =>{passType == "password"? setPassType("text"): setPassType("password")}} />    
-                    </div> */}
+                    </div>
                     <button className="loginBtn">Login</button>
                 </div>
             
