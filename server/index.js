@@ -14,6 +14,8 @@ const db = require("./config/database");
 db.connect();
 
 // Mount API
+const user = require("./routes/user");
+app.use("/api/v1",user);
 
 // Activate server
 app.listen(PORT, () => {
