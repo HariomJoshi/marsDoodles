@@ -6,17 +6,21 @@ require("dotenv").config();
 exports.signup = async(req,res) => {
     try{
         const {name,email,password} = req.body;
-
+        if(!name || !email || !password){
+            return res.status(401).json({
+                success:false,
+                message:"Please fill all the details carefully"
+            })
+        }
         const existingUser = await User.findOne({email});
+
+
         if(existingUser){
             return res.status(400).json({
                 success:false,
                 message:'User already exists'
             });
         }
-
-        console.log(password);
-        console.log(name);
 
         let hashedPassword;
         try{
@@ -59,7 +63,7 @@ exports.login = async(req, res) => {
                 message:"Please fill all the details carefully"
             })
         }
-
+        
         // check for registered user
         const user = await User.findOne({email});
         //if not a registered user
@@ -69,10 +73,13 @@ exports.login = async(req, res) => {
                 message:"Email or password is incorrect" // "User is not registered"
             })
         }
+        
+        
 
         const payload = {
             email:user.email,
             id:user._id,
+            password:user.password
         }
 
         // verify password & generate a JWT token

@@ -11,7 +11,7 @@ router.post("/signup",signup);
 router.get("/gamePage",auth, (req,res) => {
     res.json({
         success:true,
-        message:"Welcome to the GAME PAGE"
+        message:"Welcome to the HOME PAGE"
     })
 })
 

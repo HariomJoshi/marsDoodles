@@ -4,7 +4,7 @@ const sendMail = require('../utils/mailSender')
 const userSchema = new mongoose.Schema({
     name:{
          type: String,
-         required: true 
+         required:true,
     },
     imageUrl: {
         type:String,

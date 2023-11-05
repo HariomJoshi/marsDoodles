@@ -1,12 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
 
-function App() {
-  return (
-    <div className="App">
-      <b>APP FOLDER</b>
-    </div>
-  );
+function App(){
+    return (
+        <div>
+            
+        </div>
+    )
 }
 
 export default App;

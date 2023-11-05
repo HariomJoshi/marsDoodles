@@ -5,6 +5,8 @@
 
 .everyThing{
     display: flex;
+    align-items: center;
+    height: 100vh;
 }
 
 .enterDetails{
@@ -21,8 +23,16 @@
     border-radius: 8px;
     padding: 1%;
 }
-.centerPart{    
+.centerPartlogin{  
+
     top:25%;
+    left: 40%;
+    position: absolute; 
+    width: 50%;
+    height: 50%;
+}
+.centerPartSignup{
+    top:15%;
     left: 40%;
     position: absolute; 
     width: 50%;
