@@ -1,6 +1,6 @@
-import Canvas from "./components/canvas";
-import Chat from "./components/chat";
-import Onlineusers from "./components/onlineusers";
+import Canvas from "./components/Canvas";
+import Chat from "./components/Chat";
+import Onlineusers from "./components/Onlineusers";
 function Gamescreen(){
     return(
         <div>
