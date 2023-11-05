@@ -12,6 +12,7 @@ function LoginPage(){
         e.preventDefault();
         axios.post("http://localhost:4000/api/v1/login", {email:email, password:password})
         .then(result =>{console.log(result)
+            localStorage.setItem('token',result.data.token)
             navigate('/home')
         })
         .catch(e => {
