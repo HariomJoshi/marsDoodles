@@ -1,6 +1,8 @@
 // Create app
 const express = require('express');
 const app = express();
+const cors = require('cors');
+app.use(cors());
 
 // set PORT
 require('dotenv').config();
@@ -14,6 +16,8 @@ const db = require("./config/database");
 db.connect();
 
 // Mount API
+const user = require("./routes/user");
+app.use("/api/v1",user);
 
 // Activate server
 app.listen(PORT, () => {
