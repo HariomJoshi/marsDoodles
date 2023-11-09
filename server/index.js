@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 const http = require("http");
@@ -16,7 +17,7 @@ const io = new Server(server, {
 })
 
 // set PORT
-require('dotenv').config();
+require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
@@ -28,6 +29,7 @@ db.connect();
 
 // Mount API
 const user = require("./routes/user");
+
 app.use("/api/v1", user);
 
 io.on("connection", (socket) => {
@@ -48,4 +50,22 @@ io.on("connection", (socket) => {
 // Activate server
 server.listen(PORT, () => {
     console.log(`marsDoodles is live at ${PORT}`);
+
+app.use("/api/v1", user);
+
+// Activate server
+app.listen(PORT, () => {
+  console.log(`marsDoodles is live at ${PORT}`);
+});
+
+// hariom's
+const { chats } = require("./data/data");
+app.get("/game/chats", (req, res) => {
+  res.send(chats);
+});
+
+app.get("/game/chats/:id", (req, res) => {
+  console.log(req.params.id);
+  const singlechat = chats.find((c) => c._id === req.params.id);
+  res.send(singlechat);
 });
