@@ -1,51 +1,53 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 import {
   BrowserRouter,
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Gamescreen from './pages/Gamescreen';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import Home from './pages/Home';
+import Gamescreen from "./pages/Gamescreen";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import Home from "./pages/Home";
+import { ChakraProvider } from "@chakra-ui/react";
+import Chat from "./pages/components/Chat";
 
 // all the paths need to be add here
 
 const router = createBrowserRouter([
   {
     path: "/pages/game-screen",
-    element: <Gamescreen/>,
+    element: <Gamescreen />,
   },
   {
     path: "/home",
-    element: <Home/>,
+    element: <Home />,
   },
   {
     path: "/register",
-    element: <RegisterPage/>,
+    element: <RegisterPage />,
   },
   {
     path: "/",
-    element: <LoginPage/>,
-  }
-
+    element: <LoginPage />,
+  },
+  {
+    path: "/gamechats",
+    element: <Chat />,
+  },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-    <App />
-    </BrowserRouter>
-    <RouterProvider router={router} />
-  </React.StrictMode>
-);
+  <ChakraProvider>
+    <React.StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  </ChakraProvider>
+);
