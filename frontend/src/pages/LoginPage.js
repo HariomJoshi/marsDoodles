@@ -11,13 +11,14 @@ function LoginPage() {
   function submit(e) {
     e.preventDefault();
     axios
-      .post("http://localhost:5000/api/v1/login", {
+      .post("http://localhost:4000/api/v1/login", {
         email: email,
         password: password,
       })
       .then((result) => {
         console.log(result);
-        localStorage.setItem("token", result.data.token);
+        // localStorage.setItem("token", result.data.token);
+        localStorage.setItem("userInfo", { email: email });
         navigate("/home");
       })
       .catch((e) => {

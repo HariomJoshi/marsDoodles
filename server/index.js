@@ -1,20 +1,19 @@
-
-const express = require('express');
+const express = require("express");
 const app = express();
 const http = require("http");
-const {Server} = require("socket.io")
-const cors = require('cors');
+const { Server } = require("socket.io");
+const cors = require("cors");
 
 app.use(cors());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
-    cors:{
-        origin:"http://localhost:3000",
-        methods:["GET","POST"]
-    }
-})
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
 
 // set PORT
 require("dotenv").config();
@@ -33,23 +32,22 @@ const user = require("./routes/user");
 app.use("/api/v1", user);
 
 io.on("connection", (socket) => {
-    socket.on("joinUser", (data) => {
-        socket.join(data)
-        console.log(`${socket.id} has joined ${data}`)
+  socket.on("joinUser", (data) => {
+    socket.join(data);
+    console.log(`${socket.id} has joined ${data}`);
+  });
+  socket.on("drawingData", (data) => {
+    console.log(data);
+    const { roomId, x0, x1, y0, y1 } = data;
+    console.log(data.roomId);
+    socket.broadcast.to(roomId).emit("drawOnWhiteboard", {
+      x0,
+      x1,
+      y0,
+      y1,
     });
-    socket.on("drawingData", (data) => {
-        console.log(data)
-        const { roomId, x0, x1, y0, y1 } = data;
-        console.log(data.roomId);
-        socket.broadcast.to(roomId).emit("drawOnWhiteboard", {
-            x0, x1, y0, y1
-          });
-    });
+  });
 });
-
-// Activate server
-server.listen(PORT, () => {
-    console.log(`marsDoodles is live at ${PORT}`);
 
 app.use("/api/v1", user);
 

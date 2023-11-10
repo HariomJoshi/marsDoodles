@@ -6,7 +6,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
+    if (!localStorage.getItem("userInfo")) {
       navigate("/");
     }
   }, []);
@@ -17,7 +17,7 @@ function Home() {
         colorScheme="blue"
         onClick={() => {
           {
-            localStorage.removeItem("token");
+            localStorage.removeItem("userInfo");
             navigate("/");
           }
         }}

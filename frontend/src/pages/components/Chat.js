@@ -1,25 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ChatState } from "../../context/ChatProvider";
 
 function Chat() {
-  const [chats, setChats] = useState([]);
-  async function fetchChats() {
-    const { data } = await axios.get("http://localhost:5000/game/chats");
-    console.log(data);
-    setChats(data);
-  }
-  // use effect executes whenever the componenet runs
-  useEffect(() => {
-    fetchChats();
-  }, []);
+  // to use the variables inside context api chatprovider
+  const { user } = ChatState();
 
-  return (
-    <div>
-      {chats.map((chat) => (
-        <div>{chat.chatName}</div>
-      ))}
-    </div>
-  );
+  return <div></div>;
 }
 
 export default Chat;

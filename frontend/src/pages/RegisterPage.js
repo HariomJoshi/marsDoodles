@@ -12,7 +12,7 @@ function RegisterPage() {
   function submit(e) {
     e.preventDefault();
     axios
-      .post("http://localhost:5000/api/v1/signup", {
+      .post("http://localhost:4000/api/v1/signup", {
         name: name,
         email: email,
         password: password,
