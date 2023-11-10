@@ -49,21 +49,23 @@ io.on("connection", (socket) => {
   });
 });
 
-// Activate server
-server.listen(PORT, () => {
-    console.log(`marsDoodles is live at ${PORT}`);
-});
-
 app.use("/api/v1", user);
+
+
 
 // hariom's
 const { chats } = require("./data/data");
 app.get("/game/chats", (req, res) => {
-  res.send(chats);
+    res.send(chats);
 });
 
 app.get("/game/chats/:id", (req, res) => {
-  console.log(req.params.id);
-  const singlechat = chats.find((c) => c._id === req.params.id);
-  res.send(singlechat);
+    console.log(req.params.id);
+    const singlechat = chats.find((c) => c._id === req.params.id);
+    res.send(singlechat);
+});
+
+// Activate server
+server.listen(PORT, () => {
+    console.log(`marsDoodles is live at ${PORT}`);
 });
