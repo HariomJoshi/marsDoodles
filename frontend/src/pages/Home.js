@@ -1,19 +1,20 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@chakra-ui/button";
 
 function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!localStorage.getItem("userInfo")) {
+    if (!localStorage.getItem("token")) {
       navigate("/");
+    } else {
+      console.log(localStorage.getItem("userInfo"));
     }
   }, []);
 
   return (
     <>
-      <Button
+      <button
         colorScheme="blue"
         onClick={() => {
           {
@@ -23,7 +24,7 @@ function Home() {
         }}
       >
         LOG OUT
-      </Button>
+      </button>
       <b>Hello welcome to the home screen</b>
     </>
   );

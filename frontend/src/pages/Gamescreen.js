@@ -1,22 +1,29 @@
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
 import Onlineusers from "./components/Onlineusers";
-
-import { useEffect, useState } from "react"
+import "./Gamescreen.css";
+import { useEffect, useState } from "react";
 
 function Gamescreen() {
-    return (
+  return (
+    <div className="ALL">
       <div className="gamescreen-container">
-        <div className="canvas-and-chatroom-container">
-          <Canvas />
-          <Chat />
+        <div className="canvas-and-online-users-container">
+          <div class="drawigBoard">
+            <Canvas />
+          </div>
+
+          <p>ONLINE USERS:</p>
+          <div class="online-users-container">
+            <Onlineusers />
+          </div>
         </div>
-        <div className="online-users-container">
-          <Onlineusers />
+        <div className="chat-section">
+          <Chat className="chat" />
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-
-  export default Gamescreen;
+export default Gamescreen;

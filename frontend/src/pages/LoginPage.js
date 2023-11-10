@@ -17,8 +17,7 @@ function LoginPage() {
       })
       .then((result) => {
         console.log(result);
-        // localStorage.setItem("token", result.data.token);
-        localStorage.setItem("userInfo", { email: email });
+        localStorage.setItem("token", result.data.token);
         navigate("/home");
       })
       .catch((e) => {

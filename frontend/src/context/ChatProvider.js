@@ -8,16 +8,16 @@ const ChatProvider = (children) => {
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    setUser(userInfo);
     if (!userInfo) {
       navigate("/");
     }
-    setUser(userInfo);
   }, []);
 
   return (
     <chatcontext.Provider value={{ user, setUser }}>
-      {console.log(children)}
-      {children[0]}
+      {/* {console.log(children)} */}
+      {children}
     </chatcontext.Provider>
   );
 };

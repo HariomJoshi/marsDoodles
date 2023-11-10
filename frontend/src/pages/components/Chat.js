@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ChatState } from "../../context/ChatProvider";
+import "./Chat.css";
 
 function Chat() {
-  const [chats, setChats] = useState([]);
-  async function fetchChats() {
-    const { data } = await axios.get("http://localhost:4000/game/chats");
-    console.log(data);
-    setChats(data);
-  }
-  // use effect executes whenever the componenet runs
-  useEffect(() => {
-    fetchChats();
-  }, []);
-
   return (
-    <div>
-      {chats.map((chat) => (
-        <div>{chat.chatName}</div>
-      ))}
+    <div style={{ width: "100%", height: "100%" }}>
+      <p>CHAT SECTION</p>
+      <div className="chatsection">
+        <div class="chats">all chats will be shown here</div>
+        <div className="textField">
+          <div className="message-field-container">
+            <input
+              className="message-field"
+              type="text"
+              placeholder="Enter message"
+              name="Name"
+            ></input>
+          </div>
+          <div className="send-button-container">
+            <button class="send">SEND</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
