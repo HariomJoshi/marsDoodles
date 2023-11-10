@@ -41,9 +41,7 @@ io.on("connection", (socket) => {
         console.log(data)
         const { roomId, x0, x1, y0, y1 } = data;
         console.log(data.roomId);
-        socket.broadcast.to(roomId).emit("drawOnWhiteboard", {
-            x0, x1, y0, y1
-          });
+        socket.broadcast.to(roomId).emit("drawOnWhiteboard",data);
     });
 });
 

@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
-function Canvas() {
+function Canvas({ selectedColor, selectedLineWidth, selectedLineDash }) {
     const [x0,setx0] = useState('');
     const [y0,sety0] = useState('');
     const [x1,setx1] = useState('');
@@ -45,19 +45,33 @@ function Canvas() {
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        ctxRef.current = canvas.getContext('2d');
+        ctxRef.current = canvas.getContext('2d')
     }, []);
+
+    useEffect(()=>{
+        const dashArray = selectedLineDash.split(',').map(Number);
+        ctxRef.current.setLineDash(dashArray);
+        ctxRef.current.lineWidth = selectedLineWidth;
+        ctxRef.current.strokeStyle = selectedColor;
+
+    },[selectedLineDash,selectedLineWidth,selectedColor])
 
     useEffect(()=>{
         socket.on("userJoined",(data)=>{
             console.log(data)
-        })
+        });
         socket.on("drawOnWhiteboard", (data) => {
             console.log("received");
             console.log(data);
-            const {x0,x1,y0,y1} = data;
+            const {x0,x1,y0,y1,lineDash,lineWidth,color} = data;
 
-            // drawing path
+            // set options    
+            const dashArray = lineDash.split(',').map(Number);
+            ctxRef.current.setLineDash(dashArray);
+            ctxRef.current.lineWidth = lineWidth;
+            ctxRef.current.strokeStyle = color;
+
+            // drawing path   
             ctxRef.current.beginPath();
             ctxRef.current.moveTo(x0, y0);
             console.log(x0);
@@ -92,7 +106,8 @@ function Canvas() {
                 x0,
                 x1,
                 y0,
-                y1
+                y1,
+                lineDash:selectedLineDash,lineWidth:selectedLineWidth,color:selectedColor
             });   
         }
         setx0(x1); sety0(y1);
