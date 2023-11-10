@@ -49,12 +49,12 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use("/api/v1", user);
-
 // Activate server
-app.listen(PORT, () => {
-  console.log(`marsDoodles is live at ${PORT}`);
+server.listen(PORT, () => {
+    console.log(`marsDoodles is live at ${PORT}`);
 });
+
+app.use("/api/v1", user);
 
 // hariom's
 const { chats } = require("./data/data");
