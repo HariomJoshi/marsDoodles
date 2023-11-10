@@ -4,7 +4,7 @@ import axios from "axios";
 function Chat() {
   const [chats, setChats] = useState([]);
   async function fetchChats() {
-    const { data } = await axios.get("http://localhost:5000/game/chats");
+    const { data } = await axios.get("http://localhost:4000/game/chats");
     console.log(data);
     setChats(data);
   }

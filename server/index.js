@@ -50,13 +50,9 @@ io.on("connection", (socket) => {
 // Activate server
 server.listen(PORT, () => {
     console.log(`marsDoodles is live at ${PORT}`);
+});
 
 app.use("/api/v1", user);
-
-// Activate server
-app.listen(PORT, () => {
-  console.log(`marsDoodles is live at ${PORT}`);
-});
 
 // hariom's
 const { chats } = require("./data/data");
