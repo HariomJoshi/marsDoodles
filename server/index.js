@@ -1,11 +1,10 @@
-
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const app = express();
 const http = require("http");
 const {Server} = require("socket.io")
 const cors = require('cors');
 
+const app = express();
 app.use(cors());
 app.use(cookieParser())
 
@@ -40,30 +39,28 @@ io.on("connection", (socket) => {
         console.log(`${socket.id} has joined ${data}`)
     });
     socket.on("drawingData", (data) => {
-        console.log(data)
-        const { roomId, x0, x1, y0, y1 } = data;
-        console.log(data.roomId);
-        socket.broadcast.to(roomId).emit("drawOnWhiteboard", {
-            x0, x1, y0, y1
-          });
+        console.log(data);
+        socket.broadcast.to(data.roomId).emit("drawOnWhiteboard",data);
     });
+});
+
+app.use("/api/v1", user);
+
+
+
+// hariom's
+const { chats } = require("./data/data");
+app.get("/game/chats", (req, res) => {
+    res.send(chats);
+});
+
+app.get("/game/chats/:id", (req, res) => {
+    console.log(req.params.id);
+    const singlechat = chats.find((c) => c._id === req.params.id);
+    res.send(singlechat);
 });
 
 // Activate server
 server.listen(PORT, () => {
     console.log(`marsDoodles is live at ${PORT}`);
-});
-
-app.use("/api/v1", user);
-
-// hariom's
-const { chats } = require("./data/data");
-app.get("/game/chats", (req, res) => {
-  res.send(chats);
-});
-
-app.get("/game/chats/:id", (req, res) => {
-  console.log(req.params.id);
-  const singlechat = chats.find((c) => c._id === req.params.id);
-  res.send(singlechat);
 });

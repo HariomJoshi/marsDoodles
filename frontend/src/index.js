@@ -41,7 +41,6 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <ChakraProvider>
     <React.StrictMode>
       <BrowserRouter>
         <App />
@@ -49,5 +48,4 @@ root.render(
 
       <RouterProvider router={router} />
     </React.StrictMode>
-  </ChakraProvider>
 );
