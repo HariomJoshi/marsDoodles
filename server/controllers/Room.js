@@ -34,6 +34,18 @@ exports.createRoom = async(req,res) => {
     }
 }
 
+exports.joinRoom = async(req,res) => {
+    try{
+
+
+    } catch(err){
+        return res.status(500).json({
+            success:false,
+            message:`Something went wrong while joining room: ${err}`
+        })
+    }
+}
+
 exports.getAllPublicRooms = async(req,res) => {
     try{
         let rooms = await Room.find({type:"public"});

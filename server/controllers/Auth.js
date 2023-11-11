@@ -100,6 +100,7 @@ exports.login = async(req, res) => {
             res.status(200).json({
                 success:true,
                 user,
+                jwt_token:token,
                 message:"User logged in successfully"
             });
         } else{
