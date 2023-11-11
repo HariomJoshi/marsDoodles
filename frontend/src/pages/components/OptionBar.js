@@ -1,40 +1,49 @@
-import React from 'react';
+import React from "react";
 
-function OptionBar({ onColorChange, onLineWidthChange, onLineDashChange, onApplyOptions }) {
+function OptionBar({
+  onColorChange,
+  onLineWidthChange,
+  onLineDashChange,
+  onApplyOptions,
+}) {
   const containerStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    border: '2px solid black',
-    borderRadius: '5px',
-    padding: '10px',
-    margin: '10px',
+    display: "flex",
+    flexDirection: "row",
+    // justifyContent: "space-between",
+    alignItems: "center",
+    border: "2px solid black",
+    borderRadius: "5px",
+    padding: "10px",
+    margin: "10px",
+    width: "100%",
+    height: "100%",
   };
 
   const labelInputContainerStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: "5px",
   };
 
   const labelStyle = {
-    marginRight: '10px',
+    marginRight: "10px",
   };
 
   const inputStyle = {
-    padding: '5px',
-    fontSize: '16px',
+    display: "flex",
+    padding: "5px",
+    fontSize: "16px",
   };
 
   const buttonStyle = {
-    padding: '10px',
-    fontSize: '16px',
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
+    padding: "10px",
+    fontSize: "16px",
+    backgroundColor: "#3498db",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
   };
 
   return (

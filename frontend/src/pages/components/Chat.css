@@ -24,7 +24,7 @@
 .chats {
   height: 90%;
   background-color: azure;
-  padding: 2.5%;
+  padding: 1%;
 }
 .message-field-container {
   display: flex;

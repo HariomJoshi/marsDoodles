@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import JoinRoomPage from "./homescreencomp/JoinRoomPage";
 
 function Home() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Home() {
   return (
     <>
       <button
-        colorScheme="blue"
+        colorscheme="blue"
         onClick={() => {
           {
             localStorage.removeItem("userInfo");
@@ -26,6 +27,7 @@ function Home() {
         LOG OUT
       </button>
       <b>Hello welcome to the home screen</b>
+      <JoinRoomPage />
     </>
   );
 }

@@ -8,7 +8,7 @@ function Chat() {
     <div style={{ width: "100%", height: "100%" }}>
       <p>CHAT SECTION</p>
       <div className="chatsection">
-        <div class="chats">all chats will be shown here</div>
+        <div className="chats">all chats will be shown here</div>
         <div className="textField">
           <div className="message-field-container">
             <input
@@ -19,7 +19,7 @@ function Chat() {
             ></input>
           </div>
           <div className="send-button-container">
-            <button class="send">SEND</button>
+            <button className="send">SEND</button>
           </div>
         </div>
       </div>
