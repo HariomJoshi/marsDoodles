@@ -42,21 +42,16 @@ io.on("connection", (socket) => {
     console.log(data.roomId);
     socket.broadcast.to(roomId).emit("drawOnWhiteboard", data);
   });
+
+  // chatting data
+  socket.on("message", (data) => {
+    const { message, roomId } = data;
+
+    socket.broadcast.to(roomId).emit("messageResp", { message, user: "name" });
+  });
 });
 
 app.use("/api/v1", user);
-
-// hariom's
-const { chats } = require("./data/data");
-app.get("/game/chats", (req, res) => {
-  res.send(chats);
-});
-
-app.get("/game/chats/:id", (req, res) => {
-  console.log(req.params.id);
-  const singlechat = chats.find((c) => c._id === req.params.id);
-  res.send(singlechat);
-});
 
 // Activate server
 server.listen(PORT, () => {

@@ -5,6 +5,8 @@ import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation } from "react-router-dom";
+const io = require("socket.io-client");
+const socket = io.connect("http://localhost:4000");
 
 function Gamescreen() {
   const location = useLocation();
@@ -19,6 +21,7 @@ function Gamescreen() {
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
+            {/* {console.log(data)} */}
             <OptionBar
               selectedColor={selectedColor}
               selectedLineWidth={selectedLineWidth}
@@ -35,6 +38,7 @@ function Gamescreen() {
               selectedLineWidth={selectedLineWidth}
               selectedLineDash={selectedLineDash}
               roomId={data.roomId}
+              socket={socket}
             />
           </div>
 
@@ -44,7 +48,7 @@ function Gamescreen() {
           </div>
         </div>
         <div className="chat-section">
-          <Chat />
+          <Chat roomId={data.roomId} socket={socket} />
         </div>
       </div>
     </div>

@@ -1,13 +1,12 @@
 import { Button } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
-const io = require("socket.io-client");
-const socket = io.connect("http://localhost:4000");
 
 function Canvas({
   selectedColor,
   selectedLineWidth,
   selectedLineDash,
   roomId,
+  socket,
 }) {
   const [x0, setx0] = useState("");
   const [y0, sety0] = useState("");

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import JoinRoomPage from "./homescreencomp/JoinRoomPage";
+const io = require("socket.io-client");
+const socket = io.connect("http://localhost:4000");
 
 function Home() {
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ function Home() {
         LOG OUT
       </button>
       <b>Hello welcome to the home screen</b>
-      <JoinRoomPage />
+      <JoinRoomPage socket={socket} />
     </>
   );
 }

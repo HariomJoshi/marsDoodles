@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const io = require("socket.io-client");
-const socket = io.connect("http://localhost:4000");
 
-function JoinRoomPage() {
+function JoinRoomPage({ socket }) {
   const navigate = useNavigate();
   const [roomId, setRoomId] = useState("");
   const myState = { roomId };
@@ -36,6 +34,7 @@ function JoinRoomPage() {
       console.log("Joined room: " + roomId);
       joinRoom();
       navigate("/pages/game-screen", { state: myState });
+      //   console.log("Something");
     }
   };
   return (

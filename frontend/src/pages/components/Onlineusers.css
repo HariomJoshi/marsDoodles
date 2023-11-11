@@ -27,6 +27,7 @@
   display: flex;
   border: 1px solid #282c34;
   border-radius: 10px;
+  /* scrollbar-width: none; */
 }
 .iconbox section {
   scroll-snap-align: start;
