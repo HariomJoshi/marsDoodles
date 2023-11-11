@@ -18,7 +18,7 @@ import Chat from "./pages/components/Chat";
 
 const router = createBrowserRouter([
   {
-    path: "/pages/game-screen",
+    path: "/pages/game-screen/:id",
     element: <Gamescreen />,
   },
   {

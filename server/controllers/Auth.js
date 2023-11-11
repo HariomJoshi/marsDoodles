@@ -89,16 +89,16 @@ exports.login = async(req, res) => {
                                 expiresIn:"2h"
                                 })
             // user = user.toObject();
-            user.token = token; // <- not working
             // to remove password from the response being send to the client
             user.password = undefined;
             const options = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // + 3 days
-                httpOnly:true
+                expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // + 30 days
+                httpOnly: true,
+                secure: true
             }
-            res.cookie("token",token,options).status(200).json({
+            res.cookie('jwt', token, options);
+            res.status(200).json({
                 success:true,
-                token,
                 user,
                 message:"User logged in successfully"
             });

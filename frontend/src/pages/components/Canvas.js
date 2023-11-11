@@ -71,8 +71,10 @@ function Canvas() {
     function onMouseDown(e) {
         setVisible(true);
         ctxRef.current.beginPath();
-        setx0(e.clientX);
-        sety0(e.clientY);
+        // React wraps the native browser event inside its own synthetic event object,
+        // therefore native event properties need to be accessed for certain cases.
+        setx0(e.nativeEvent.offsetX);
+        sety0(e.nativeEvent.offsetY);
         ctxRef.current.moveTo(x0, y0);
     }
 
@@ -82,8 +84,8 @@ function Canvas() {
     }
 
     function onMouseMove(e) {
-        setx1(e.clientX);
-        sety1(e.clientY);
+        setx1(e.nativeEvent.offsetX);
+        sety1(e.nativeEvent.offsetY);
         if (visible) {  
             ctxRef.current.lineTo(x1, y1);
             ctxRef.current.stroke();
