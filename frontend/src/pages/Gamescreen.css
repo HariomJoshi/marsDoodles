@@ -1,7 +1,12 @@
+* {
+  margin: 0%;
+  padding: 0%;
+}
+
 .ALL {
   height: 100vh;
   width: 100vw;
-  /* position: fixed; */
+  position: fixed;
   background-color: beige;
   /* overflow: hidden; */
 }
@@ -23,18 +28,23 @@
 .chat-section {
   display: flex;
   width: 30%;
-  height: 100%;
-  background-color: blue;
+  height: 98%;
+  /* background-color: blue; */
 }
 
 .option-bar {
   width: 70%;
   height: 10%;
   display: flex;
+  margin-bottom: 0.5%;
 }
 
-/* .drawingBoard {
-  display: flex;
+.online-users-container {
+  height: 20%;
+}
+
+.drawingBoard {
   margin-bottom: 2%;
-  height: 70%;
-} */
+  height: 67%;
+  width: 100%;
+}

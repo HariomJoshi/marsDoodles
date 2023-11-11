@@ -4,25 +4,25 @@ function Avatar() {
   const imageLink = [
     {
       img: "https://i.pinimg.com/564x/b9/aa/d1/b9aad114e8d8fe6650b238f3516fc5a7.jpg",
-      name: "NARUTO UZUMAKI",
+      name: "NARUTO",
       score: 999,
       color: "blue",
     },
     {
       img: "https://i.pinimg.com/564x/70/a6/cc/70a6cc1610b0da9aa18cf197d4a14d42.jpg",
-      name: "SATURO GOJO",
+      name: "SATURO",
       score: 997,
       color: "blue",
     },
     {
       img: "https://i.pinimg.com/564x/37/01/43/370143d737f98e0f783f51f1d5da13bf.jpg",
-      name: "KAKASHI HATAKE",
+      name: "KAKASHI",
       score: 998,
       color: "blue",
     },
     {
       img: "https://i.pinimg.com/564x/1a/4d/dc/1a4ddce91abcc1cdb55072b209697041.jpg",
-      name: "ONE PIECE",
+      name: "ONEPIECE",
       score: 996,
       color: "blue",
     },
@@ -46,25 +46,25 @@ function Avatar() {
     },
     {
       img: "https://i.pinimg.com/564x/1a/4d/dc/1a4ddce91abcc1cdb55072b209697041.jpg",
-      name: "ONE PEICE",
+      name: "ONEPEICE",
       score: 992,
       color: "green",
     },
     {
       img: "https://i.pinimg.com/564x/70/a6/cc/70a6cc1610b0da9aa18cf197d4a14d42.jpg",
-      name: "SATURO GOJO",
+      name: "SATURO",
       score: 997,
       color: "green",
     },
     {
       img: "https://i.pinimg.com/564x/37/01/43/370143d737f98e0f783f51f1d5da13bf.jpg",
-      name: "KAKASHI HATAKE",
+      name: "KAKASHI",
       score: 998,
       color: "green",
     },
     {
       img: "https://i.pinimg.com/564x/1a/4d/dc/1a4ddce91abcc1cdb55072b209697041.jpg",
-      name: "ONE PIECE",
+      name: "ONEPIECE",
       score: 996,
       color: "green",
     },
@@ -88,7 +88,7 @@ function Avatar() {
     },
     {
       img: "https://i.pinimg.com/564x/1a/4d/dc/1a4ddce91abcc1cdb55072b209697041.jpg",
-      name: "ONE PEICE",
+      name: "ONEPEICE",
       score: 992,
       color: "green",
     },
