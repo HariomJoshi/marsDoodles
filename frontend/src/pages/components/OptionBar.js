@@ -34,6 +34,7 @@ function OptionBar({
     display: "flex",
     padding: "5px",
     fontSize: "16px",
+    width: "50%",
   };
 
   const buttonStyle = {

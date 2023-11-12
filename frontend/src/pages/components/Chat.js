@@ -6,14 +6,20 @@ function Chat({ roomId, socket }) {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    socket.on("messageResp", (data) => {
+    const handleReceiveMessage = (data) => {
       setChats((prevChats) => [...prevChats, data]);
-    });
-  }, []);
+    };
+
+    socket.on("messageResp", handleReceiveMessage);
+
+    return () => {
+      socket.off("messageResp", handleReceiveMessage);
+    };
+  }, [socket]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (message.trim() != "") {
+    if (message.trim() !== "") {
       setChats((prevChats) => [...prevChats, { message, user: "You" }]);
       socket.emit("message", { message, roomId });
       setMessage("");
