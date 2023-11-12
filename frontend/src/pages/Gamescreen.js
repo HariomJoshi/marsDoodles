@@ -1,15 +1,58 @@
+import "./Gamescreen.css";
+import React, { useState } from "react";
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
+import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
-function Gamescreen(){
-    return(
-        <div>
-            <b>GAME SCREEN</b>
-            <Canvas/>
-            <Chat/>
-            <Onlineusers/> 
+import { useLocation } from "react-router-dom";
+const io = require("socket.io-client");
+const socket = io.connect("http://localhost:4000");
+
+function Gamescreen() {
+  const location = useLocation();
+  const [selectedColor, setSelectedColor] = useState("black");
+  const [selectedLineWidth, setSelectedLineWidth] = useState(2);
+  const [selectedLineDash, setSelectedLineDash] = useState("");
+  const data = location.state;
+
+  // console.log(data.roomId);
+  return (
+    <div className="ALL">
+      <div className="gamescreen-container">
+        <div className="canvas-and-online-users-container">
+          <div className="option-bar">
+            {/* {console.log(data)} */}
+            <OptionBar
+              selectedColor={selectedColor}
+              selectedLineWidth={selectedLineWidth}
+              selectedLineDash={selectedLineDash}
+              onColorChange={(color) => setSelectedColor(color)}
+              onLineWidthChange={(width) => setSelectedLineWidth(width)}
+              onLineDashChange={(dash) => setSelectedLineDash(dash)}
+              // onApplyOptions={applySelectedOptions}
+            />
+          </div>
+          <div className="drawingBoard">
+            <Canvas
+              selectedColor={selectedColor}
+              selectedLineWidth={selectedLineWidth}
+              selectedLineDash={selectedLineDash}
+              roomId={data.roomId}
+              socket={socket}
+            />
+          </div>
+
+          <p>ONLINE USERS:</p>
+          <div className="online-users-container">
+            <Onlineusers />
+          </div>
         </div>
-    )
+        <div className="chat-section">
+          <Chat roomId={data.roomId} socket={socket} />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Gamescreen;
