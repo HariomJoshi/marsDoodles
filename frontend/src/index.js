@@ -13,6 +13,8 @@ import RegisterPage from "./pages/RegisterPage";
 import Home from "./pages/Home";
 import { ChakraProvider } from "@chakra-ui/react";
 import Chat from "./pages/components/Chat";
+import ChatProvider from "./context/ChatProvider";
+import Canvas from "./pages/components/Canvas";
 
 // all the paths need to be add here
 
@@ -36,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: "/gamechats",
     element: <Chat />,
+  },
+  {
+    path: "/canvas",
+    element: <Canvas />,
   },
 ]);
 

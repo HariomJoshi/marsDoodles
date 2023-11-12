@@ -1,9 +1,14 @@
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate} from "react-router-dom"; 
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import './Home.css'
+import JoinRoomPage from "./homescreencomp/JoinRoomPage";
+const io = require("socket.io-client");
+const socket = io.connect("http://localhost:4000");
+
 
 function Home({}) {
   const [user, setUser] = useState(null);
@@ -17,6 +22,17 @@ function Home({}) {
   const jwt = cookies.get("jwt_auth");
 
   const handleJoinRoom = (roomId) => {
+    //hariom's
+    if (!localStorage.getItem("token")) {
+      navigate("/");
+    } else {
+      console.log(localStorage.getItem("userInfo"));
+    }
+  }, []);
+    
+    
+    
+    
     const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`
     axios.post(link,{
       type:createRoomType,
@@ -65,6 +81,21 @@ function Home({}) {
 
   return (
     <div>
+    <div> 
+    <button
+        colorscheme="blue"
+        onClick={() => {
+          {
+            localStorage.removeItem("userInfo");
+            navigate("/");
+          }
+        }}
+      >
+        LOG OUT
+      </button>
+      <b>Hello welcome to the home screen</b>
+      <JoinRoomPage socket={socket} />
+    </div>
       <div className="top-bar">
         <div className="logo">
           <h1>
@@ -157,6 +188,7 @@ function Home({}) {
         </div>
       </div>
     </div>
+
   );
 }
 

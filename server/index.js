@@ -1,8 +1,10 @@
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require('cors');
+
 
 const app = express();
 
@@ -19,8 +21,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+
+    methods: ["GET", "POST"],
+  },
 });
 
 // set PORT
@@ -48,19 +51,18 @@ io.on("connection", (socket) => {
     console.log(data);
     socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
   });
+
+
+   
+
+  // chatting data
+  socket.on("message", (data) => {
+    const { message, roomId } = data;
+
+    socket.broadcast.to(roomId).emit("messageResp", { message, user: "name" });
+  });
 });
 
-// hariom's
-const { chats } = require("./data/data");
-app.get("/game/chats", (req, res) => {
-  res.send(chats);
-});
-
-app.get("/game/chats/:id", (req, res) => {
-  console.log(req.params.id);
-  const singlechat = chats.find((c) => c._id === req.params.id);
-  res.send(singlechat);
-});
 
 // Activate server
 server.listen(PORT, () => {
