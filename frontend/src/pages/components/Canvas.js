@@ -20,7 +20,6 @@ function Canvas({
   // const [canvasWidth, setCanvasWidth] = useState('');
 
   function joinRoom() {
-    // console.log(roomId);
     socket.emit("joinUser", roomId);
   }
 
@@ -61,7 +60,7 @@ function Canvas({
     ctxRef.current.setLineDash(dashArray);
     ctxRef.current.lineWidth = selectedLineWidth;
     ctxRef.current.strokeStyle = selectedColor;
-  }, [selectedLineDash, selectedLineWidth, selectedColor]);
+  }, [selectedLineDash, selectedLineWidth, selectedColor, socket]);
 
   useEffect(() => {
     socket.on("userJoined", (data) => {
@@ -73,8 +72,12 @@ function Canvas({
       const { x0, x1, y0, y1, lineDash, lineWidth, color } = data;
 
       // set options
-      const dashArray = lineDash.split(",").map(Number);
-      ctxRef.current.setLineDash(dashArray);
+      try{
+        const dashArray = lineDash.split(',').map(Number);
+        ctxRef.current.setLineDash(dashArray);
+        } catch(err){
+
+      }
       ctxRef.current.lineWidth = lineWidth;
       ctxRef.current.strokeStyle = color;
 
@@ -91,8 +94,9 @@ function Canvas({
   function onMouseDown(e) {
     setVisible(true);
     ctxRef.current.beginPath();
-    setx0(e.clientX);
-    sety0(e.clientY);
+    setx0(e.nativeEvent.offsetX);
+    sety0(e.nativeEvent.offsetY);
+
     ctxRef.current.moveTo(x0, y0);
   }
 
@@ -102,28 +106,26 @@ function Canvas({
   }
 
   function onMouseMove(e) {
-    setx1(e.clientX);
-    sety1(e.clientY);
-    if (visible) {
-      ctxRef.current.lineTo(x1, y1);
-      ctxRef.current.stroke();
-      socket.emit("drawingData", {
-        roomId,
-        x0,
-        x1,
-        y0,
-        y1,
-        lineDash: selectedLineDash,
-        lineWidth: selectedLineWidth,
-        color: selectedColor,
-      });
-    }
-    setx0(x1);
-    sety0(y1);
+      setx1(e.nativeEvent.offsetX);
+      sety1(e.nativeEvent.offsetY);
+      if (visible) {  
+        ctxRef.current.lineTo(x1, y1);
+            ctxRef.current.stroke();
+            socket.emit("drawingData", {
+                roomId,
+                x0,
+                x1,
+                y0,
+                y1,
+                lineDash:selectedLineDash,lineWidth:selectedLineWidth,color:selectedColor
+              });   
+          }
+      setx0(x1); sety0(y1);
   }
 
   return (
     <div>
+
       {/* <input
         style={inputStyle}
         type="text"
@@ -131,6 +133,7 @@ function Canvas({
       />
       <button style={buttonStyle} onClick={() => joinRoom()}>
         JOIN
+
       </button> */}
       {joinRoom()}
       <canvas
@@ -143,6 +146,7 @@ function Canvas({
         onMouseMove={onMouseMove}
       />
     </div>
+
   );
 }
 

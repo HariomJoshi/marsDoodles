@@ -20,7 +20,7 @@ import Canvas from "./pages/components/Canvas";
 
 const router = createBrowserRouter([
   {
-    path: "/pages/game-screen",
+    path: "/pages/game-screen/:id",
     element: <Gamescreen />,
   },
   {
@@ -47,7 +47,6 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-
     <React.StrictMode>
       <BrowserRouter>
         <App />

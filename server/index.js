@@ -1,16 +1,27 @@
-const express = require("express");
-const app = express();
+
+const express = require('express');
+const cookieParser = require('cookie-parser');
 const http = require("http");
 const { Server } = require("socket.io");
-const cors = require("cors");
+const cors = require('cors');
 
-app.use(cors());
+
+const app = express();
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST"],
+  credentials: true, 
+}));
+
+app.use(cookieParser());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
+
     methods: ["GET", "POST"],
   },
 });
@@ -38,10 +49,11 @@ io.on("connection", (socket) => {
   });
   socket.on("drawingData", (data) => {
     console.log(data);
-    const { roomId, x0, x1, y0, y1 } = data;
-    console.log(data.roomId);
-    socket.broadcast.to(roomId).emit("drawOnWhiteboard", data);
+    socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
   });
+
+
+   
 
   // chatting data
   socket.on("message", (data) => {
@@ -51,7 +63,6 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use("/api/v1", user);
 
 // Activate server
 server.listen(PORT, () => {

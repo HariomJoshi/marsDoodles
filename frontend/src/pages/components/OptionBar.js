@@ -4,7 +4,6 @@ function OptionBar({
   onColorChange,
   onLineWidthChange,
   onLineDashChange,
-  onApplyOptions,
 }) {
   const containerStyle = {
     display: "flex",
@@ -45,6 +44,7 @@ function OptionBar({
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
+
   };
 
   return (
@@ -79,3 +79,4 @@ function OptionBar({
 }
 
 export default OptionBar;
+
