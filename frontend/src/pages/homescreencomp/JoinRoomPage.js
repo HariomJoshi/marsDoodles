@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function JoinRoomPage({ socket }) {
+function JoinRoomPage({ socket, roomId }) {
   const navigate = useNavigate();
-  const [roomId, setRoomId] = useState("");
-  const myState = { roomId };
+  // const [roomId, setRoomId] = useState("");
+  // const myState = { roomId };
 
   const inputStyle = {
     padding: "10px",
@@ -33,17 +33,17 @@ function JoinRoomPage({ socket }) {
     if (roomId) {
       console.log("Joined room: " + roomId);
       joinRoom();
-      navigate("/pages/game-screen", { state: myState });
+      navigate(`/pages/game-screen/${roomId}`);
       //   console.log("Something");
     }
   };
   return (
     <div>
-      <input
+      {/* <input
         style={inputStyle}
         type="text"
         onChange={(e) => setRoomId(e.target.value)}
-      />
+      /> */}
       <button style={buttonStyle} onClick={handleclick}>
         JOIN
       </button>
