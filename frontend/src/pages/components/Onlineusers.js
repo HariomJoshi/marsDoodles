@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Onlineusers.css";
 
-function Onlineusers({ usersData }) {
+function Onlineusers({ usersData,  name}) {
   if (!usersData) {
     // to handle invalid requests
     return <></>;
@@ -17,7 +17,7 @@ function Onlineusers({ usersData }) {
               src={`https://robohash.org/${data.playerId}.png`}
             />
             <p style={{ fontSize: "12px", textAlign: "center" }}>
-              {data.playerId}
+              {name}
             </p>
             <p style={{ fontSize: "10px" }}>{data.points}</p>
           </div>
