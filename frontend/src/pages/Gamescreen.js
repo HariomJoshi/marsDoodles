@@ -1,5 +1,5 @@
 import "./Gamescreen.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
@@ -14,7 +14,15 @@ function Gamescreen() {
   const [selectedColor, setSelectedColor] = useState("black");
   const [selectedLineWidth, setSelectedLineWidth] = useState(2);
   const [selectedLineDash, setSelectedLineDash] = useState("");
+  const [usersData, setUsersData] = useState();
   // const data = location.state;
+
+  useEffect(()=>{
+    socket.on("userUpdate",(data)=>{
+      setUsersData(data.players)
+    })
+    console.log(usersData)
+  },[socket,usersData])
 
   // console.log(data.roomId);
   return (
@@ -31,6 +39,8 @@ function Gamescreen() {
               onColorChange={(color) => setSelectedColor(color)}
               onLineWidthChange={(width) => setSelectedLineWidth(width)}
               onLineDashChange={(dash) => setSelectedLineDash(dash)}
+              roomId={id}
+              socket={socket}
               // onApplyOptions={applySelectedOptions}
             />
           </div>
@@ -46,7 +56,7 @@ function Gamescreen() {
 
           <p>ONLINE USERS:</p>
           <div className="online-users-container">
-            <Onlineusers />
+            <Onlineusers usersData={usersData}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">

@@ -20,7 +20,9 @@ function Canvas({
   // const [canvasWidth, setCanvasWidth] = useState('');
 
   function joinRoom() {
-    socket.emit("joinUser", roomId);
+    const data = {userName:"user", roomId}
+    console.log(data);
+    socket.emit("joinUser", data);
   }
 
   const style = {
@@ -53,6 +55,7 @@ function Canvas({
   useEffect(() => {
     const canvas = canvasRef.current;
     ctxRef.current = canvas.getContext("2d");
+    joinRoom();
   }, []);
 
   useEffect(() => {
@@ -120,7 +123,6 @@ function Canvas({
                 lineDash:selectedLineDash,lineWidth:selectedLineWidth,color:selectedColor
               });   
           }
-      setx0(x1); sety0(y1);
   }
 
   return (
@@ -135,7 +137,6 @@ function Canvas({
         JOIN
 
       </button> */}
-      {joinRoom()}
       <canvas
         style={style}
         ref={canvasRef}
