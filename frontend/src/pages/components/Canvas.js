@@ -1,4 +1,3 @@
-import { Button } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
 
 function Canvas({
@@ -7,6 +6,8 @@ function Canvas({
   selectedLineDash,
   roomId,
   socket,
+  name,
+  email,
 }) {
   const [x0, setx0] = useState("");
   const [y0, sety0] = useState("");
@@ -18,10 +19,13 @@ function Canvas({
   // const [roomId, setRoomId] = useState("");
   // const [canvasHeight, setCanvasHeight] = useState('');
   // const [canvasWidth, setCanvasWidth] = useState('');
-
+  const data = { roomId, name, email };
   function joinRoom() {
+<<<<<<< HEAD
     const data = { userName: "user", roomId };
     console.log(data);
+=======
+>>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
     socket.emit("joinUser", data);
   }
 
