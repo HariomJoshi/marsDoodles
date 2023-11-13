@@ -64,15 +64,6 @@ function createPlayer(
 // BUG : upon refreshing the page socket_id changes :> FIX: use userEmail instead of socket_id
 
 io.on("connection", (socket) => {
-  socket.on("disconnecting", () => {
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      if (room !== socket.id) {
-        // The socket is leaving room
-        console.log(`Socket ID ${socket.id} is LEAVING room ${room}`);
-      }
-    });
-  });
   socket.on("joinUser", (data) => {
     console.log(data);
     const { userName, roomId } = data;
@@ -125,9 +116,27 @@ io.on("connection", (socket) => {
 
     socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
   });
+
+  socket.on("disconnect", () => {
+    // Loop through gameRooms to find the room where the user is associated
+    for (const roomId in gameRooms) {
+      const room = gameRooms[roomId];
+      // Check if the user is in the room's players array
+      const index = room.players.findIndex((player) => player.playerId === socket.id);    
+      if (index !== -1) {
+        // Remove the user from the room's players array
+        room.players.splice(index, 1);    
+        // Broadcast an updated user list or game state to the room
+        io.to(roomId).emit("userUpdate", room);
+        break;
+      }
+    }
+  });
+  
 });
 
 // Activate server
 server.listen(PORT, () => {
   console.log(`marsDoodles is live at ${PORT}`);
 });
+
