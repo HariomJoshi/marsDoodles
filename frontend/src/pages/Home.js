@@ -4,6 +4,8 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "./Home.css";
+const io = require("socket.io-client");
+const socket = io.connect("http://localhost:4000");
 
 function Home({}) {
   const [user, setUser] = useState(null);

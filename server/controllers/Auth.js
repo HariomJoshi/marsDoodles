@@ -64,7 +64,6 @@ exports.login = async (req, res) => {
         message: "Please fill all the details carefully",
       });
     }
-<<<<<<< HEAD
 
     // check for registered user
     const user = await User.findOne({ email });
@@ -72,16 +71,6 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-=======
-
-    // check for registered user
-    const user = await User.findOne({ email });
-    //if not a registered user
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
         message: "Email or password is incorrect", // "User is not registered"
       });
     }
@@ -109,11 +98,7 @@ exports.login = async (req, res) => {
       res.cookie("jwt", token, options);
       res.status(200).json({
         success: true,
-<<<<<<< HEAD
         user,
-=======
-        user: user,
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
         jwt_token: token,
         message: "User logged in successfully",
       });

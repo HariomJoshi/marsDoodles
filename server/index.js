@@ -125,9 +125,9 @@ io.on("connection", (socket) => {
 
     socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
   });
+});
 
-  // Activate server
-  server.listen(PORT, () => {
-    console.log(`marsDoodles is live at ${PORT}`);
-  });
+// Activate server
+server.listen(PORT, () => {
+  console.log(`marsDoodles is live at ${PORT}`);
 });
