@@ -3,12 +3,12 @@ require("dotenv").config();
 
 exports.auth = (req,res,next) => {
     try{
-        //extract JWT token
-        // pending: other ways to fetch tokens
-        const token = req.body.token;
+        console.log(req.body)
+        console.log(req.body.jwt)
+        const token = req.body.jwt;
 
         if(!token){
-            return res.status(401).json({
+            return res.status(406).json({
                 success:false,
                 message:"Token missing"
             })
@@ -20,18 +20,17 @@ exports.auth = (req,res,next) => {
             console.log(payload);
             req.user = payload; // to use in next middlewares
         } catch(error){
-            return res.status(401).json({
-                success:false,
-                message:`Token is invalid: ${error}`
+            return res.status(402).json({
+                success:false, 
+                message:`Token is invalid: ${error}` // send user to the login page
             })
         }
         next(); // goes to next middleware
 
     } catch(error){
-        return res.status(401).json({
+        return res.status(403).json({
             success:false,
-            
-            message:`Something went wrong while verifying the token:${error}`
+            message:`Something went wrong while verifying the token: ${error}`
         })
     }
 }

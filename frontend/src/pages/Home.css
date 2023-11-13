@@ -1,0 +1,117 @@
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3498db;
+    padding: 10px;
+    color: #fff;
+    border-radius: 8px;
+    margin: 5px;
+  }
+  
+  .logo {
+    font-size: 24px;
+  }
+  
+  .logo-highlight {
+    transform: rotate(-25deg);
+    display: inline-block;
+    color: black;
+  }
+  
+  .profile-button a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+  }
+  
+  /* Main content styles */
+  .main-content {
+    display: flex;
+  }
+  
+  .left-column {
+    max-width: 50%;
+    overflow: auto;
+    margin: 5px;
+    padding: 10px;
+  }
+  
+  .available-rooms {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  h2 {
+    font-size: 18px;
+    background-color: #3498db;
+    padding: 5px 10px;
+    color: #fff;
+    border-radius: 8px;
+  }
+  
+  .refresh-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  
+  .right-column {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .join-room-container,
+  .create-room-container {
+    margin-bottom: 20px;
+  }
+  
+  .join-room,
+  .create-room {
+    border: 1px solid #3498db;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+  }
+  
+  .room {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .room-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+  }
+  
+  .room-label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .room-data {
+    color: #333;
+  }
+  
+  .join-button,
+  .create-join-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  

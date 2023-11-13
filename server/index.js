@@ -1,16 +1,28 @@
+const { getUser, addUser, getUsersInRoom } = require("./utils/roomUsers");
 const express = require("express");
-const app = express();
+const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
-app.use(cors());
+const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+app.use(cookieParser());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
+
     methods: ["GET", "POST"],
   },
 });
@@ -32,37 +44,42 @@ const user = require("./routes/user");
 app.use("/api/v1", user);
 
 io.on("connection", (socket) => {
+  socket.on("joinUser", (data) => {
+    socket.join(data.roomId);
+    console.log(`${socket.id} has joined ${data.roomId}`);
+    const user = {
+      // name , userId , roomId, isHost, isPresenter, socketID
+      name: data.name,
+      roomId: data.roomId,
+      email: data.email,
+      isHost: false,
+      isPresenter: false,
+      socketID: socket.id,
+    };
 
-    socket.on("joinUser", (data) => {
-        socket.join(data)
-        console.log(`${socket.id} has joined ${data}`)
-    });
-    socket.on("drawingData", (data) => {
-        console.log(data)
-        const { roomId, x0, x1, y0, y1 } = data;
-        console.log(data.roomId);
-        socket.broadcast.to(roomId).emit("drawOnWhiteboard",data);
-    });
+    addUser(user);
   });
-});
+  socket.on("drawingData", (data) => {
+    console.log(data);
+    socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
+  });
 
-app.use("/api/v1", user);
+  // chatting data
+  socket.on("message", (data) => {
+    const { message, roomId, name } = data;
+    // const name = getUser(userId).name;
 
+    socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+  });
 
-
-// hariom's
-const { chats } = require("./data/data");
-app.get("/game/chats", (req, res) => {
-    res.send(chats);
-});
-
-app.get("/game/chats/:id", (req, res) => {
-    console.log(req.params.id);
-    const singlechat = chats.find((c) => c._id === req.params.id);
-    res.send(singlechat);
+  socket.on("onlineusers", (roomId) => {
+    const users = getUsersInRoom(roomId);
+    console.log("Filtered array: " + users.length);
+    socket.broadcast.to(roomId).emit("currentOnlineUsers", users);
+  });
 });
 
 // Activate server
 server.listen(PORT, () => {
-    console.log(`marsDoodles is live at ${PORT}`);
+  console.log(`marsDoodles is live at ${PORT}`);
 });

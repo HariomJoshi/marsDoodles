@@ -24,7 +24,7 @@
 .chats {
   height: 90%;
   background-color: azure;
-  padding: 2.5%;
+  padding: 1%;
 }
 .message-field-container {
   display: flex;
@@ -52,4 +52,13 @@
   height: 100%;
   border-radius: 10px;
   background-color: rgb(3, 168, 233);
+}
+.oneChat {
+  width: 100%;
+  height: fit-content;
+  justify-content: center;
+  background-color: rgb(128, 128, 236);
+  border-radius: 10px;
+  padding: 5%;
+  margin-top: 1%;
 }

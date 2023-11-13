@@ -1,12 +1,15 @@
 import "./LoginPage.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 function LoginPage() {
   let [passType, setPassType] = useState("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user, setUser] = useState("");
   const navigate = useNavigate();
   function submit(e) {
     e.preventDefault();
@@ -16,19 +19,28 @@ function LoginPage() {
         password: password,
       })
       .then((result) => {
+        const cookie = new Cookies();
         console.log(result);
-        localStorage.setItem("token", result.data.token);
-        navigate("/home");
+        const jwt_token = result.data.jwt_token;
+        const decoded = jwtDecode(jwt_token);
+        setUser(decoded);
+        cookie.set("jwt_auth", jwt_token, {
+          expires: new Date(decoded.exp * 10000),
+        });
+        console.log(result.data.user.email); // printing email
+        navigate("/home", {
+          state: { name: result.data.user },
+        });
       })
       .catch((e) => {
         console.log(e);
-        if (e.response.status == 403) {
+        if (e.response.status === 403) {
           alert("Email or password incorrect");
-        } else if (e.response.status == 400) {
+        } else if (e.response.status === 400) {
           alert("Please fill all the details");
-        } else if (e.response.status == 401) {
+        } else if (e.response.status === 401) {
           alert("Email or password incorrect");
-        } else if (e.response.status == 500) {
+        } else if (e.response.status === 500) {
           alert("Unexpected error at server");
         }
       });
