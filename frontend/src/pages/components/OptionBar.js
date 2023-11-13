@@ -4,15 +4,15 @@ function OptionBar({
   onColorChange,
   onLineWidthChange,
   onLineDashChange,
+  onGettingDrawing,
   socket,
   roomId,
 }) {
   const containerStyle = {
     display: "flex",
     flexDirection: "row",
-    // justifyContent: "space-between",
     justifyContent: "flex-start",
-    // alignItems: "center",
+    alignItems: "flex-start",
     border: "2px solid black",
     borderRadius: "5px",
     padding: "10px",
@@ -25,6 +25,7 @@ function OptionBar({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    width: "25%",
     // marginLeft: "5px",
   };
 
@@ -74,6 +75,14 @@ function OptionBar({
           style={inputStyle}
           type="text"
           onChange={(e) => onLineDashChange(e.target.value)}
+        />
+      </div>
+      <div style={labelInputContainerStyle}>
+        <label style={labelStyle}>Drawing: </label>
+        <input
+          style={inputStyle}
+          type="text"
+          onChange={(e) => onGettingDrawing(e.target.value)}
         />
       </div>
     </div>

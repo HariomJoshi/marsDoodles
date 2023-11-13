@@ -14,6 +14,7 @@ function Gamescreen() {
   const [selectedColor, setSelectedColor] = useState("black");
   const [selectedLineWidth, setSelectedLineWidth] = useState(2);
   const [selectedLineDash, setSelectedLineDash] = useState("");
+  const [currentDrawing, setCurrentDrawing] = useState("");
   const [usersData, setUsersData] = useState();
   const [name, setName] = useState();
   const data = location.state;
@@ -40,9 +41,11 @@ function Gamescreen() {
               selectedColor={selectedColor}
               selectedLineWidth={selectedLineWidth}
               selectedLineDash={selectedLineDash}
+              currentDrawing={currentDrawing}
               onColorChange={(color) => setSelectedColor(color)}
               onLineWidthChange={(width) => setSelectedLineWidth(width)}
               onLineDashChange={(dash) => setSelectedLineDash(dash)}
+              onGettingDrawing={(drawing) => setCurrentDrawing(drawing)}
               roomId={id}
               socket={socket}
               // onApplyOptions={applySelectedOptions}
