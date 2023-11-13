@@ -14,12 +14,12 @@ function Gamescreen() {
   const [selectedColor, setSelectedColor] = useState("black");
   const [selectedLineWidth, setSelectedLineWidth] = useState(2);
   const [selectedLineDash, setSelectedLineDash] = useState("");
-  const data = location.state;
-
-  console.log("Gamescreen data " + data.name.email);
-
   const [usersData, setUsersData] = useState();
-  // const data = location.state;
+  const [name, setName] = useState();
+  const data = location.state;
+  // useEffect(() => {
+  //   setName(localStorage.getItem("name"));
+  // }, []);
 
   useEffect(() => {
     socket.on("userUpdate", (data) => {
@@ -55,8 +55,7 @@ function Gamescreen() {
               selectedLineDash={selectedLineDash}
               roomId={id}
               socket={socket}
-              name={data.name.name}
-              email={data.name.email}
+              // name={name}
             />
           </div>
 
@@ -66,7 +65,7 @@ function Gamescreen() {
           </div>
         </div>
         <div className="chat-section">
-          <Chat roomId={id} socket={socket} name={data.name.name} />
+          <Chat roomId={id} socket={socket} name={data.name} />
         </div>
       </div>
     </div>

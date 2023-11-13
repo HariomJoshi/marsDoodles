@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -14,23 +14,16 @@ function Home({}) {
   const [joinRoomId, setJoinRoomId] = useState("");
   const [createRoomType, setCreateRoomType] = useState("public");
   const [createRoomId, setCreateRoomId] = useState("");
-
   const cookies = new Cookies();
   const navigate = useNavigate();
   const jwt = cookies.get("jwt_auth");
+  const location = useLocation();
+  const name = location.state;
 
   const handleJoinRoom = (roomId) => {
-
-    const data = {userName:user,roomId:joinRoomId}
-    socket.emit("joinUser",data);
-    navigate(`/pages/game-screen/${joinRoomId}`)
-
-    //hariom's
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-    } else {
-      console.log(localStorage.getItem("userInfo"));
-    }
+    const data = { userName: user, roomId: joinRoomId };
+    socket.emit("joinUser", data);
+    navigate(`/pages/game-screen/${joinRoomId}`, { state: name });
 
     // const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
     // axios
@@ -47,9 +40,9 @@ function Home({}) {
   };
 
   const handleCreateRoom = () => {
-    const data = {userName:user,roomId:createRoomId}
-    socket.emit("joinUser",data);
-    navigate(`/pages/game-screen/${createRoomId}`)
+    const data = { userName: user, roomId: createRoomId };
+    socket.emit("joinUser", data);
+    navigate(`/pages/game-screen/${createRoomId}`, { state: name });
     // axios
     //   .post(`http://localhost:4000/api/v1/createRoom/${createRoomId}`, {
     //     type: createRoomType,
