@@ -26,17 +26,9 @@ function LoginPage() {
         setUser(decoded);
         cookie.set("jwt_auth", jwt_token, {
           expires: new Date(decoded.exp * 10000),
-<<<<<<< HEAD
         });
         console.log(result.data.user.name);
         navigate("/home", { state: { name: result.data.user.name } });
-=======
-        });
-        console.log(result.data.user.email); // printing email
-        navigate("/home", {
-          state: { name: result.data.user },
-        });
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
       })
       .catch((e) => {
         console.log(e);

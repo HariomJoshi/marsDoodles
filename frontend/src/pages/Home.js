@@ -15,7 +15,6 @@ function Home({}) {
   const navigate = useNavigate();
   const jwt = cookies.get("jwt_auth");
   const location = useLocation();
-<<<<<<< HEAD
   const name = location.state;
 
   const handleJoinRoom = (roomId) => {
@@ -52,41 +51,6 @@ function Home({}) {
     //   .catch((error) => {
     //     console.log(error);
     //   });
-=======
-  const data = location.state;
-  console.log("Homescreen data " + data.name.name);
-  console.log("Homescreen data email " + data.name.email);
-
-  const handleJoinRoom = () => {
-    const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
-    axios
-      .post(link, {
-        type: createRoomType,
-        jwt,
-      })
-      .then(() => {
-        navigate(`/pages/game-screen/${joinRoomId}`, { state: data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleCreateRoom = () => {
-    axios
-      .post(`http://localhost:4000/api/v1/createRoom/${createRoomId}`, {
-        type: createRoomType,
-        jwt,
-      })
-      .then(() => {
-        navigate(`/pages/game-screen/${createRoomId}`, {
-          state: data,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
   };
 
   const handleRefresh = () => {
@@ -120,7 +84,6 @@ function Home({}) {
 
   return (
     <div>
-<<<<<<< HEAD
       <div>
         <button
           colorscheme="blue"
@@ -136,9 +99,6 @@ function Home({}) {
         <b>Hello welcome to the home screen</b>
         {/* <JoinRoomPage roomId={joinRoomId} socket={socket} /> */}
       </div>
-=======
-      <div>{/* <JoinRoomPage roomId={joinRoomId} socket={socket} /> */}</div>
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
       <div className="top-bar">
         <div className="logo">
           <h1>
