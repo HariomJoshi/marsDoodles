@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "./Home.css";
-import JoinRoomPage from "./homescreencomp/JoinRoomPage";
-const io = require("socket.io-client");
-const socket = io.connect("http://localhost:4000");
 
 function Home({}) {
   const [user, setUser] = useState(null);
@@ -18,15 +15,12 @@ function Home({}) {
   const cookies = new Cookies();
   const navigate = useNavigate();
   const jwt = cookies.get("jwt_auth");
+  const location = useLocation();
+  const data = location.state;
+  console.log("Homescreen data " + data.name.name);
+  console.log("Homescreen data email " + data.name.email);
 
-  const handleJoinRoom = (roomId) => {
-    //hariom's
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-    } else {
-      console.log(localStorage.getItem("userInfo"));
-    }
-
+  const handleJoinRoom = () => {
     const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
     axios
       .post(link, {
@@ -34,7 +28,7 @@ function Home({}) {
         jwt,
       })
       .then(() => {
-        navigate(`/pages/game-screen/${joinRoomId}`);
+        navigate(`/pages/game-screen/${joinRoomId}`, { state: data });
       })
       .catch((error) => {
         console.log(error);
@@ -48,7 +42,9 @@ function Home({}) {
         jwt,
       })
       .then(() => {
-        navigate(`/pages/game-screen/${createRoomId}`);
+        navigate(`/pages/game-screen/${createRoomId}`, {
+          state: data,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -69,6 +65,9 @@ function Home({}) {
   };
 
   useEffect(() => {
+    if (!cookies.get("jwt_auth")) {
+      navigate("/");
+    }
     axios
       .post("http://localhost:4000/api/v1/getAllPublicRooms", {
         jwt: jwt,
@@ -83,21 +82,7 @@ function Home({}) {
 
   return (
     <div>
-      <div>
-        <button
-          colorscheme="blue"
-          onClick={() => {
-            {
-              localStorage.removeItem("userInfo");
-              navigate("/");
-            }
-          }}
-        >
-          LOG OUT
-        </button>
-        <b>Hello welcome to the home screen</b>
-        <JoinRoomPage roomId={joinRoomId} socket={socket} />
-      </div>
+      <div>{/* <JoinRoomPage roomId={joinRoomId} socket={socket} /> */}</div>
       <div className="top-bar">
         <div className="logo">
           <h1>
@@ -105,16 +90,16 @@ function Home({}) {
           </h1>
         </div>
         <div className="profile-button">
-          <Link to="/profile">Profile</Link>
-          <Link
+          <button to="/profile">Profile</button>
+          <button
             onClick={() => {
               setUser(null);
-              cookies.remove("jwt-auth");
+              cookies.remove("jwt_auth");
+              navigate("/");
             }}
-            to="/"
           >
             LogOut
-          </Link>
+          </button>
         </div>
       </div>
 

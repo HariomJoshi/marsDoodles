@@ -1,4 +1,3 @@
-import { Button } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
 
 function Canvas({
@@ -7,6 +6,8 @@ function Canvas({
   selectedLineDash,
   roomId,
   socket,
+  name,
+  email,
 }) {
   const [x0, setx0] = useState("");
   const [y0, sety0] = useState("");
@@ -18,9 +19,9 @@ function Canvas({
   // const [roomId, setRoomId] = useState("");
   // const [canvasHeight, setCanvasHeight] = useState('');
   // const [canvasWidth, setCanvasWidth] = useState('');
-
+  const data = { roomId, name, email };
   function joinRoom() {
-    socket.emit("joinUser", roomId);
+    socket.emit("joinUser", data);
   }
 
   const style = {
@@ -72,12 +73,10 @@ function Canvas({
       const { x0, x1, y0, y1, lineDash, lineWidth, color } = data;
 
       // set options
-      try{
-        const dashArray = lineDash.split(',').map(Number);
+      try {
+        const dashArray = lineDash.split(",").map(Number);
         ctxRef.current.setLineDash(dashArray);
-        } catch(err){
-
-      }
+      } catch (err) {}
       ctxRef.current.lineWidth = lineWidth;
       ctxRef.current.strokeStyle = color;
 
@@ -106,26 +105,28 @@ function Canvas({
   }
 
   function onMouseMove(e) {
-      setx1(e.nativeEvent.offsetX);
-      sety1(e.nativeEvent.offsetY);
-      if (visible) {  
-        ctxRef.current.lineTo(x1, y1);
-            ctxRef.current.stroke();
-            socket.emit("drawingData", {
-                roomId,
-                x0,
-                x1,
-                y0,
-                y1,
-                lineDash:selectedLineDash,lineWidth:selectedLineWidth,color:selectedColor
-              });   
-          }
-      setx0(x1); sety0(y1);
+    setx1(e.nativeEvent.offsetX);
+    sety1(e.nativeEvent.offsetY);
+    if (visible) {
+      ctxRef.current.lineTo(x1, y1);
+      ctxRef.current.stroke();
+      socket.emit("drawingData", {
+        roomId,
+        x0,
+        x1,
+        y0,
+        y1,
+        lineDash: selectedLineDash,
+        lineWidth: selectedLineWidth,
+        color: selectedColor,
+      });
+    }
+    setx0(x1);
+    sety0(y1);
   }
 
   return (
     <div>
-
       {/* <input
         style={inputStyle}
         type="text"
@@ -146,7 +147,6 @@ function Canvas({
         onMouseMove={onMouseMove}
       />
     </div>
-
   );
 }
 

@@ -1,18 +1,19 @@
-
-const express = require('express');
-const cookieParser = require('cookie-parser');
+const { getUser, addUser, getUsersInRoom } = require("./utils/roomUsers");
+const express = require("express");
+const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
-const cors = require('cors');
-
+const cors = require("cors");
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
-  credentials: true, 
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 
@@ -44,25 +45,39 @@ app.use("/api/v1", user);
 
 io.on("connection", (socket) => {
   socket.on("joinUser", (data) => {
-    socket.join(data);
-    console.log(`${socket.id} has joined ${data}`);
+    socket.join(data.roomId);
+    console.log(`${socket.id} has joined ${data.roomId}`);
+    const user = {
+      // name , userId , roomId, isHost, isPresenter, socketID
+      name: data.name,
+      roomId: data.roomId,
+      email: data.email,
+      isHost: false,
+      isPresenter: false,
+      socketID: socket.id,
+    };
+
+    addUser(user);
   });
   socket.on("drawingData", (data) => {
     console.log(data);
     socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
   });
 
-
-   
-
   // chatting data
   socket.on("message", (data) => {
-    const { message, roomId } = data;
+    const { message, roomId, name } = data;
+    // const name = getUser(userId).name;
 
-    socket.broadcast.to(roomId).emit("messageResp", { message, user: "name" });
+    socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+  });
+
+  socket.on("onlineusers", (roomId) => {
+    const users = getUsersInRoom(roomId);
+    console.log("Filtered array: " + users.length);
+    socket.broadcast.to(roomId).emit("currentOnlineUsers", users);
   });
 });
-
 
 // Activate server
 server.listen(PORT, () => {

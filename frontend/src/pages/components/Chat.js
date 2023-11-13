@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Chat.css";
 
-function Chat({ roomId, socket }) {
+function Chat({ roomId, socket, name }) {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
 
@@ -21,7 +21,7 @@ function Chat({ roomId, socket }) {
     e.preventDefault();
     if (message.trim() !== "") {
       setChats((prevChats) => [...prevChats, { message, user: "You" }]);
-      socket.emit("message", { message, roomId });
+      socket.emit("message", { message, roomId, name });
       setMessage("");
     }
   };
