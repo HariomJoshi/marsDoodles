@@ -5,13 +5,14 @@ function OptionBar({
   onLineWidthChange,
   onLineDashChange,
   socket,
-  roomId
+  roomId,
 }) {
   const containerStyle = {
     display: "flex",
     flexDirection: "row",
     // justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    // alignItems: "center",
     border: "2px solid black",
     borderRadius: "5px",
     padding: "10px",
@@ -24,7 +25,7 @@ function OptionBar({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: "5px",
+    // marginLeft: "5px",
   };
 
   const labelStyle = {
@@ -35,7 +36,7 @@ function OptionBar({
     display: "flex",
     padding: "5px",
     fontSize: "16px",
-    width: "50%",
+    width: "20%",
   };
 
   const buttonStyle = {
@@ -46,7 +47,6 @@ function OptionBar({
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
-
   };
 
   return (
@@ -81,4 +81,3 @@ function OptionBar({
 }
 
 export default OptionBar;
-
