@@ -16,11 +16,11 @@ function Gamescreen() {
   const [selectedLineDash, setSelectedLineDash] = useState("");
   const data = location.state;
 
-  // console.log(data.roomId);
+  console.log("Gamescreen data " + data.name.email);
   return (
     <div className="ALL">
       <div className="gamescreen-container">
-       <h1 className='Main-logo'>bit2byte</h1>
+        <h1 className="Main-logo">bit2byte</h1>
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
             {/* {console.log(data)} */}
@@ -39,18 +39,25 @@ function Gamescreen() {
               selectedColor={selectedColor}
               selectedLineWidth={selectedLineWidth}
               selectedLineDash={selectedLineDash}
-              roomId={data.roomId}
+              roomId={id}
               socket={socket}
+              name={data.name.name}
+              email={data.name.email}
             />
           </div>
 
           <p>ONLINE USERS:</p>
           <div className="online-users-container">
-            <Onlineusers />
+            <Onlineusers
+              name={data.name}
+              socket={socket}
+              roomId={id}
+              email={data.name.email}
+            />
           </div>
         </div>
         <div className="chat-section">
-          <Chat roomId={data.roomId} socket={socket} />
+          <Chat roomId={id} socket={socket} name={data.name.name} />
         </div>
       </div>
     </div>
