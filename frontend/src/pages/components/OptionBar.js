@@ -4,6 +4,8 @@ function OptionBar({
   onColorChange,
   onLineWidthChange,
   onLineDashChange,
+  socket,
+  roomId
 }) {
   const containerStyle = {
     display: "flex",

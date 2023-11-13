@@ -20,6 +20,11 @@ function Home({}) {
   const jwt = cookies.get("jwt_auth");
 
   const handleJoinRoom = (roomId) => {
+
+    const data = {userName:user,roomId:joinRoomId}
+    socket.emit("joinUser",data);
+    navigate(`/pages/game-screen/${joinRoomId}`)
+
     //hariom's
     if (!localStorage.getItem("token")) {
       navigate("/");
@@ -27,32 +32,35 @@ function Home({}) {
       console.log(localStorage.getItem("userInfo"));
     }
 
-    const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
-    axios
-      .post(link, {
-        type: createRoomType,
-        jwt,
-      })
-      .then(() => {
-        navigate(`/pages/game-screen/${joinRoomId}`);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
+    // axios
+    //   .post(link, {
+    //     type: createRoomType,
+    //     jwt,
+    //   })
+    //   .then(() => {
+    //     navigate(`/pages/game-screen/${joinRoomId}`);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleCreateRoom = () => {
-    axios
-      .post(`http://localhost:4000/api/v1/createRoom/${createRoomId}`, {
-        type: createRoomType,
-        jwt,
-      })
-      .then(() => {
-        navigate(`/pages/game-screen/${createRoomId}`);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const data = {userName:user,roomId:createRoomId}
+    socket.emit("joinUser",data);
+    navigate(`/pages/game-screen/${createRoomId}`)
+    // axios
+    //   .post(`http://localhost:4000/api/v1/createRoom/${createRoomId}`, {
+    //     type: createRoomType,
+    //     jwt,
+    //   })
+    //   .then(() => {
+    //     navigate(`/pages/game-screen/${createRoomId}`);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleRefresh = () => {
@@ -96,7 +104,7 @@ function Home({}) {
           LOG OUT
         </button>
         <b>Hello welcome to the home screen</b>
-        <JoinRoomPage roomId={joinRoomId} socket={socket} />
+        {/* <JoinRoomPage roomId={joinRoomId} socket={socket} /> */}
       </div>
       <div className="top-bar">
         <div className="logo">
