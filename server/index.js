@@ -44,6 +44,7 @@ app.use("/api/v1", user);
 
 const reqPlayers = 2;
 const gameRooms = {};
+
 function createPlayer(
   playerId,
   playerName,
@@ -86,7 +87,7 @@ io.on("connection", (socket) => {
         // if player > threshold (min req to start the game)
         const noOfPlayersInRoom = io.sockets.adapter.rooms.get(roomId).size;
         if (noOfPlayersInRoom == reqPlayers) {
-          // start game
+          // startGameTimer(roomId);
         }
       }
     } else {

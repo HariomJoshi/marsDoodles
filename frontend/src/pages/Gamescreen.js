@@ -4,6 +4,7 @@ import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
+import Clock from "./components/Clock";
 import { useLocation, useParams } from "react-router-dom";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
@@ -32,7 +33,6 @@ function Gamescreen() {
   return (
     <div className="ALL">
       <div className="gamescreen-container">
-        <h1 className="Main-logo">bit2byte</h1>
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
             {/* {console.log(data)} */}
@@ -61,7 +61,7 @@ function Gamescreen() {
 
           <p>ONLINE USERS:</p>
           <div className="online-users-container">
-            <Onlineusers usersData={usersData}></Onlineusers>
+            <Onlineusers usersData={usersData} name={data.name}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">

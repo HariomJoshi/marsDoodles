@@ -1,4 +1,7 @@
 import React from "react";
+import Clock from "./Clock";
+import "./OptionBar.css";
+import { useState } from "react";
 
 function OptionBar({
   onColorChange,
@@ -7,74 +10,46 @@ function OptionBar({
   socket,
   roomId,
 }) {
-  const containerStyle = {
-    display: "flex",
-    flexDirection: "row",
-    // justifyContent: "space-between",
-    justifyContent: "flex-start",
-    // alignItems: "center",
-    border: "2px solid black",
-    borderRadius: "5px",
-    padding: "10px",
-    margin: "10px",
-    width: "100%",
-    height: "100%",
-  };
 
-  const labelInputContainerStyle = {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    // marginLeft: "5px",
-  };
-
-  const labelStyle = {
-    marginRight: "10px",
-  };
-
-  const inputStyle = {
-    display: "flex",
-    padding: "5px",
-    fontSize: "16px",
-    width: "20%",
-  };
-
-  const buttonStyle = {
-    padding: "10px",
-    fontSize: "16px",
-    backgroundColor: "#3498db",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-  };
-
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isItMyTurn, setIsItMyTurn] = useState(false);
+  
   return (
-    <div style={containerStyle}>
-      <div style={labelInputContainerStyle}>
-        <label style={labelStyle}>Line Width:</label>
-        <input
-          style={inputStyle}
-          type="number"
-          min="1"
-          onChange={(e) => onLineWidthChange(Number(e.target.value))}
-        />
+    <div className="container">
+      <div className="logo">
+        <h1>
+          bit2byte
+        </h1>
       </div>
-      <div style={labelInputContainerStyle}>
-        <label style={labelStyle}>Line Color:</label>
-        <input
-          style={inputStyle}
-          type="color"
-          onChange={(e) => onColorChange(e.target.value)}
-        />
-      </div>
-      <div style={labelInputContainerStyle}>
-        <label style={labelStyle}>Line Dash:</label>
-        <input
-          style={inputStyle}
-          type="text"
-          onChange={(e) => onLineDashChange(e.target.value)}
-        />
+      <div className="controls">
+        { isItMyTurn && <div className="labelInputContainer">
+          <label className="label">Line Width:</label>
+          <input
+            className="input"
+            type="number"
+            min="1"
+            onChange={(e) => onLineWidthChange(Number(e.target.value))}
+          />
+        </div>}
+       { isItMyTurn && <div className="labelInputContainer">
+          <label className="label">Line Color:</label>
+          <input
+            className="input"
+            type="color"
+            onChange={(e) => onColorChange(e.target.value)}
+          />
+        </div>}
+        { isItMyTurn && <div className="labelInputContainer">
+          <label className="label">Line Dash:</label>
+          <input
+            className="input"
+            type="text"
+            onChange={(e) => onLineDashChange(e.target.value)}
+          />
+        </div>}
+        <div className="labelInputContainer">
+          <Clock initialTime={60} />
+        </div>
       </div>
     </div>
   );
