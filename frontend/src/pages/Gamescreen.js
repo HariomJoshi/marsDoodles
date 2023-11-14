@@ -18,24 +18,18 @@ function Gamescreen() {
   const [usersData, setUsersData] = useState();
   const [name, setName] = useState();
   const data = location.state;
-  // useEffect(() => {
-  //   setName(localStorage.getItem("name"));
-  // }, []);
 
   useEffect(() => {
     socket.on("userUpdate", (data) => {
       setUsersData(data.players);
     });
-    console.log(usersData);
   }, [socket, usersData]);
 
-  console.log("Gamescreen data " + drawingName);
   return (
     <div className="ALL">
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
-            {/* {console.log(data)} */}
             <OptionBar
               selectedColor={selectedColor}
               selectedLineWidth={selectedLineWidth}
@@ -46,9 +40,7 @@ function Gamescreen() {
               transferRightAns={(ans) => setDrawingName(ans)}
               roomId={id}
               socket={socket}
-              // onApplyOptions={applySelectedOptions}
             />
-            {console.log("Drawing name: " + drawingName)}
           </div>
           <div className="drawingBoard">
             <Canvas
@@ -57,11 +49,8 @@ function Gamescreen() {
               selectedLineDash={selectedLineDash}
               roomId={id}
               socket={socket}
-              // name={name}
             />
           </div>
-
-          <p>ONLINE USERS:</p>
           <div className="online-users-container">
             <Onlineusers usersData={usersData}></Onlineusers>
           </div>
