@@ -1,10 +1,12 @@
 import "./Gamescreen.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation, useParams } from "react-router-dom";
+import Cookies from "universal-cookie";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -18,6 +20,14 @@ function Gamescreen() {
   const [usersData, setUsersData] = useState();
   const [name, setName] = useState();
   const data = location.state;
+  const navigate = useNavigate();
+  const cookies = new Cookies()
+
+  useEffect(()=>{
+    if (!cookies.get("jwt_auth")) {
+      navigate("/");
+    }
+  })
 
   useEffect(()=>{
     if(data && data.name){

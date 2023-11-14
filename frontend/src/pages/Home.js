@@ -20,9 +20,11 @@ function Home({}) {
   const name = location.state;
 
   const handleJoinRoom = (roomId) => {
-    const data = { userName: user, roomId: joinRoomId };
-    socket.emit("joinUser", data);
-    navigate(`/pages/game-screen/${joinRoomId}`, { state: name });
+    if(joinRoomId !== ""){
+      const data = { userName: user, roomId: joinRoomId };
+      socket.emit("joinUser", data);
+      navigate(`/pages/game-screen/${joinRoomId}`, { state: name });
+    }
 
     // const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
     // axios
@@ -39,9 +41,12 @@ function Home({}) {
   };
 
   const handleCreateRoom = () => {
-    const data = { userName: user, roomId: createRoomId };
-    socket.emit("joinUser", data);
-    navigate(`/pages/game-screen/${createRoomId}`, { state: name });
+    if(createRoomId !== ""){
+      const data = { userName: user, roomId: createRoomId };
+      socket.emit("joinUser", data);
+      navigate(`/pages/game-screen/${createRoomId}`, { state: name });
+    }
+
     // axios
     //   .post(`http://localhost:4000/api/v1/createRoom/${createRoomId}`, {
     //     type: createRoomType,
@@ -113,7 +118,6 @@ function Home({}) {
             onClick={() => {
               setUser(null);
               cookies.remove("jwt_auth");
-              navigate("/");
             }}
           >
             LogOut
