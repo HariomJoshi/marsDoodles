@@ -27,12 +27,12 @@ function Chat({ roomId, socket, name }) {
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      <p>CHAT SECTION</p>
       <form onSubmit={handleSubmit} className="chatsection">
         <div className="chats">
           {console.log(chats)}
           {chats.map((msg, index) => (
             <p key={index * 999} className="oneChat">
+              <img src={`https://robohash.org/${socket.id}.png`} alt="" />
               {msg.user}: {msg.message}
             </p>
           ))}
@@ -51,7 +51,7 @@ function Chat({ roomId, socket, name }) {
             ></input>
           </div>
           <div className="send-button-container">
-            <button className="send">SEND</button>
+            <button className="send"></button>
           </div>
         </div>
       </form>

@@ -31,26 +31,6 @@ function Canvas({
     border: "2px solid #3498db",
     borderRadius: "8px",
     backgroundColor: "#ecf0f1",
-    width: "100%",
-    height: "100%",
-  };
-
-  const inputStyle = {
-    padding: "10px",
-    fontSize: "16px",
-    border: "2px solid #3498db",
-    borderRadius: "8px",
-    marginRight: "10px",
-  };
-
-  const buttonStyle = {
-    padding: "10px 20px",
-    fontSize: "16px",
-    backgroundColor: "#3498db",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
   };
 
   useEffect(() => {
