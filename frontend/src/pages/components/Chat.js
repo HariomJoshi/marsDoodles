@@ -11,7 +11,6 @@ function Chat({ roomId, socket, name }) {
     };
 
     socket.on("messageResp", handleReceiveMessage);
-
     return () => {
       socket.off("messageResp", handleReceiveMessage);
     };

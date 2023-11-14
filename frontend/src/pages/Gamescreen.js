@@ -14,7 +14,7 @@ function Gamescreen() {
   const [selectedColor, setSelectedColor] = useState("black");
   const [selectedLineWidth, setSelectedLineWidth] = useState(2);
   const [selectedLineDash, setSelectedLineDash] = useState("");
-<<<<<<< HEAD
+  const [drawingName, setDrawingName] = useState("");
   const [usersData, setUsersData] = useState();
   const [name, setName] = useState();
   const data = location.state;
@@ -28,15 +28,11 @@ function Gamescreen() {
     });
     console.log(usersData);
   }, [socket, usersData]);
-=======
-  const data = location.state;
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
 
-  console.log("Gamescreen data " + data.name.email);
+  console.log("Gamescreen data " + drawingName);
   return (
     <div className="ALL">
       <div className="gamescreen-container">
-        <h1 className="Main-logo">bit2byte</h1>
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
             {/* {console.log(data)} */}
@@ -47,10 +43,12 @@ function Gamescreen() {
               onColorChange={(color) => setSelectedColor(color)}
               onLineWidthChange={(width) => setSelectedLineWidth(width)}
               onLineDashChange={(dash) => setSelectedLineDash(dash)}
+              transferRightAns={(ans) => setDrawingName(ans)}
               roomId={id}
               socket={socket}
               // onApplyOptions={applySelectedOptions}
             />
+            {console.log("Drawing name: " + drawingName)}
           </div>
           <div className="drawingBoard">
             <Canvas
@@ -59,35 +57,22 @@ function Gamescreen() {
               selectedLineDash={selectedLineDash}
               roomId={id}
               socket={socket}
-<<<<<<< HEAD
               // name={name}
-=======
-              name={data.name.name}
-              email={data.name.email}
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
             />
           </div>
 
           <p>ONLINE USERS:</p>
           <div className="online-users-container">
-<<<<<<< HEAD
             <Onlineusers usersData={usersData}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">
-          <Chat roomId={id} socket={socket} name={data.name} />
-=======
-            <Onlineusers
-              name={data.name}
-              socket={socket}
-              roomId={id}
-              email={data.name.email}
-            />
-          </div>
-        </div>
-        <div className="chat-section">
-          <Chat roomId={id} socket={socket} name={data.name.name} />
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
+          <Chat
+            roomId={id}
+            socket={socket}
+            name={data.name}
+            rightAns={drawingName}
+          />
         </div>
       </div>
     </div>

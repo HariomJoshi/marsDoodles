@@ -21,11 +21,8 @@ function Canvas({
   // const [canvasWidth, setCanvasWidth] = useState('');
   const data = { roomId, name, email };
   function joinRoom() {
-<<<<<<< HEAD
     const data = { userName: "user", roomId };
     console.log(data);
-=======
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
     socket.emit("joinUser", data);
   }
 

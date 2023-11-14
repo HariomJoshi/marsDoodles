@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-const { getUser, addUser, getUsersInRoom } = require("./utils/roomUsers");
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const http = require("http");
@@ -43,11 +39,14 @@ db.connect();
 
 // Mount API
 const user = require("./routes/user");
+const { compareSync } = require("bcrypt");
 
 app.use("/api/v1", user);
 
 const reqPlayers = 2;
 const gameRooms = {};
+const rightAns = {}; // stores the current right ans in a room
+
 function createPlayer(
   playerId,
   playerName,
@@ -60,7 +59,7 @@ function createPlayer(
     playerName: playerName,
     points: points,
     isAdmin: isAdmin,
-    wordGuessed: wordGuessed,
+    wordGuessed: false,
     // timetaken: seconds
   };
 }
@@ -68,17 +67,7 @@ function createPlayer(
 // BUG : upon refreshing the page socket_id changes :> FIX: use userEmail instead of socket_id
 
 io.on("connection", (socket) => {
-  socket.on("disconnecting", () => {
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      if (room !== socket.id) {
-        // The socket is leaving room
-        console.log(`Socket ID ${socket.id} is LEAVING room ${room}`);
-      }
-    });
-  });
   socket.on("joinUser", (data) => {
-<<<<<<< HEAD
     console.log(data);
     const { userName, roomId } = data;
     const socketsInRoom = io.sockets.adapter.rooms.get(roomId);
@@ -100,7 +89,7 @@ io.on("connection", (socket) => {
         // if player > threshold (min req to start the game)
         const noOfPlayersInRoom = io.sockets.adapter.rooms.get(roomId).size;
         if (noOfPlayersInRoom == reqPlayers) {
-          // start game
+          // startGameTimer(roomId);
         }
       }
     } else {
@@ -113,26 +102,12 @@ io.on("connection", (socket) => {
       gameRooms[roomId] = {
         admin: player,
         players: [player],
+        rightAns: null
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
-    console.log(gameRooms[roomId]);
+    // console.log(gameRooms[roomId]);
     console.log("SENt");
-=======
-    socket.join(data.roomId);
-    console.log(`${socket.id} has joined ${data.roomId}`);
-    const user = {
-      // name , userId , roomId, isHost, isPresenter, socketID
-      name: data.name,
-      roomId: data.roomId,
-      email: data.email,
-      isHost: false,
-      isPresenter: false,
-      socketID: socket.id,
-    };
-
-    addUser(user);
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
   });
   socket.on("drawingData", (data) => {
     console.log(data);
@@ -142,24 +117,41 @@ io.on("connection", (socket) => {
   // chatting data
   socket.on("message", (data) => {
     const { message, roomId, name } = data;
-<<<<<<< HEAD
-=======
-    // const name = getUser(userId).name;
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
-
-    socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+    if(message == gameRooms[roomId].rightAns){
+      io.in(roomId).emit("messageResp", { message:"Guessed", user: name });
+    }else {
+      socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+    } 
   });
 
-<<<<<<< HEAD
-=======
-  socket.on("onlineusers", (roomId) => {
-    const users = getUsersInRoom(roomId);
-    console.log("Filtered array: " + users.length);
-    socket.broadcast.to(roomId).emit("currentOnlineUsers", users);
+  socket.on("setDrawingName",(data)=>{
+    const { roomId, drawingName } = data;
+  if (gameRooms[roomId]) {
+    gameRooms[roomId].rightAns = drawingName;
+  } else {
+    console.error(`Room ${roomId} does not exist.`);
+  }
+  })
+
+  socket.on("disconnect", () => {
+    // Loop through gameRooms to find the room where the user is associated
+    for (const roomId in gameRooms) {
+      const room = gameRooms[roomId];
+      // Check if the user is in the room's players array
+      const index = room.players.findIndex(
+        (player) => player.playerId === socket.id
+      );
+      if (index !== -1) {
+        // Remove the user from the room's players array
+        room.players.splice(index, 1);
+        // Broadcast an updated user list or game state to the room
+        io.to(roomId).emit("userUpdate", room);
+        break;
+      }
+    }
   });
 });
 
->>>>>>> f4239691196e40dadf4ae7ff9e36d83300821400
 // Activate server
 server.listen(PORT, () => {
   console.log(`marsDoodles is live at ${PORT}`);
