@@ -4,14 +4,8 @@ import "./Chat.css";
 function Chat({ roomId, socket, name }) {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
-  const [rightAns, setRightAns] = useState("");
 
   useEffect(() => {
-    socket.emit("getRightAns", roomId);
-    socket.on("resRightAns", (ans) => {
-      setRightAns(ans);
-    });
-
     const handleReceiveMessage = (data) => {
       setChats((prevChats) => [...prevChats, data]);
     };
@@ -26,9 +20,6 @@ function Chat({ roomId, socket, name }) {
     e.preventDefault();
     if (message.trim() !== "") {
       setChats((prevChats) => [...prevChats, { message, user: "You" }]);
-      if (message.trim() === rightAns) {
-        message = name + " GUESSED THE RIGHT ANS";
-      }
       socket.emit("message", { message, roomId, name });
       setMessage("");
     }
@@ -36,12 +27,12 @@ function Chat({ roomId, socket, name }) {
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      <p>CHAT SECTION</p>
       <form onSubmit={handleSubmit} className="chatsection">
         <div className="chats">
           {console.log(chats)}
           {chats.map((msg, index) => (
             <p key={index * 999} className="oneChat">
+              <img src={`https://robohash.org/${socket.id}.png`} alt="" />
               {msg.user}: {msg.message}
             </p>
           ))}
@@ -60,7 +51,7 @@ function Chat({ roomId, socket, name }) {
             ></input>
           </div>
           <div className="send-button-container">
-            <button className="send">SEND</button>
+            <button className="send"></button>
           </div>
         </div>
       </form>
