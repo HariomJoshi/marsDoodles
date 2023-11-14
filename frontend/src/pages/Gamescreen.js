@@ -19,6 +19,12 @@ function Gamescreen() {
   const [name, setName] = useState();
   const data = location.state;
 
+  useEffect(()=>{
+    if(data && data.name){
+      setName(data.name)
+    }
+  },[data])
+
   useEffect(() => {
     socket.on("userUpdate", (data) => {
       setUsersData(data.players);
@@ -59,7 +65,7 @@ function Gamescreen() {
           <Chat
             roomId={id}
             socket={socket}
-            name={data.name}
+            name={name}
             rightAns={drawingName}
           />
         </div>
