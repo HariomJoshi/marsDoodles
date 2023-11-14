@@ -18,7 +18,7 @@ A normal game consists of a few rounds, where every round a player has to draw t
 - CHAT BOX..
 - HAVING OPTION TO CHANGE COLOR OF PENCIL...
 - ABLE TO UNDO AND REDO ACTION...
--
+- Ability to draw different shapessuch as circle, square, rectangle, ellipse, trapezium, free draw, lines,curvy-lines
 
 
 ## Contributing
