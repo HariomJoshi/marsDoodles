@@ -15,13 +15,9 @@ function OptionBar({
   const [isItMyTurn, setIsItMyTurn] = useState(false);
   const [drawingName, setDrawingName] = useState("");
 
-  // useEffect(() => {
-  // socket.emit("currentRightAns", { roomId, drawingName });
-  // socket.on("rightAns", (ans) => {
-  //   transferRightAns(ans.rightAns);
-  //   console.log(ans.rightAns);
-  // });
-  // }, [socket]);
+  useEffect(() => {
+    socket.emit("currentRightAns", { roomId, drawingName });
+  }, [socket, drawingName]);
 
   return (
     <div className="container">
@@ -74,7 +70,7 @@ function OptionBar({
           onChange={(e) => {
             // console.log(e.target.value);
             setDrawingName(e.target.value);
-            socket.emit("currentRightAns", { roomId, drawingName });
+            // socket.emit("currentRightAns", { roomId, drawingName });
           }}
         />
       </div>

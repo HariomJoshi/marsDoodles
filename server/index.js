@@ -44,7 +44,7 @@ app.use("/api/v1", user);
 
 const reqPlayers = 2;
 const gameRooms = {};
-const rightAns = {}; // stores the current right ans in a room
+// const rightAns = {}; // stores the current right ans in a room
 
 function createPlayer(
   playerId,
@@ -138,22 +138,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("currentRightAns", (data) => {
-    console.log(data.drawingName);
-    console.log(data.roomId);
     // adding right ans of the room
     if (data.roomId && data.drawingName) {
       gameRooms[data.roomId].rightAns = data.drawingName;
     }
-
-    // rightAns[data.roomId].push(data.drawingName);
+    console.log(gameRooms[data.roomId]);
+    console.log(gameRooms);
   });
 
-  socket.on("getRightAns", (roomId) => {
+  socket.on("isRightAns", ({ roomId, message }) => {
     // if(Object.keys(rightAns).includes(roomId)){
     //   socket.broadcast.to(roomId).emit(rightAns[roomId]);
     // }
-
-    socket.broadcast.to(roomId).emit("resRightAns", gameRooms.roomId.rightAns);
+    console.log(message);
+    // console.log(typeof roomId);
+    console.log(gameRooms[roomId].rightAns);
+    if (message.trim() === gameRooms[roomId].rightAns) {
+      console.log("equal");
+      socket.broadcast.to(roomId).emit("resRightAns", { isRight: true });
+    } else {
+      console.log("not equal");
+      socket.broadcast.to(roomId).emit("resRightAns", { isRight: false });
+    }
+    console.log(message.trim() === gameRooms[roomId].rightAns);
   });
 });
 
