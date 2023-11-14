@@ -44,6 +44,7 @@ app.use("/api/v1", user);
 
 const reqPlayers = 2;
 const gameRooms = {};
+const rightAns = {}; // stores the current right ans in a room
 
 function createPlayer(
   playerId,
@@ -123,21 +124,40 @@ io.on("connection", (socket) => {
     for (const roomId in gameRooms) {
       const room = gameRooms[roomId];
       // Check if the user is in the room's players array
-      const index = room.players.findIndex((player) => player.playerId === socket.id);    
+      const index = room.players.findIndex(
+        (player) => player.playerId === socket.id
+      );
       if (index !== -1) {
         // Remove the user from the room's players array
-        room.players.splice(index, 1);    
+        room.players.splice(index, 1);
         // Broadcast an updated user list or game state to the room
         io.to(roomId).emit("userUpdate", room);
         break;
       }
     }
   });
-  
+
+  socket.on("currentRightAns", (data) => {
+    console.log(data.drawingName);
+    console.log(data.roomId);
+    // adding right ans of the room
+    if (data.roomId && data.drawingName) {
+      gameRooms[data.roomId].rightAns = data.drawingName;
+    }
+
+    // rightAns[data.roomId].push(data.drawingName);
+  });
+
+  socket.on("getRightAns", (roomId) => {
+    // if(Object.keys(rightAns).includes(roomId)){
+    //   socket.broadcast.to(roomId).emit(rightAns[roomId]);
+    // }
+
+    socket.broadcast.to(roomId).emit("resRightAns", gameRooms.roomId.rightAns);
+  });
 });
 
 // Activate server
 server.listen(PORT, () => {
   console.log(`marsDoodles is live at ${PORT}`);
 });
-

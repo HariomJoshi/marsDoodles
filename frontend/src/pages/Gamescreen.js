@@ -4,7 +4,6 @@ import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
-import Clock from "./components/Clock";
 import { useLocation, useParams } from "react-router-dom";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
@@ -15,7 +14,7 @@ function Gamescreen() {
   const [selectedColor, setSelectedColor] = useState("black");
   const [selectedLineWidth, setSelectedLineWidth] = useState(2);
   const [selectedLineDash, setSelectedLineDash] = useState("");
-  const [currentDrawing, setCurrentDrawing] = useState("");
+  const [drawingName, setDrawingName] = useState("");
   const [usersData, setUsersData] = useState();
   const [name, setName] = useState();
   const data = location.state;
@@ -30,7 +29,7 @@ function Gamescreen() {
     console.log(usersData);
   }, [socket, usersData]);
 
-  console.log("Gamescreen data " + data.name.email);
+  console.log("Gamescreen data " + drawingName);
   return (
     <div className="ALL">
       <div className="gamescreen-container">
@@ -41,15 +40,15 @@ function Gamescreen() {
               selectedColor={selectedColor}
               selectedLineWidth={selectedLineWidth}
               selectedLineDash={selectedLineDash}
-              currentDrawing={currentDrawing}
               onColorChange={(color) => setSelectedColor(color)}
               onLineWidthChange={(width) => setSelectedLineWidth(width)}
               onLineDashChange={(dash) => setSelectedLineDash(dash)}
-              onGettingDrawing={(drawing) => setCurrentDrawing(drawing)}
+              transferRightAns={(ans) => setDrawingName(ans)}
               roomId={id}
               socket={socket}
               // onApplyOptions={applySelectedOptions}
             />
+            {console.log("Drawing name: " + drawingName)}
           </div>
           <div className="drawingBoard">
             <Canvas
@@ -64,11 +63,16 @@ function Gamescreen() {
 
           <p>ONLINE USERS:</p>
           <div className="online-users-container">
-            <Onlineusers usersData={usersData} name={data.name}></Onlineusers>
+            <Onlineusers usersData={usersData}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">
-          <Chat roomId={id} socket={socket} name={data.name} />
+          <Chat
+            roomId={id}
+            socket={socket}
+            name={data.name}
+            rightAns={drawingName}
+          />
         </div>
       </div>
     </div>

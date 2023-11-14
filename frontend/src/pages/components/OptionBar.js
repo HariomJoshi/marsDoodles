@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Clock from "./Clock";
 import "./OptionBar.css";
 import { useState } from "react";
@@ -7,12 +7,21 @@ function OptionBar({
   onColorChange,
   onLineWidthChange,
   onLineDashChange,
-  onGettingDrawing,
+  transferRightAns,
   socket,
   roomId,
 }) {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isItMyTurn, setIsItMyTurn] = useState(false);
+  const [drawingName, setDrawingName] = useState("");
+
+  // useEffect(() => {
+  // socket.emit("currentRightAns", { roomId, drawingName });
+  // socket.on("rightAns", (ans) => {
+  //   transferRightAns(ans.rightAns);
+  //   console.log(ans.rightAns);
+  // });
+  // }, [socket]);
 
   return (
     <div className="container">
@@ -55,14 +64,28 @@ function OptionBar({
           <Clock initialTime={60} />
         </div>
       </div>
-      <div style={labelInputContainerStyle}>
-        <label style={labelStyle}>Drawing: </label>
+
+      {/* {isItMyTurn && ( */}
+      <div className="labelInputContainer">
+        <label className="label">Drawing: </label>
         <input
-          style={inputStyle}
+          className="input"
           type="text"
-          onChange={(e) => onGettingDrawing(e.target.value)}
+          onChange={(e) => {
+            // console.log(e.target.value);
+            setDrawingName(e.target.value);
+            socket.emit("currentRightAns", { roomId, drawingName });
+          }}
         />
       </div>
+      {/* )} */}
+
+      {!isItMyTurn && (
+        <div className="labelInputContainer">
+          Word size: <b>{drawingName.length}</b>
+          {/* {console.log(drawingName)}   */}
+        </div>
+      )}
     </div>
   );
 }

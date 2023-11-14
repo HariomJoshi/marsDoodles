@@ -4,14 +4,19 @@ import "./Chat.css";
 function Chat({ roomId, socket, name }) {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
+  const [rightAns, setRightAns] = useState("");
 
   useEffect(() => {
+    socket.emit("getRightAns", roomId);
+    socket.on("resRightAns", (ans) => {
+      setRightAns(ans);
+    });
+
     const handleReceiveMessage = (data) => {
       setChats((prevChats) => [...prevChats, data]);
     };
 
     socket.on("messageResp", handleReceiveMessage);
-
     return () => {
       socket.off("messageResp", handleReceiveMessage);
     };
@@ -21,6 +26,9 @@ function Chat({ roomId, socket, name }) {
     e.preventDefault();
     if (message.trim() !== "") {
       setChats((prevChats) => [...prevChats, { message, user: "You" }]);
+      if (message.trim() === rightAns) {
+        message = name + " GUESSED THE RIGHT ANS";
+      }
       socket.emit("message", { message, roomId, name });
       setMessage("");
     }
