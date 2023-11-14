@@ -116,21 +116,28 @@ io.on("connection", (socket) => {
 
   // chatting data
   socket.on("message", (data) => {
+    let obj = {};
     const { message, roomId, name } = data;
     if (message == gameRooms[roomId].rightAns) {
-      io.in(roomId).emit("messageResp", { message: "Guessed", user: name });
+      obj = { message: "GUESSED THE RIGHT ANS", user: name };
     } else {
-      socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+      obj = { message: message, user: name };
     }
+    socket.broadcast.to(roomId).emit("messageResp", obj);
   });
 
   socket.on("setDrawingName", (data) => {
     const { roomId, drawingName } = data;
     if (gameRooms[roomId]) {
       gameRooms[roomId].rightAns = drawingName;
-    } else {
-      console.error(`Room ${roomId} does not exist.`);
     }
+    console.log(gameRooms);
+  });
+
+  socket.on("getCorrectAns", (data) => {
+    const { roomId, message } = data;
+    let obj = { right: message == gameRooms[roomId].rightAns };
+    socket.broadcast.to(roomId).emit("recieveCorrectAns", obj);
   });
 
   socket.on("disconnect", () => {

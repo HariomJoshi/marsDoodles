@@ -4,6 +4,7 @@ import "./Chat.css";
 function Chat({ roomId, socket, name }) {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
+  const [isRight, setIsRight] = useState(true);
 
   useEffect(() => {
     const handleReceiveMessage = (data) => {
@@ -16,26 +17,26 @@ function Chat({ roomId, socket, name }) {
     };
   }, [socket]);
 
-  useEffect(() => {
-    socket.emit("isRightAns", { roomId, message });
-    socket.on("resRightAns", ({ isRight }) => {
-      if (isRight) {
-        setIsRightAns(true);
-      } else {
-        setIsRightAns(false);
-      }
-    });
-    console.log(isRightAns);
-    console.log(message);
-  }, [socket, message]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    socket.emit("getCorrectAns", { roomId, message });
+    socket.on("recieveCorrectAns", (data) => {
+      setIsRight(data.right);
+      console.log(data.right);
+    });
     // setMessage(e.target.value);
+    console.log(isRight);
     console.log(message);
 
     if (message.trim() !== "") {
-      setChats((prevChats) => [...prevChats, { message, user: "You" }]);
+      if (isRight) {
+        setChats((prevChats) => [
+          ...prevChats,
+          { message: "GUESSED THE RIGHT ANS", user: "You" },
+        ]);
+      } else {
+        setChats((prevChats) => [...prevChats, { message, user: "You" }]);
+      }
       socket.emit("message", { message, roomId, name });
       setMessage("");
     }
@@ -62,7 +63,7 @@ function Chat({ roomId, socket, name }) {
               name="Name"
               onChange={(e) => {
                 setMessage(e.target.value);
-                // console.log(message);
+                console.log(message);
               }}
             ></input>
           </div>
