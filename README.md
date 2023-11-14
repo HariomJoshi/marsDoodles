@@ -31,8 +31,8 @@ A normal game consists of a few rounds, where every round a player has to draw t
 
 ## Tech Stack
 
-*Client:* React,CSS
+*Client:* React,CSS, webSockets
 
-*Server:* Node, Express , Web socket
+*Server:* Node, Express , webSocket
 
 *Database:* Mongo DB
