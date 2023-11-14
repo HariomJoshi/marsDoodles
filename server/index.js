@@ -39,6 +39,7 @@ db.connect();
 
 // Mount API
 const user = require("./routes/user");
+const { compareSync } = require("bcrypt");
 
 app.use("/api/v1", user);
 
@@ -58,7 +59,7 @@ function createPlayer(
     playerName: playerName,
     points: points,
     isAdmin: isAdmin,
-    wordGuessed: wordGuessed,
+    wordGuessed: false,
     // timetaken: seconds
   };
 }
@@ -101,10 +102,11 @@ io.on("connection", (socket) => {
       gameRooms[roomId] = {
         admin: player,
         players: [player],
+        rightAns: null
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
-    console.log(gameRooms[roomId]);
+    // console.log(gameRooms[roomId]);
     console.log("SENt");
   });
   socket.on("drawingData", (data) => {
@@ -115,9 +117,21 @@ io.on("connection", (socket) => {
   // chatting data
   socket.on("message", (data) => {
     const { message, roomId, name } = data;
-
-    socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+    if(message == gameRooms[roomId].rightAns){
+      io.in(roomId).emit("messageResp", { message:"Guessed", user: name });
+    }else {
+      socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+    } 
   });
+
+  socket.on("setDrawingName",(data)=>{
+    const { roomId, drawingName } = data;
+  if (gameRooms[roomId]) {
+    gameRooms[roomId].rightAns = drawingName;
+  } else {
+    console.error(`Room ${roomId} does not exist.`);
+  }
+  })
 
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated
@@ -135,25 +149,6 @@ io.on("connection", (socket) => {
         break;
       }
     }
-  });
-
-  socket.on("currentRightAns", (data) => {
-    console.log(data.drawingName);
-    console.log(data.roomId);
-    // adding right ans of the room
-    if (data.roomId && data.drawingName) {
-      gameRooms[data.roomId].rightAns = data.drawingName;
-    }
-
-    // rightAns[data.roomId].push(data.drawingName);
-  });
-
-  socket.on("getRightAns", (roomId) => {
-    // if(Object.keys(rightAns).includes(roomId)){
-    //   socket.broadcast.to(roomId).emit(rightAns[roomId]);
-    // }
-
-    socket.broadcast.to(roomId).emit("resRightAns", gameRooms.roomId.rightAns);
   });
 });
 
