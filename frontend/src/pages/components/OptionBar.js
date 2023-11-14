@@ -16,8 +16,11 @@ function OptionBar({
   const [drawingName, setDrawingName] = useState("");
 
   useEffect(() => {
-    socket.emit("currentRightAns", { roomId, drawingName });
-  }, [socket, drawingName]);
+    socket.emit("setDrawingName", {
+      roomId,
+      drawingName,
+    });
+  }, [drawingName, roomId, socket]);
 
   return (
     <div className="container">
@@ -61,25 +64,20 @@ function OptionBar({
         </div>
       </div>
 
-      {/* {isItMyTurn && ( */}
       <div className="labelInputContainer">
         <label className="label">Drawing: </label>
         <input
           className="input"
           type="text"
           onChange={(e) => {
-            // console.log(e.target.value);
             setDrawingName(e.target.value);
-            // socket.emit("currentRightAns", { roomId, drawingName });
           }}
         />
       </div>
-      {/* )} */}
 
       {!isItMyTurn && (
         <div className="labelInputContainer">
           Word size: <b>{drawingName.length}</b>
-          {/* {console.log(drawingName)}   */}
         </div>
       )}
     </div>

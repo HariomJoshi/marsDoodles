@@ -4,7 +4,6 @@ import "./Chat.css";
 function Chat({ roomId, socket, name }) {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
-  const [isRightAns, setIsRightAns] = useState(false);
 
   useEffect(() => {
     const handleReceiveMessage = (data) => {
@@ -36,21 +35,8 @@ function Chat({ roomId, socket, name }) {
     console.log(message);
 
     if (message.trim() !== "") {
-      if (isRightAns) {
-        setChats((prevChats) => [
-          ...prevChats,
-          { message: " GUESSED THE RIGHT ANS", user: "You" },
-        ]);
-        socket.emit("message", {
-          message: " GUESSED THE RIGHT ANS",
-          roomId,
-          name,
-        });
-      } else {
-        setChats((prevChats) => [...prevChats, { message, user: "You" }]);
-        socket.emit("message", { message, roomId, name });
-      }
-
+      setChats((prevChats) => [...prevChats, { message, user: "You" }]);
+      socket.emit("message", { message, roomId, name });
       setMessage("");
     }
   };
