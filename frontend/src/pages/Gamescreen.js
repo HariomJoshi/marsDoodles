@@ -22,6 +22,20 @@ function Gamescreen() {
   const data = location.state;
   const navigate = useNavigate();
   const cookies = new Cookies()
+  const [timer, setTimer] = useState(null);
+
+  useEffect(() => {
+    socket.on('gameTimerUpdate', (timerValue) => {
+      setTimer(timerValue);
+    });
+    socket.on('gameTimerExpired', () => {
+      console.log('Game timer expired');
+    });
+    return () => {
+      socket.off('gameTimerUpdate');
+      socket.off('gameTimerExpired');
+    };
+  }, [socket]);
 
   useEffect(()=>{
     if (!cookies.get("jwt_auth")) {
@@ -56,6 +70,7 @@ function Gamescreen() {
               transferRightAns={(ans) => setDrawingName(ans)}
               roomId={id}
               socket={socket}
+              timer={timer}
             />
           </div>
           <div className="drawingBoard">

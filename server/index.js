@@ -40,6 +40,8 @@ db.connect();
 // Mount API
 const user = require("./routes/user");
 const { compareSync } = require("bcrypt");
+const { constrainedMemory } = require("process");
+const { time } = require("console");
 
 app.use("/api/v1", user);
 
@@ -63,6 +65,7 @@ function createPlayer(
     // timetaken: seconds
   };
 }
+
 
 // BUG : upon refreshing the page socket_id changes :> FIX: use userEmail instead of socket_id
 
@@ -88,8 +91,10 @@ io.on("connection", (socket) => {
 
         // if player > threshold (min req to start the game)
         const noOfPlayersInRoom = io.sockets.adapter.rooms.get(roomId).size;
-        if (noOfPlayersInRoom == reqPlayers) {
-          // startGameTimer(roomId);
+        if (noOfPlayersInRoom == reqPlayers && !gameRooms[roomId].gameStarted) {
+          gameRooms[roomId].gameStarted = true;
+          // start game
+          io.sockets.in(roomId).emit("startGame", gameRooms[roomId])
         }
       }
     } else {
@@ -102,12 +107,15 @@ io.on("connection", (socket) => {
       gameRooms[roomId] = {
         admin: player,
         players: [player],
-        rightAns: null
+        rightAns: null,
+        timer: {
+          duration: 100,
+          intervalId: null, // The intervalId: null serves as an indicator that no timer is currently running for the associated room
+        },
+        gameStarted: false
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
-    // console.log(gameRooms[roomId]);
-    console.log("SENt");
   });
   socket.on("drawingData", (data) => {
     console.log(data);
@@ -117,12 +125,34 @@ io.on("connection", (socket) => {
   // chatting data
   socket.on("message", (data) => {
     const { message, roomId, name } = data;
-    if(message === gameRooms[roomId].rightAns){
-      io.in(roomId).emit("messageResp", { message:"Guessed", user: name });
-    }else {
-      socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
-    } 
-  });
+    if (gameRooms[roomId] && message === gameRooms[roomId].rightAns) {
+      console.log("Got ans")
+        io.in(roomId).emit("messageResp", { message: "Guessed", user: name });
+
+        const playerIndex = gameRooms[roomId].players.findIndex(
+            (player) => player.playerId === socket.id
+        );
+        
+        if (playerIndex !== -1) {
+            gameRooms[roomId].players[playerIndex].wordGuessed = true;
+        }
+    } else {
+        socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+    }
+    let flag = false;
+    for (const player of gameRooms[roomId].players) {
+      if(player.playerId === socket.id){
+        continue;
+      }
+      if (!player.wordGuessed) {
+          flag = true;
+          break;
+      }
+    }
+    if (!flag) {
+        io.sockets.in(roomId).emit("endGame", gameRooms[roomId]);
+    }
+});
 
   socket.on("setDrawingName",(data)=>{
     const { roomId, drawingName } = data;

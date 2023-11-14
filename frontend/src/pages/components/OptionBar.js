@@ -10,6 +10,7 @@ function OptionBar({
   transferRightAns,
   socket,
   roomId,
+  timer
 }) {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isItMyTurn, setIsItMyTurn] = useState(false);
@@ -60,7 +61,7 @@ function OptionBar({
           </div>
         )}
         <div className="labelInputContainer">
-          <Clock initialTime={60} />
+          <Clock socket={socket} initialTime={60}/>
         </div>
       </div>
 
