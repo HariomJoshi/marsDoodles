@@ -52,12 +52,12 @@ function Gamescreen() {
       setName(data.name)
     }
   },[data])
-
-  useEffect(() => {
-    socket.on("userUpdate", (data) => {
-      setUsersData(data.players);
-    });
-  }, [socket, usersData]);
+  
+  // useEffect(() => {
+  //   socket.on("userUpdate", (data) => {
+  //     setUsersData(data.players);
+  //   });
+  // }, [socket, usersData]);
 
   return (
     <div className="ALL">
@@ -91,7 +91,7 @@ function Gamescreen() {
             />
           </div>
           <div className="online-users-container">
-            <Onlineusers usersData={usersData}></Onlineusers>
+            <Onlineusers socket={socket}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">

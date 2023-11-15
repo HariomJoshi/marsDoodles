@@ -116,33 +116,49 @@ io.on("connection", (socket) => {
         },
         gameStarted: false,
         currentPlayerIndex: 0,
-        startTime: null,
-        endTime: null
+        startTime: Date.now()
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
   });
   socket.on("drawingData", (data) => {
-    console.log(data);
-    socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
+    const {roomId} = data;
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      const playerIndex = gameRooms[roomId].players.findIndex(
+        (player) => player.playerId === socket.id
+        );
+      if(playerIndex === gameRooms[roomId].currentPlayerIndex){
+        console.log(data);
+        socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
+      }
+    }
   });
 
   // chatting data
   socket.on("message", (data) => {
     const { message, roomId, name } = data;
     if (gameRooms[roomId] && message === gameRooms[roomId].rightAns) {
-      console.log("Got ans")
-        io.in(roomId).emit("messageResp", { message: "Guessed", user: name });
-
+        console.log("Got ans")    
         const playerIndex = gameRooms[roomId].players.findIndex(
-            (player) => player.playerId === socket.id
-        );
+          (player) => player.playerId === socket.id
+          );
+        if(playerIndex !== gameRooms[roomId].currentPlayerIndex){
+          io.in(roomId).emit("messageResp", { message: "Guessed", user: name });
+        }
         
-        if (playerIndex !== -1) {
+    
+        if (playerIndex !== -1 && playerIndex !== gameRooms[roomId].currentPlayerIndex) {
             gameRooms[roomId].players[playerIndex].wordGuessed = true;
+         // Add score
+        const score = (100000 - (Date.now() - gameRooms[roomId].startTime));
+        gameRooms[roomId].players[playerIndex].points += score > 0 ? score : 1
+        console.log("score: ",gameRooms[roomId].players[playerIndex].points )
         }
     } else {
+      if(gameRooms[roomId] && message !== gameRooms[roomId].rightAns){
+        console.log(message, "  ", gameRooms[roomId].rightAns)
         socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
+      }   
     }
     let flag = false;
 
@@ -156,7 +172,7 @@ io.on("connection", (socket) => {
       }
     }
     if (!flag) {
-        io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+      io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
     }
 });
 
@@ -184,6 +200,7 @@ io.on("connection", (socket) => {
           );
         if (playerIndex !== -1) {
           gameRooms[roomId].players[playerIndex].playerName = name;
+          // io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId].players);
         }
         let flag = false;
         for (const player of gameRooms[roomId].players) {
