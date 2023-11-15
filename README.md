@@ -21,6 +21,7 @@ A normal game consists of a few rounds, where every round a player has to draw t
 - ABLE TO UNDO AND REDO ACTION
 
 
+
 ## Contributing
 
 - <a href="https://github.com/HariomJoshi">HARIOM JOSHI</a> (Leader) (2023CA40)
@@ -36,3 +37,4 @@ A normal game consists of a few rounds, where every round a player has to draw t
 *Server:* Node, Express , webSocket
 
 *Database:* Mongo DB
+

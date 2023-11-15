@@ -71,7 +71,6 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-
         message: "Email or password is incorrect", // "User is not registered"
       });
     }
@@ -99,7 +98,7 @@ exports.login = async (req, res) => {
       res.cookie("jwt", token, options);
       res.status(200).json({
         success: true,
-        user: user,
+        user,
         jwt_token: token,
         message: "User logged in successfully",
       });

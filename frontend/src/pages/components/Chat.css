@@ -1,31 +1,37 @@
 * {
-  margin: 0%;
-  padding: 0%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
 }
 
 .chatsection {
   display: flex;
   flex-direction: column;
   width: 90%;
-  height: 95%;
-  border-width: 2px;
+  height: 98%;
+  border: 4px solid white;
   border-radius: 8px;
-  border-style: solid;
-  border-color: blueviolet;
   margin: 2.5% 5%;
-  /* margin: 10px; */
 }
+
 .textField {
   display: flex;
   flex-direction: row;
-  padding: 0%;
+  padding: 0;
   height: 10%;
 }
+
 .chats {
   height: 90%;
-  background-color: azure;
+  background-color: #f0f0f0;
   padding: 1%;
+  overflow-y: auto;
 }
+
 .message-field-container {
   display: flex;
   width: 80%;
@@ -37,7 +43,9 @@
   width: 100%;
   height: 100%;
   padding: 2.5%;
+  border: 1px solid #ccc;
   border-radius: 10px;
+  outline: none; 
 }
 
 .send-button-container {
@@ -48,17 +56,47 @@
 }
 
 .send {
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  background-color: rgb(3, 168, 233);
+  position: relative;
+  width: 50px; 
+  height: 50px; 
+  border: none;
+  border-radius: 50%; 
+  background-color: #3498db;
+  color: #fff;
+  font-size: 24px; 
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
+.send:hover {
+  background-color: #2980b9;
+}
+
+.send::before {
+  content: '\27A4'; 
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+
 .oneChat {
   width: 100%;
-  height: fit-content;
-  justify-content: center;
-  background-color: rgb(128, 128, 236);
+  display: flex;
+  align-items: flex-start; 
+  background-color: black;
   border-radius: 10px;
-  padding: 5%;
+  padding: 1.5%;
   margin-top: 1%;
+  overflow-wrap: break-word;
+}
+
+.oneChat img {
+  width: 30px;
+  height: 30px; 
+  border-radius: 50%;
+  margin-right: 10px; 
 }
