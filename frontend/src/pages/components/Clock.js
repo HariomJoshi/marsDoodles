@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "./Clock.css";
 
-function Clock({ initialTime, startTimer, stopTimer }) {
+function Clock({socket,initialTime}) {
   const [time, setTime] = useState(initialTime);
+  const [startTimer, setStartTimer] = useState(false);
+  const [stopTimer, setStopTime] = useState(false);
+
+  useEffect(()=>{
+    socket.on("startGame",()=>{
+        setStartTimer(true);
+        setStopTime(false)
+    })
+    socket.on("endGame",()=>{
+        setStopTime(true)
+        setStartTimer(true);
+    })
+  },[socket])
 
   useEffect(() => {
     let intervalId;

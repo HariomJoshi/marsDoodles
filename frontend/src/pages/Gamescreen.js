@@ -1,10 +1,12 @@
 import "./Gamescreen.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation, useParams } from "react-router-dom";
+import Cookies from "universal-cookie";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -18,24 +20,46 @@ function Gamescreen() {
   const [usersData, setUsersData] = useState();
   const [name, setName] = useState();
   const data = location.state;
-  // useEffect(() => {
-  //   setName(localStorage.getItem("name"));
-  // }, []);
+  const navigate = useNavigate();
+  const cookies = new Cookies()
+  const [timer, setTimer] = useState(null);
+
+  useEffect(() => {
+    socket.on('gameTimerUpdate', (timerValue) => {
+      setTimer(timerValue);
+    });
+    socket.on('gameTimerExpired', () => {
+      console.log('Game timer expired');
+    });
+    return () => {
+      socket.off('gameTimerUpdate');
+      socket.off('gameTimerExpired');
+    };
+  }, [socket]);
+
+  useEffect(()=>{
+    if (!cookies.get("jwt_auth")) {
+      navigate("/");
+    }
+  })
+
+  useEffect(()=>{
+    if(data && data.name){
+      setName(data.name)
+    }
+  },[data])
 
   useEffect(() => {
     socket.on("userUpdate", (data) => {
       setUsersData(data.players);
     });
-    console.log(usersData);
   }, [socket, usersData]);
 
-  console.log("Gamescreen data " + drawingName);
   return (
     <div className="ALL">
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
-            {/* {console.log(data)} */}
             <OptionBar
               selectedColor={selectedColor}
               selectedLineWidth={selectedLineWidth}
@@ -46,9 +70,8 @@ function Gamescreen() {
               transferRightAns={(ans) => setDrawingName(ans)}
               roomId={id}
               socket={socket}
-              // onApplyOptions={applySelectedOptions}
+              timer={timer}
             />
-            {console.log("Drawing name: " + drawingName)}
           </div>
           <div className="drawingBoard">
             <Canvas
@@ -57,11 +80,8 @@ function Gamescreen() {
               selectedLineDash={selectedLineDash}
               roomId={id}
               socket={socket}
-              // name={name}
             />
           </div>
-
-          <p>ONLINE USERS:</p>
           <div className="online-users-container">
             <Onlineusers usersData={usersData}></Onlineusers>
           </div>
@@ -70,7 +90,7 @@ function Gamescreen() {
           <Chat
             roomId={id}
             socket={socket}
-            name={data.name}
+            name={name}
             rightAns={drawingName}
           />
         </div>
