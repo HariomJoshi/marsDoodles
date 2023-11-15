@@ -45,7 +45,7 @@ const { time } = require("console");
 
 app.use("/api/v1", user);
 
-const reqPlayers = 2;
+const reqPlayers = 3;
 const gameRooms = {};
 const rightAns = {}; // stores the current right ans in a room
 
@@ -95,6 +95,9 @@ io.on("connection", (socket) => {
           gameRooms[roomId].gameStarted = true;
           // start game
           io.sockets.in(roomId).emit("startGame", gameRooms[roomId])
+          const html = `<h1> It's your turn.</h1> <h3>Enter a word in section "Drawing" </h3>`
+          const currPlayer = gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId;
+          io.to(`${currPlayer}`).emit("chooseWord",html)
         }
       }
     } else {
@@ -112,7 +115,8 @@ io.on("connection", (socket) => {
           duration: 100,
           intervalId: null, // The intervalId: null serves as an indicator that no timer is currently running for the associated room
         },
-        gameStarted: false
+        gameStarted: false,
+        currentPlayerIndex: 0
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
@@ -140,8 +144,9 @@ io.on("connection", (socket) => {
         socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
     }
     let flag = false;
+
     for (const player of gameRooms[roomId].players) {
-      if(player.playerId === socket.id){
+      if(socket.id === player[gameRooms[roomId].currentPlayerIndex]){
         continue;
       }
       if (!player.wordGuessed) {
@@ -156,11 +161,22 @@ io.on("connection", (socket) => {
 
   socket.on("setDrawingName",(data)=>{
     const { roomId, drawingName } = data;
-  if (gameRooms[roomId]) {
-    gameRooms[roomId].rightAns = drawingName;
+  if (gameRooms[roomId] && gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex] &&gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId === socket.id) {
+    console.log(drawingName)
+    gameRooms[roomId].rightAns = drawingName;   
   } else {
     console.error(`Room ${roomId} does not exist.`);
   }
+  })
+
+  socket.on("getUserName",(data)=>{
+    const {name} = data;
+    const playerIndex = gameRooms[roomId].players.findIndex(
+      (player) => player.playerId === socket.id
+      );
+    if (playerIndex !== -1) {
+      gameRooms[roomId].players[playerIndex].playerName = name;
+    }
   })
 
   socket.on("disconnect", () => {

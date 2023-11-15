@@ -17,7 +17,6 @@ function Onlineusers({ usersData,  name}) {
               src={`https://robohash.org/${data.playerId}.png`}
             />
             <p style={{ fontSize: "12px", textAlign: "center" }}>
-              {name}
             </p>
             <p style={{ fontSize: "10px" }}>{data.points}</p>
           </div>

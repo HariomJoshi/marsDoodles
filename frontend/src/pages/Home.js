@@ -118,6 +118,7 @@ function Home({}) {
             onClick={() => {
               setUser(null);
               cookies.remove("jwt_auth");
+              navigate("/")
             }}
           >
             LogOut

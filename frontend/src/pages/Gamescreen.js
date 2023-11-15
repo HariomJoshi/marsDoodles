@@ -7,6 +7,7 @@ import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation, useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
+import EdPopup from "./components/popups/EnterDetailsPopup";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -57,6 +58,7 @@ function Gamescreen() {
 
   return (
     <div className="ALL">
+      <EdPopup isModalOpen={true} socket={socket}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
