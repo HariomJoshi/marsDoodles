@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
-const EdPopup = ({ isModalOpen, socket,roomId }) => {
+const RlPopup = ({ isModalOpen, socket,roomId }) => {
+  const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
-  const [userName, setUserName] = useState('');
 
   const myStyle = {
     overlay: {
@@ -68,13 +69,17 @@ const EdPopup = ({ isModalOpen, socket,roomId }) => {
     setModalIsOpen(false);
   };
 
+  socket.on("roomLimitExceeded",()=>{
+    console.log("roomLimitExceeded")
+    setModalIsOpen(true)
+  })
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if(userName.trim() !== ""){
-        socket.emit("getUserName",{name: userName, roomId})
-        setModalIsOpen(false);
-    }
+    navigate("/")
+    setModalIsOpen(false);
   };
+
 
   return (
     <Modal
@@ -84,13 +89,8 @@ const EdPopup = ({ isModalOpen, socket,roomId }) => {
       style={myStyle}
     >
       <form onSubmit={handleFormSubmit} style={myStyle.form}>
-        <h1>Name your Avatar</h1>
-        <input
-          type="text"
-          onChange={(e)=>{setUserName(e.target.value)}}
-          style={myStyle.input}
-          placeholder="Enter your name"
-        />
+        <h1>Room Limit Exceeded.</h1>
+        <h3>You may join other public rooms or create a new private room.</h3>
         <button type="submit" style={myStyle.button}>
           Okay
         </button>
@@ -99,4 +99,4 @@ const EdPopup = ({ isModalOpen, socket,roomId }) => {
   );
 };
 
-export default EdPopup;
+export default RlPopup;

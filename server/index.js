@@ -47,7 +47,6 @@ app.use("/api/v1", user);
 
 const reqPlayers = 3;
 const gameRooms = {};
-const rightAns = {}; // stores the current right ans in a room
 
 function createPlayer(
   playerId,
@@ -58,7 +57,7 @@ function createPlayer(
 ) {
   return {
     playerId: playerId,
-    playerName: playerName,
+    playerName: null,
     points: points,
     isAdmin: isAdmin,
     wordGuessed: false,
@@ -78,26 +77,26 @@ io.on("connection", (socket) => {
       if (socketsInRoom.has(socket.id)) {
         // The socket ID is in the room
         console.log(`Socket ID ${socket.id} is ALREADY in the room ${roomId}`);
-      } else {
-        // The socket ID is not in the room and the room exists
-        socket.join(roomId);
-        const player = createPlayer(socket.id, userName, 0, false, false);
-        console.log(
-          `Socket ID ${socket.id} has JOINED the room ${roomId} as PLAYER`
-        );
-
-        // Add the player to the gameRooms
-        gameRooms[roomId].players.push(player);
-
+      } else { // The socket ID is not in the room and the room exists
         // if player > threshold (min req to start the game)
         const noOfPlayersInRoom = io.sockets.adapter.rooms.get(roomId).size;
         if (noOfPlayersInRoom == reqPlayers && !gameRooms[roomId].gameStarted) {
-          gameRooms[roomId].gameStarted = true;
-          // start game
-          io.sockets.in(roomId).emit("startGame", gameRooms[roomId])
-          const html = `<h1> It's your turn.</h1> <h3>Enter a word in section "Drawing" </h3>`
-          const currPlayer = gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId;
-          io.to(`${currPlayer}`).emit("chooseWord",html)
+          const playerIndex = gameRooms[roomId].players.findIndex(
+            (player) => player.playerId === socket.id
+            );
+          if(playerIndex === -1){
+            io.to(`${socket.id}`).emit("roomLimitExceeded");
+            console.log("Room limit Exceeded")
+          }
+        }else {
+          socket.join(roomId);
+          const player = createPlayer(socket.id, userName, 0, false, false);
+          console.log(
+            `Socket ID ${socket.id} has JOINED the room ${roomId} as PLAYER`
+          );
+  
+          // Add the player to the gameRooms
+          gameRooms[roomId].players.push(player);
         }
       }
     } else {
@@ -116,7 +115,9 @@ io.on("connection", (socket) => {
           intervalId: null, // The intervalId: null serves as an indicator that no timer is currently running for the associated room
         },
         gameStarted: false,
-        currentPlayerIndex: 0
+        currentPlayerIndex: 0,
+        startTime: null,
+        endTime: null
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
@@ -163,20 +164,44 @@ io.on("connection", (socket) => {
     const { roomId, drawingName } = data;
   if (gameRooms[roomId] && gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex] &&gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId === socket.id) {
     console.log(drawingName)
-    gameRooms[roomId].rightAns = drawingName;   
+    gameRooms[roomId].rightAns = drawingName; 
+    io.sockets.in(roomId).emit("startGame", gameRooms[roomId])
+    console.log("Game Started")
   } else {
     console.error(`Room ${roomId} does not exist.`);
   }
   })
 
   socket.on("getUserName",(data)=>{
-    const {name} = data;
-    const playerIndex = gameRooms[roomId].players.findIndex(
-      (player) => player.playerId === socket.id
-      );
-    if (playerIndex !== -1) {
-      gameRooms[roomId].players[playerIndex].playerName = name;
-    }
+    const {name, roomId} = data;
+    // if(!io.sockets.adapter.rooms.get(roomId)){
+    //   const noOfPlayers = io.sockets.adapter.rooms.get(roomId).size;
+    //   console.log("no of players: ",noOfPlayers)
+  
+        const playerIndex = gameRooms[roomId].players.findIndex(
+          (player) => player.playerId === socket.id
+          );
+        if (playerIndex !== -1) {
+          gameRooms[roomId].players[playerIndex].playerName = name;
+        }
+        let flag = false;
+        for (const player of gameRooms[roomId].players) {
+          if (player.playerName) {
+          } else{
+            console.log(player)
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          const currPlayer = gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId;
+          console.log("Asked for drawing data")
+          io.to(`${currPlayer}`).emit("sendDrawingData")
+        } else {
+          console.log("permission to draw not valid")
+        }
+    // }
+   
   })
 
   socket.on("disconnect", () => {
