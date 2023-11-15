@@ -10,6 +10,7 @@ import Cookies from "universal-cookie";
 import EdPopup from "./components/popups/EnterDetailsPopup";
 import CwPopup from "./components/popups/ChooseWordPopup";
 import RlPopup from "./components/popups/RoomLimitPopup";
+import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -63,6 +64,7 @@ function Gamescreen() {
       <CwPopup isModalOpen={false} roomId={id} socket={socket}/>
       <EdPopup isModalOpen={true}  roomId={id} socket={socket}/>
       <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">

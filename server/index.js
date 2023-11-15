@@ -147,7 +147,7 @@ io.on("connection", (socket) => {
     let flag = false;
 
     for (const player of gameRooms[roomId].players) {
-      if(socket.id === player[gameRooms[roomId].currentPlayerIndex]){
+      if(gameRooms[roomId] && gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex] &&gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId === player.playerId){
         continue;
       }
       if (!player.wordGuessed) {
@@ -156,7 +156,7 @@ io.on("connection", (socket) => {
       }
     }
     if (!flag) {
-        io.sockets.in(roomId).emit("endGame", gameRooms[roomId]);
+        io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
     }
 });
 
@@ -165,8 +165,10 @@ io.on("connection", (socket) => {
   if (gameRooms[roomId] && gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex] &&gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId === socket.id) {
     console.log(drawingName)
     gameRooms[roomId].rightAns = drawingName; 
-    io.sockets.in(roomId).emit("startGame", gameRooms[roomId])
-    console.log("Game Started")
+    if(drawingName !== ""){
+      io.sockets.in(roomId).emit("startGame", gameRooms[roomId])
+      console.log("Game Started") 
+    }
   } else {
     console.error(`Room ${roomId} does not exist.`);
   }
@@ -175,9 +177,8 @@ io.on("connection", (socket) => {
   socket.on("getUserName",(data)=>{
     const {name, roomId} = data;
     // if(!io.sockets.adapter.rooms.get(roomId)){
-    //   const noOfPlayers = io.sockets.adapter.rooms.get(roomId).size;
-    //   console.log("no of players: ",noOfPlayers)
-  
+      //   console.log("no of players: ",noOfPlayers)
+    if(gameRooms[roomId]){
         const playerIndex = gameRooms[roomId].players.findIndex(
           (player) => player.playerId === socket.id
           );
@@ -193,14 +194,14 @@ io.on("connection", (socket) => {
             break;
           }
         }
-        if (!flag) {
+        if (!flag && io.sockets.adapter.rooms.get(roomId).size === reqPlayers) {
           const currPlayer = gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerId;
           console.log("Asked for drawing data")
           io.to(`${currPlayer}`).emit("sendDrawingData")
         } else {
           console.log("permission to draw not valid")
         }
-    // }
+    }
    
   })
 

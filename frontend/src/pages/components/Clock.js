@@ -8,6 +8,7 @@ function Clock({socket,initialTime}) {
 
   useEffect(()=>{
     socket.on("startGame",()=>{
+        console.log("Started game")
         setStartTimer(true);
         setStopTime(false)
     })
