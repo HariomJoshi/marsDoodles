@@ -165,7 +165,9 @@ io.on("connection", (socket) => {
 
   socket.on("getCorrectAns", (data) => {
     const { roomId, message } = data;
-    let obj = { right: message == gameRooms[roomId].rightAns };
+    let obj = {
+      right: gameRooms[roomId] && message == gameRooms[roomId].rightAns,
+    };
     socket.broadcast.to(roomId).emit("recieveCorrectAns", obj);
   });
 
