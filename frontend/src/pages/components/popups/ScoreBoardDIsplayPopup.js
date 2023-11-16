@@ -5,6 +5,17 @@ const SbPopup = ({ isModalOpen, socket, roomId }) => {
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
   const [players, setPlayers] = useState([]);
 
+  // Close the modal after 3 seconds
+  useEffect(() => {
+    if (modalIsOpen) {
+      const timer = setTimeout(() => {
+        setModalIsOpen(false);
+      }, 3000); 
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or modal closure
+    }
+  }, [modalIsOpen]);
+
   socket.on("endGame", (data) => {
     setPlayers(data);
     setModalIsOpen(true);
@@ -109,7 +120,7 @@ const SbPopup = ({ isModalOpen, socket, roomId }) => {
             ))}
         </ul>
         <button style={myStyle.nextRoundButton} onClick={handleFormSubmit}>
-          To the next Round!
+          Okay
         </button>
       </div>
     </Modal>
