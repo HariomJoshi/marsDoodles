@@ -50,6 +50,7 @@ app.use("/api/v1", user);
 const reqPlayers = 3;
 const maxRounds = 1;
 const gameRooms = {};
+const users = []; // for mouse pointer
 
 // Function to create a player object
 function createPlayer(
@@ -267,6 +268,24 @@ io.on("connection", (socket) => {
   }
   });
 
+  socket.on('mouseMove', (data) => {
+    // const {idx,name,x,y} = data;
+    const { x, y,roomId } = data;
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      const idx = gameRooms[roomId].players.findIndex(
+        (player) => player.playerId === socket.id
+      );
+      if(idx !== -1){
+        const name = gameRooms[roomId].players[idx].playerName;
+        const id = gameRooms[roomId].players[idx].playerId;
+        // Broadcast the mouse movement data to other clients in the same room
+        socket.broadcast.to(roomId).emit('mouseMove', { idx,name, x, y,id });
+        console.log( idx,name, x, y )
+      }
+      }
+      
+  });
+
   // Handling setting drawing name event
   socket.on("setDrawingName", (data) => {
     const { roomId, drawingName } = data;
@@ -279,6 +298,11 @@ io.on("connection", (socket) => {
         gameRooms[roomId].currentPlayerIndex
       ].playerId === socket.id
     ) {
+        socket.on('setUserData', (userData) => {
+          users[socket.id] = userData;
+          socket.broadcast.emit('userConnect', { id: socket.id, userData });
+        });
+
       console.log(drawingName);
       gameRooms[roomId].rightAns = drawingName;
       if (drawingName !== "") {

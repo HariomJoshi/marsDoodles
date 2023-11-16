@@ -42,7 +42,7 @@ const CwPopup = ({ isModalOpen, socket,roomId }) => {
     input: {
       width: '100%',
       padding: '12px',
-      margin: '10px 0', // Adjusted margin for spacing
+      margin: '10px 0',
       border: '1px solid #ccc',
       borderRadius: '4px',
       fontSize: '16px',

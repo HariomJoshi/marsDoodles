@@ -12,6 +12,8 @@ import CwPopup from "./components/popups/ChooseWordPopup";
 import RlPopup from "./components/popups/RoomLimitPopup";
 import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
 import GePopup from "./components/popups/GameEndPopup";
+import SePopup from "./components/popups/SettingsPopup";
+import MousePointerSharing from "./components/MousePointerSharing";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -67,6 +69,8 @@ function Gamescreen() {
       <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
+      {/* <SePopup isModalOpen={true}  roomId={id} socket={socket}/> */}
+      <MousePointerSharing socket={socket} roomId={id}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
