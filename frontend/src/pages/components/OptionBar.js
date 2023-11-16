@@ -12,9 +12,10 @@ function OptionBar({
   roomId,
   timer
 }) {
-  const [isGameStarted, setIsGameStarted] = useState(false);
   const [isItMyTurn, setIsItMyTurn] = useState(false);
   const [drawingName, setDrawingName] = useState("");
+  const [wordSize, setWordSize] = useState("");
+  const [playerName, setPlayerName] = useState("Player1");
 
   useEffect(() => {
     socket.emit("setDrawingName", {
@@ -22,6 +23,17 @@ function OptionBar({
       drawingName,
     });
   }, [drawingName, roomId, socket]);
+
+  useEffect(()=>{
+    socket.on("setDrawingControl",(data)=>{
+      setIsItMyTurn(data);
+    })
+    socket.on("currentPlayerData",(data)=>{
+      const {pName, wSize} = data;
+      setPlayerName(pName);
+      setWordSize(wSize)
+    })
+  },[socket])
 
   return (
     <div className="container">
@@ -64,21 +76,17 @@ function OptionBar({
           <Clock socket={socket} initialTime={90}/>
         </div>
       </div>
-
-      <div className="labelInputContainer">
-        <label className="label">Drawing: </label>
-        <input
-          className="input"
-          type="text"
-          onChange={(e) => {
-            setDrawingName(e.target.value);
-          }}
-        />
-      </div>
+      {
+        !isItMyTurn && (
+          <div className="labelInputContainer">
+            It's {playerName}'s turn to draw
+          </div>
+        )
+      }
 
       {!isItMyTurn && (
         <div className="labelInputContainer">
-          Word size: <b>{drawingName.length}</b>
+          Word size: <b>{wordSize}</b>
         </div>
       )}
     </div>

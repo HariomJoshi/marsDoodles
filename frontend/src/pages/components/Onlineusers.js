@@ -11,6 +11,11 @@ function Onlineusers({ socket,  name}) {
     });
   }, [socket, usersData]);
 
+  useEffect (()=>{
+    socket.on("startGame",(data)=>{
+      setUsersData(data.players);
+    })
+  },[socket, usersData])
 
   if (!usersData) {
     // to handle invalid requests
@@ -29,7 +34,6 @@ function Onlineusers({ socket,  name}) {
               src={`https://robohash.org/${data.playerId}.png`}
             />
             <p style={{ fontSize: "12px", textAlign: "center" }}>{data.playerName}</p>
-            <p style={{ fontSize: "10px" }}>{data.playerName}</p>
             <p style={{ fontSize: "10px" }}>{data.points}</p>
           </div>
         ))}

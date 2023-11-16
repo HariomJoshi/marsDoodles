@@ -5,12 +5,12 @@ const SbPopup = ({ isModalOpen, socket, roomId }) => {
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
   const [players, setPlayers] = useState([]);
 
-  // Close the modal after 3 seconds
+  // Close the modal after 5 seconds
   useEffect(() => {
     if (modalIsOpen) {
       const timer = setTimeout(() => {
         setModalIsOpen(false);
-      }, 3000); 
+      }, 5000); 
 
       return () => clearTimeout(timer); // Cleanup the timer on component unmount or modal closure
     }

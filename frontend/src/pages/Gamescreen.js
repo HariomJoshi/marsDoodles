@@ -11,6 +11,7 @@ import EdPopup from "./components/popups/EnterDetailsPopup";
 import CwPopup from "./components/popups/ChooseWordPopup";
 import RlPopup from "./components/popups/RoomLimitPopup";
 import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
+import GePopup from "./components/popups/GameEndPopup";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -65,6 +66,7 @@ function Gamescreen() {
       <EdPopup isModalOpen={true}  roomId={id} socket={socket}/>
       <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">

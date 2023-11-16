@@ -19,7 +19,7 @@ function Chat({ roomId, socket, name }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() !== "") {
-      setChats((prevChats) => [...prevChats, { message, user: "You" }]);
+      setChats((prevChats) => [...prevChats, { message, user: "You",id:socket.id }]);
       socket.emit("message", { message, roomId, name });
       setMessage("");
     }
@@ -32,7 +32,7 @@ function Chat({ roomId, socket, name }) {
           {console.log(chats)}
           {chats.map((msg, index) => (
             <p key={index * 999} className="oneChat">
-              <img src={`https://robohash.org/${socket.id}.png`} alt="" />
+              <img src={`https://robohash.org/${msg.id}.png`} alt="" />
               {msg.user}: {msg.message}
             </p>
           ))}
