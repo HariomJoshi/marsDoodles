@@ -37,9 +37,11 @@ function OptionBar({
 
   return (
     <div className="container">
-      <div className="logo">
-        <h1>bit2byte</h1>
-      </div>
+     <div className="logo">
+          <h1 >
+            bit<span className="logo-highlight">2</span>byte
+          </h1>
+        </div>
       <div className="controls">
         {isItMyTurn && (
           <div className="labelInputContainer">

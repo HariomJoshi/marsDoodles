@@ -108,7 +108,7 @@ function Home({}) {
       </div>
       <div className="top-bar">
         <div className="logo">
-          <h1>
+          <h1 >
             bit<span className="logo-highlight">2</span>byte
           </h1>
         </div>
