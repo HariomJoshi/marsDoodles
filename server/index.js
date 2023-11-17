@@ -24,6 +24,7 @@ app.use(cookieParser());
 const server = http.createServer(app);
 
 // Create a Socket.IO server instance
+
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -52,6 +53,7 @@ const maxRounds = 1;
 const gameRooms = {};
 const users = []; // for mouse pointer
 
+
 // Function to create a player object
 function createPlayer(
   playerId,
@@ -71,6 +73,7 @@ function createPlayer(
 }
 
 // Socket.IO connection handling
+
 io.on("connection", (socket) => {
   // Handling user join event
   socket.on("joinUser", (data) => {
@@ -105,6 +108,7 @@ io.on("connection", (socket) => {
 
           // Add the player to the gameRooms
           gameRooms[roomId].players.push(player);
+
         }
       }
     } else {
@@ -128,8 +132,10 @@ io.on("connection", (socket) => {
           intervalId: null,
         },
         gameStarted: false,
+
         currentPlayerIndex: 0,
         startTime: Date.now(),
+
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);
@@ -217,6 +223,7 @@ io.on("connection", (socket) => {
 
   // Handling chat messages
   socket.on("message", (data) => {
+    let obj = {};
     const { message, roomId, name } = data;
     if(gameRooms[roomId] && gameRooms[roomId].players){
     if ( message === gameRooms[roomId].rightAns
@@ -260,7 +267,9 @@ io.on("connection", (socket) => {
           .to(roomId)
           .emit("messageResp", { message, user: gameRooms[roomId].players[playerIndex].playerName, id:socket.id });
       }
+
     }
+    socket.broadcast.to(roomId).emit("messageResp", obj);
     let flag = false;
 
     for (const player of gameRooms[roomId].players) {
@@ -273,6 +282,8 @@ io.on("connection", (socket) => {
           gameRooms[roomId].currentPlayerIndex
         ].playerId === player.playerId
       ) {
+
+      if (player.playerId === socket.id) {
         continue;
       }
       if (!player.wordGuessed) {
@@ -367,6 +378,7 @@ io.on("connection", (socket) => {
           users[socket.id] = userData;
           socket.broadcast.emit('userConnect', { id: socket.id, userData });
         });
+
 
       console.log(drawingName);
       gameRooms[roomId].rightAns = drawingName;
