@@ -9,30 +9,32 @@ A normal game consists of a few rounds, where every round a player has to draw t
 # Features
 ### BASIC
 - LOGIN AND SIGNUP 
-- GAMESCREEN TO PLAY...
-- HOME SCREEN TO VIEW AVAILABLE PUBLIC ROOM OR TO JOIN AND ALSO TO CREATE ROOMS...
--  GAME RULE SIMILIAR TO SCRIBBLE.IO
+- GAMESCREEN TO PLAY
+- HOME SCREEN TO VIEW AVAILABLE PUBLIC ROOM OR TO JOIN AND ALSO TO CREATE ROOMS
+- GAME RULE SIMILIAR TO SCRIBBLE.IO
+- CURRENTLY ONLINE PLAYERS ON THE ROOM VISIBLE
 
 ### ADVANCE 
-- REALTIME WHITEBOARD SHARING WITH ROOM MEMBER..
-- CHAT BOX..
-- HAVING OPTION TO CHANGE COLOR OF PENCIL...
-- ABLE TO UNDO AND REDO ACTION...
-- Ability to draw different shapessuch as circle, square, rectangle, ellipse, trapezium, free draw, lines,curvy-lines
+- REALTIME WHITEBOARD SHARING WITH ROOM MEMBER
+- CHAT BOX
+- HAVING OPTION TO CHANGE COLOR OF PENCIL
+- ABLE TO UNDO AND REDO ACTION
+
 
 
 ## Contributing
 
-- HARIOM JOSHI (CAPTAIN)(2023CA40)
+- <a href="https://github.com/HariomJoshi">HARIOM JOSHI</a> (Leader) (2023CA40)
 
-- SOMENATH SINGH (2023CA99)
+- <a href="https://github.com/itsnarutouzumaki">SOMENATH SINGH <a>(2023CA99)
 
-- ARPIT RATHORE (2023CA21) 
+- <a href="https://github.com/ArpitRathore2020">ARPIT RATHORE <a> (2023CA21) 
 
 ## Tech Stack
 
-*Client:* React,CSS
+*Client:* React, CSS, webSocket
 
-*Server:* Node, Express , Web socket
+*Server:* Node, Express , webSocket
 
 *Database:* Mongo DB
+

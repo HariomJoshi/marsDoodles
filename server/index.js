@@ -15,13 +15,10 @@ app.use(
 );
 
 app.use(cookieParser());
-
 const server = http.createServer(app);
-
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
-
     methods: ["GET", "POST"],
   },
 });
@@ -40,12 +37,14 @@ db.connect();
 // Mount API
 const user = require("./routes/user");
 const { compareSync } = require("bcrypt");
+const { constrainedMemory } = require("process");
+const { time } = require("console");
 
 app.use("/api/v1", user);
 
 const reqPlayers = 2;
 const gameRooms = {};
-const rightAns = {}; // stores the current right ans in a room
+// const rightAns = {}; // stores the current right ans in a room
 
 function createPlayer(
   playerId,
@@ -88,8 +87,10 @@ io.on("connection", (socket) => {
 
         // if player > threshold (min req to start the game)
         const noOfPlayersInRoom = io.sockets.adapter.rooms.get(roomId).size;
-        if (noOfPlayersInRoom == reqPlayers) {
-          // startGameTimer(roomId);
+        if (noOfPlayersInRoom == reqPlayers && !gameRooms[roomId].gameStarted) {
+          gameRooms[roomId].gameStarted = true;
+          // start game
+          io.sockets.in(roomId).emit("startGame", gameRooms[roomId]);
         }
       }
     } else {
@@ -102,12 +103,15 @@ io.on("connection", (socket) => {
       gameRooms[roomId] = {
         admin: player,
         players: [player],
-        rightAns: null
+        rightAns: null,
+        timer: {
+          duration: 100,
+          intervalId: null, // The intervalId: null serves as an indicator that no timer is currently running for the associated room
+        },
+        gameStarted: false,
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]); // only send that root data ie.gamerron.get(roomid)
-    // console.log(gameRooms[roomId]);
-    console.log("SENt");
   });
   socket.on("drawingData", (data) => {
     console.log(data);
@@ -116,22 +120,53 @@ io.on("connection", (socket) => {
 
   // chatting data
   socket.on("message", (data) => {
+    let obj = {};
     const { message, roomId, name } = data;
-    if(message == gameRooms[roomId].rightAns){
-      io.in(roomId).emit("messageResp", { message:"Guessed", user: name });
-    }else {
-      socket.broadcast.to(roomId).emit("messageResp", { message, user: name });
-    } 
+    if (gameRooms[roomId] && message === gameRooms[roomId].rightAns) {
+      console.log("Got ans");
+
+      obj = { message: "GUESSED THE RIGHT ANS", user: name };
+      const playerIndex = gameRooms[roomId].players.findIndex(
+        (player) => player.playerId === socket.id
+      );
+
+      if (playerIndex !== -1) {
+        gameRooms[roomId].players[playerIndex].wordGuessed = true;
+      }
+    } else {
+      obj = { message: message, user: name };
+    }
+    socket.broadcast.to(roomId).emit("messageResp", obj);
+    let flag = false;
+    for (const player of gameRooms[roomId].players) {
+      if (player.playerId === socket.id) {
+        continue;
+      }
+      if (!player.wordGuessed) {
+        flag = true;
+        break;
+      }
+    }
+    if (!flag) {
+      io.sockets.in(roomId).emit("endGame", gameRooms[roomId]);
+    }
   });
 
-  socket.on("setDrawingName",(data)=>{
+  socket.on("setDrawingName", (data) => {
     const { roomId, drawingName } = data;
-  if (gameRooms[roomId]) {
-    gameRooms[roomId].rightAns = drawingName;
-  } else {
-    console.error(`Room ${roomId} does not exist.`);
-  }
-  })
+    if (gameRooms[roomId]) {
+      gameRooms[roomId].rightAns = drawingName;
+    }
+    console.log(gameRooms);
+  });
+
+  socket.on("getCorrectAns", (data) => {
+    const { roomId, message } = data;
+    let obj = {
+      right: gameRooms[roomId] && message == gameRooms[roomId].rightAns,
+    };
+    socket.broadcast.to(roomId).emit("recieveCorrectAns", obj);
+  });
 
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated
