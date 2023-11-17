@@ -7,6 +7,13 @@ import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation, useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
+import EdPopup from "./components/popups/EnterDetailsPopup";
+import CwPopup from "./components/popups/ChooseWordPopup";
+import RlPopup from "./components/popups/RoomLimitPopup";
+import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
+import GePopup from "./components/popups/GameEndPopup";
+import SePopup from "./components/popups/SettingsPopup";
+import MousePointerSharing from "./components/MousePointerSharing";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -48,15 +55,22 @@ function Gamescreen() {
       setName(data.name)
     }
   },[data])
-
-  useEffect(() => {
-    socket.on("userUpdate", (data) => {
-      setUsersData(data.players);
-    });
-  }, [socket, usersData]);
+  
+  // useEffect(() => {
+  //   socket.on("userUpdate", (data) => {
+  //     setUsersData(data.players);
+  //   });
+  // }, [socket, usersData]);
 
   return (
     <div className="ALL">
+      <CwPopup isModalOpen={false} roomId={id} socket={socket}/>
+      <EdPopup isModalOpen={true}  roomId={id} socket={socket}/>
+      <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <SePopup isModalOpen={true}  roomId={id} socket={socket}/>
+      <MousePointerSharing socket={socket} roomId={id}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
@@ -83,7 +97,7 @@ function Gamescreen() {
             />
           </div>
           <div className="online-users-container">
-            <Onlineusers usersData={usersData}></Onlineusers>
+            <Onlineusers socket={socket}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">

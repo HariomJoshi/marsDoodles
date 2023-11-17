@@ -11,7 +11,6 @@ import Gamescreen from "./pages/Gamescreen";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Home from "./pages/Home";
-import { ChakraProvider } from "@chakra-ui/react";
 import Chat from "./pages/components/Chat";
 import ChatProvider from "./context/ChatProvider";
 import Canvas from "./pages/components/Canvas";
