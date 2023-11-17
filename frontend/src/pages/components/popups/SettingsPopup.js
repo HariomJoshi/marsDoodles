@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 const SePopup = ({ isModalOpen, socket, roomId }) => {
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
-  const [players, setPlayers] = useState([]);
+  const [toggleState, setToggleState] = useState(false);
 
+  // Event listener for final game end
   socket.on("finalGameEnd", (data) => {
-    setPlayers(data.players);
     setModalIsOpen(true);
   });
 
+  // Styles for the modal and switch
   const myStyle = {
     overlay: {
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -23,16 +24,17 @@ const SePopup = ({ isModalOpen, socket, roomId }) => {
     content: {
       position: 'relative',
       backgroundColor: '#f9f9f9',
-      padding: '30px 30px 30px 30px',
+      padding: '30px',
       border: '1px solid #ccc',
       borderRadius: '8px',
       boxShadow: '0 2px 20px rgba(0, 0, 0, 0.2)',
-      maxWidth: '500px',
       width: '100%',
       overflow: 'hidden',
-      textAlign: 'center',
+      textAlign: 'left',
+      maxWidth: '500px',
+      boxSizing: 'border-box',
     },
-    closeButton: {
+    closeBtn: {
       position: 'absolute',
       top: '15px',
       right: '15px',
@@ -40,96 +42,73 @@ const SePopup = ({ isModalOpen, socket, roomId }) => {
       fontSize: '24px',
       color: '#333',
     },
-    playerList: {
-      listStyle: 'none',
-      padding: '0',
-      marginTop: '20px',
+    switchContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
-    playerListItem: {
+    switchLabel: {
+      fontSize: '18px',
+      marginBottom: '10px',
+    },
+    switchSlider: {
       display: 'flex',
       alignItems: 'center',
-      marginBottom: '15px',
     },
-    playerImage: {
-      width: '60px',
-      height: '60px',
+    switchSliderInner: {
+      position: 'relative',
+      width: '46px',
+      height: '26px',
+      borderRadius: '23px',
+      backgroundColor: toggleState ? '#4BD763' : '#e6e6e6',
+      transition: 'background-color 0.3s',
+      marginLeft: toggleState ? '24px' : '0',
+    },
+    switchSliderBefore: {
+      content: '',
+      position: 'absolute',
+      left: '2px',
+      top: '2px',
+      width: '22px',
+      height: '22px',
       borderRadius: '50%',
-      border: '2px solid black',
-      marginRight: '15px',
-    },
-    playerName: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-    },
-    playerPoints: {
-      fontSize: '16px',
-    },
-    nextRoundButton: {
-      backgroundColor: '#3498DB',
-      color: 'white',
-      padding: '15px',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '15px',
-      fontWeight: 'bold',
-      marginTop: '20px',
-      transition: 'background-color 0.3s',
-    },
-    nextRoundButtonHover: {
-      backgroundColor: '#45a049',
-    },
-    toggleButton: {
-      backgroundColor: '#3498DB',
-      color: 'white',
-      padding: '10px',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '15px',
-      fontWeight: 'bold',
-      marginTop: '20px',
-      transition: 'background-color 0.3s',
-    },
-    toggleButtonHover: {
-      backgroundColor: '#45a049',
+      backgroundColor: '#fff',
+      transform: toggleState ? 'translateX(20px)' : 'translateX(0)',
+      transition: 'transform 0.3s',
     },
   };
 
+  // Function to handle toggle change
+  const handleToggleChange = () => {
+    setToggleState(!toggleState);
+  };
+
+  // Function to close the modal
   const closeModal = () => {
     setModalIsOpen(false);
   };
 
-  const handleToggleButtonClick = () => {
-    setModalIsOpen(!modalIsOpen);
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    setModalIsOpen(false);
-  };
-
   return (
-    <div>
-      <button
-        style={{
-          ...myStyle.toggleButton,
-          ...(modalIsOpen && myStyle.toggleButtonHover),
-        }}
-        onClick={handleToggleButtonClick}
-      >
-        Toggle
-      </button>
-
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} contentLabel="Score Board" style={myStyle}>
-        <div>
-          <h1 style={{ marginBottom: '10px', fontSize: '25px', backgroundColor: 'black', padding: '10px'}}>Settings</h1>
-          <button style={myStyle.nextRoundButton} onClick={handleFormSubmit}>
-            Done
-          </button>
+    <Modal isOpen={modalIsOpen} contentLabel="Score Board" style={myStyle}>
+        <h1>Settings</h1>
+      <div style={myStyle.closeBtn} onClick={closeModal}>&times;</div>
+      <div style={myStyle.content}>
+        <div style={myStyle.switchContainer}>
+          {/* Label for the switch */}
+          <div style={myStyle.switchLabel}>
+            Show mouse pointer to others
+          </div>
+          {/* Switch slider */}
+          <div style={myStyle.switchSlider}>
+            {/* Inner part of the slider */}
+            <div style={myStyle.switchSliderInner} onClick={handleToggleChange}>
+              {/* White circle inside the slider */}
+              <div style={myStyle.switchSliderBefore}></div>
+            </div>
+          </div>
         </div>
-      </Modal>
-    </div>
+      </div>
+    </Modal>
   );
 };
 

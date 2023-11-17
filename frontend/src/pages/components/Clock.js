@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Clock.css";
 
-function Clock({socket,initialTime}) {
+function Clock({socket,initialTime,roomId}) {
   const [time, setTime] = useState(initialTime);
   const [startTimer, setStartTimer] = useState(false);
   const [stopTimer, setStopTime] = useState(false);
@@ -9,6 +9,7 @@ function Clock({socket,initialTime}) {
   useEffect(()=>{
     socket.on("startGame",()=>{
         console.log("Started game")
+        setTime(initialTime)
         setStartTimer(true);
         setStopTime(false)
     })
@@ -24,8 +25,10 @@ function Clock({socket,initialTime}) {
     if (startTimer) {
       intervalId = setInterval(() => {
         setTime((prevTime) => {
-          if (prevTime <= 0 || stopTimer) {
+          if (prevTime <= 0 || stopTimer) {         
             clearInterval(intervalId);
+            const data = {roomId:roomId}
+            socket.emit("nextTurn",data)
             return prevTime;
           } else {
             return prevTime - 1;

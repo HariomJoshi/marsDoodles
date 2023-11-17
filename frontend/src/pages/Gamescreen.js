@@ -69,7 +69,7 @@ function Gamescreen() {
       <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
-      {/* <SePopup isModalOpen={true}  roomId={id} socket={socket}/> */}
+      <SePopup isModalOpen={true}  roomId={id} socket={socket}/>
       <MousePointerSharing socket={socket} roomId={id}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
