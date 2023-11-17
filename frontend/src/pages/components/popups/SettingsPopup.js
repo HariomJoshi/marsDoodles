@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-const SePopup = ({ isModalOpen, socket, roomId }) => {
+const SePopup = ({ isModalOpen, socket, roomId, openSettingsModal,settingsOpen }) => {
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
   const [toggleState, setToggleState] = useState(false);
+
+  useEffect(()=>{
+    setModalIsOpen(true)
+  },[settingsOpen])
 
   // Event listener for final game end
   socket.on("finalGameEnd", (data) => {
@@ -90,7 +94,6 @@ const SePopup = ({ isModalOpen, socket, roomId }) => {
 
   return (
     <Modal isOpen={modalIsOpen} contentLabel="Score Board" style={myStyle}>
-        <h1>Settings</h1>
       <div style={myStyle.closeBtn} onClick={closeModal}>&times;</div>
       <div style={myStyle.content}>
         <div style={myStyle.switchContainer}>

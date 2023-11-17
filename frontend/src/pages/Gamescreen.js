@@ -25,6 +25,7 @@ function Gamescreen() {
   const [selectedLineDash, setSelectedLineDash] = useState("");
   const [drawingName, setDrawingName] = useState("");
   const [usersData, setUsersData] = useState();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [name, setName] = useState();
   const data = location.state;
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ function Gamescreen() {
       setName(data.name)
     }
   },[data])
-  
+
   // useEffect(() => {
   //   socket.on("userUpdate", (data) => {
   //     setUsersData(data.players);
@@ -69,7 +70,7 @@ function Gamescreen() {
       <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <SePopup isModalOpen={true}  roomId={id} socket={socket}/>
+      <SePopup  isModalOpen={false} settingsOpen={settingsOpen} roomId={id} socket={socket}/>
       <MousePointerSharing socket={socket} roomId={id}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
@@ -86,6 +87,7 @@ function Gamescreen() {
               socket={socket}
               timer={timer}
             />
+            <button onClick={()=>{setSettingsOpen(true)}}>Settings</button>
           </div>
           <div className="drawingBoard">
             <Canvas

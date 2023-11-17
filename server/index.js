@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 // Create an Express app
 const app = express();
@@ -41,6 +43,10 @@ app.use(express.json());
 // Connect to the database
 const db = require("./config/database");
 db.connect();
+
+// cloudinary connection
+const cloudinary = require("./config/cloudinary");
+cloudinary.cloudinaryConnect();
 
 // Mount API routes
 const user = require("./routes/user");

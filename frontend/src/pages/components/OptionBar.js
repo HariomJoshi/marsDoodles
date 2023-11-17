@@ -10,7 +10,8 @@ function OptionBar({
   transferRightAns,
   socket,
   roomId,
-  timer
+  timer,
+  openSettingsModal
 }) {
   const [isItMyTurn, setIsItMyTurn] = useState(false);
   const [drawingName, setDrawingName] = useState("");
@@ -91,6 +92,8 @@ function OptionBar({
           Word size: <b>{wordSize}</b>
         </div>
       )}
+
+      <button onClick={openSettingsModal}>Settings</button>
     </div>
   );
 }
