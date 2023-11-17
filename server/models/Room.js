@@ -1,26 +1,26 @@
 const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema({
-    roomId: {
+  roomId: {
     type: String,
     required: true,
   },
   type: {
     type: String,
-    enum: ["public","private"],
-    required:true
+    enum: ["public", "private"],
+    required: true,
   },
-  admin:{
+  admin: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required:true
+    required: true,
   },
-  participants:[
+  participants: [
     {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   games: [
     {
       type: mongoose.Schema.Types.ObjectId,

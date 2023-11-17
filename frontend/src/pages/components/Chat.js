@@ -17,13 +17,18 @@ function Chat({ roomId, socket, name }) {
     };
   }, [socket]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
     socket.emit("getCorrectAns", { roomId, message });
+    console.log("Message: " + message);
     socket.on("recieveCorrectAns", (data) => {
       setIsRight(data.right);
-      console.log(data.right);
+      console.log("response: " + data.right);
     });
+  }, [message]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     // setMessage(e.target.value);
     console.log(isRight);
     console.log(message);
