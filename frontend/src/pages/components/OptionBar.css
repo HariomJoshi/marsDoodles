@@ -38,6 +38,11 @@ h1 {
   font-size: 16px;
   width: 20%;
 }
+.logo {
+  font-size: 24px;
+  background-image: url('https://img.freepik.com/free-vector/gradient-white-monochrome-background_23-2148998015.jpg?w=900&t=st=1700155675~exp=1700156275~hmac=97bbf46a4bb924a79947d42a95306209b08a382d883c26d959daecbdc3c16108');
+  border-radius: 5px;
+}
 
 .button {
   padding: 10px;
