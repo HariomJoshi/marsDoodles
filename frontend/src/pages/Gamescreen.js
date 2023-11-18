@@ -6,6 +6,7 @@ import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation, useParams } from "react-router-dom";
+import { AiOutlineSetting } from "react-icons/ai";
 import Cookies from "universal-cookie";
 import EdPopup from "./components/popups/EnterDetailsPopup";
 import CwPopup from "./components/popups/ChooseWordPopup";
@@ -93,7 +94,9 @@ function Gamescreen() {
               socket={socket}
               timer={timer}
             />
-            <button onClick={() => setSettingsOpen(true)}>Settings</button>
+            <button onClick={() => setSettingsOpen(true)}>
+              <AiOutlineSetting size={49}/> 
+            </button>
           </div>
           <div className="drawingBoard">
             <Canvas
