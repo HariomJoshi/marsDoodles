@@ -64,7 +64,8 @@ function createPlayer(
   playerName,
   points = 0,
   isAdmin = false,
-  wordGuessed = false
+  wordGuessed = false,
+  isChatRestricted =  false
 ) {
   return {
     playerId: playerId,
@@ -72,6 +73,7 @@ function createPlayer(
     points: points,
     isAdmin: isAdmin,
     wordGuessed: false,
+    isChatRestricted: false
     // timetaken: seconds
   };
 }
@@ -158,8 +160,18 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("amIAdmin",(data)=>{
+    const {roomId} = data;
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      if(socket.id === gameRooms[roomId].admin.playerId){
+        socket.emit("yesYouAreAdmin");
+      }
+    }  
+  })
+
   // // timer runs out and not all players guess the correct answer
 socket.on("nextTurn",(data)=>{
+  console.log("NEXT TURN")
   const {roomId} = data;
   if(gameRooms[roomId] && gameRooms[roomId].players){
     if(gameRooms[roomId].turnStartTime){
@@ -172,6 +184,7 @@ socket.on("nextTurn",(data)=>{
       gameRooms[roomId].rightAns = null;
       // round end
       if(gameRooms[roomId].currentPlayerIndex < gameRooms[roomId].players.length-1){
+        console.log("currentPlayerIndex < gameRooms[roomId].players.length-1")
         gameRooms[roomId].currentPlayerIndex = ( gameRooms[roomId].currentPlayerIndex + 1 ) % gameRooms[roomId].players.length;
         const currPlayer =
           gameRooms[roomId].players[
@@ -257,9 +270,11 @@ socket.on("nextTurn",(data)=>{
           (player) => player.playerId === socket.id
         );
         // Broadcast chat messages (excluding the sender) if the message is not the correct answer
-        socket.broadcast
+        if(!gameRooms[roomId].players[playerIndex].isChatRestricted){
+          socket.broadcast
           .to(roomId)
           .emit("messageResp", { message, user: gameRooms[roomId].players[playerIndex].playerName, id:socket.id });
+        }
       }
     }
     let flag = false;
@@ -390,6 +405,43 @@ socket.on("nextTurn",(data)=>{
     
   })
 
+  socket.on("kickUser",(data)=>{
+    const {id,roomId} = data;
+    console.log(data)
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      if(socket.id === gameRooms[roomId].admin.playerId){
+        const socket = io.sockets.sockets.get(id);
+        if (socket) {
+          io.to(id).emit("youHaveBeenKicked");
+          socket.leave(roomId);       
+          const index = gameRooms[roomId].players.findIndex(
+            (player) => player.playerId === socket.id
+          );
+          if (index !== -1) {
+            // Remove the user from the room's players array
+            gameRooms[roomId].players.splice(index, 1);
+            io.to(roomId).emit("userUpdate", gameRooms[roomId]);
+          }
+        } else {
+          console.log(`Socket with ID ${id} not found`);
+        }
+      }
+    }
+  })
+
+  socket.on("chatRestrict",(data)=>{
+    const {id,roomId} = data;
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      if(socket.id === gameRooms[roomId].admin.playerId){
+        const playerIndex = gameRooms[roomId].players.findIndex(
+          (player) => player.playerId === id
+        );
+        gameRooms[roomId].players[playerIndex].isChatRestricted = true
+        io.to(roomId).emit("userUpdate", gameRooms[roomId]);
+      }
+    }
+  })
+
   // Handling setting drawing name event
   socket.on("setDrawingName", (data) => {
     const { roomId, drawingName } = data;
@@ -481,6 +533,7 @@ socket.on("nextTurn",(data)=>{
       }
     }
   });
+
 });
 
 // Activate the server and listen on the specified PORT

@@ -91,21 +91,6 @@ function Home({}) {
 
   return (
     <div>
-      <div>
-        <button
-          colorscheme="blue"
-          onClick={() => {
-            {
-              localStorage.removeItem("userInfo");
-              navigate("/");
-            }
-          }}
-        >
-          LOG OUT
-        </button>
-        <b>Hello welcome to the home screen</b>
-        {/* <JoinRoomPage roomId={joinRoomId} socket={socket} /> */}
-      </div>
       <div className="top-bar">
         <div className="logo">
           <h1 >

@@ -34,6 +34,10 @@ function Gamescreen() {
   const [timer, setTimer] = useState(null);
 
   useEffect(() => {
+    socket.on("youHaveBeenKicked",()=>{
+      console.log("i'm being kicked")
+      navigate("/home")
+    })
     socket.on('gameTimerUpdate', (timerValue) => {
       setTimer(timerValue);
     });
@@ -108,7 +112,7 @@ function Gamescreen() {
             />
           </div>
           <div className="online-users-container">
-            <Onlineusers socket={socket}></Onlineusers>
+            <Onlineusers socket={socket} roomId={id}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">
