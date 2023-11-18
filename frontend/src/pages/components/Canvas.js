@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { AiOutlineDownload } from 'react-icons/ai';
+import { FaShareSquare } from "react-icons/fa";
 import ShareButtons from "./ShareButtons";
 import "./Canvas.css";
 
@@ -116,7 +117,6 @@ function Canvas({
     }, []);
   }
 
-  // Add this function inside your Canvas component
 function captureCanvasImage() {
   const canvas = canvasRef.current;
   const imageData = canvas.toDataURL('image/png');
@@ -126,8 +126,7 @@ function captureCanvasImage() {
 
   function getLink() {
     const imageData = captureCanvasImage();
-  
-    // Send the imageData to your backend
+
     fetch('http://localhost:4000/api/v1/getLink', {
       method: 'POST',
       headers: {
@@ -138,8 +137,6 @@ function captureCanvasImage() {
       .then(response => response.json())
       .then(result => {
         console.log('Backend response:', result);
-  
-        // Update the state or perform any other actions with the returned link
         setUrl(result.link);
       })
       .catch(error => {
@@ -163,7 +160,21 @@ function captureCanvasImage() {
   return (
     <div>
       <div>
-        <button onClick={getLink}> BUTTON </button>
+      <button
+          onClick={getLink}
+          style={{
+            background: '#4CAF50', // Green color
+            color: 'white',
+            padding: '10px 15px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginRight: '10px', // Add some margin to separate the buttons
+          }}
+        >
+          <FaShareSquare style={{ marginRight: '5px' }} />
+          Generate
+        </button>
         <ShareButtons shareUrl={url}/>
         <button onClick={download} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
           <AiOutlineDownload size={24} color="#fff" /> 

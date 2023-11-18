@@ -5,27 +5,26 @@ import { FaFacebookSquare, FaTwitterSquare, FaWhatsappSquare, FaLinkedin } from 
 const ShareButtons = ({shareUrl}) => {
   const [title, setTitle] = useState("My canvas drawing on bit2byte !")
   const iconStyle = { fontSize: '30px', marginRight: '10px', color: 'white' };
-  const [shareurl,setShareUrl] = useState("https://res.cloudinary.com/demo/image/upload/v1371995958/c87hg9xfxrd4itiim3t0.jpg")
 
 
   function shareOnTwitter(shareUrl, title) {
-    const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareurl)}&text=${encodeURIComponent(title)}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`;
     window.open(twitterUrl, '_blank');
   }
   
   function shareOnLinkedIn(shareUrl, title) {
-    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareurl)}&title=${encodeURIComponent(title)}`;
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(title)}`;
     window.open(linkedInUrl, '_blank');
   }
 
   function shareOnWhatsApp(shareUrl, title) {
-    const whatsAppUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(shareurl)}`;
+    const whatsAppUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(shareUrl)}`;
     window.open(whatsAppUrl, '_blank');
   }
 
   // testing pending for facebook
   function shareOnFacebook(shareUrl, title) {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareurl)}&quote=${encodeURIComponent(title)}`;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(title)}`;
     window.open(facebookUrl, '_blank');
   }
   

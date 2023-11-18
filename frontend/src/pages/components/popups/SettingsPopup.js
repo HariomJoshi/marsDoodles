@@ -1,20 +1,29 @@
+// SePopup.jsx
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-const SePopup = ({ isModalOpen, socket, roomId, openSettingsModal,settingsOpen }) => {
+const SePopup = ({ isModalOpen, socket, roomId, openSettingsModal }) => {
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
-  const [toggleState, setToggleState] = useState(false);
+  const [toggleState, setToggleState] = useState(true);
+  const [myPlayerIdx, setMyPlayerIdx] = useState(null);
 
-  useEffect(()=>{
-    setModalIsOpen(true)
-  },[settingsOpen])
+  useEffect(() => {
+    setModalIsOpen(isModalOpen);
+  }, [isModalOpen]);
 
-  // Event listener for final game end
-  socket.on("finalGameEnd", (data) => {
-    setModalIsOpen(true);
-  });
+
+  // // Event listener for final game end
+  // socket.on("finalGameEnd", (data) => {
+  //   socket.emit("returnMyIdx", roomId);
+  //   socket.on("returnMyIdx", (idx) => {
+  //     setMyPlayerIdx(idx);
+  //     socket.emit('disableMouse', { idx: myPlayerIdx });
+  //   }); 
+  // });
+
+
 
   // Styles for the modal and switch
   const myStyle = {
@@ -82,18 +91,22 @@ const SePopup = ({ isModalOpen, socket, roomId, openSettingsModal,settingsOpen }
     },
   };
 
-  // Function to handle toggle change
   const handleToggleChange = () => {
-    setToggleState(!toggleState);
+    setToggleState((prevState) => !prevState);
+  
+    // Emit enableMouseMove or disableMouse event based on the toggle state
+    const eventName = toggleState ? 'disableMouse' : 'enableMouse';
+    socket.emit(eventName, { roomId });
   };
 
   // Function to close the modal
   const closeModal = () => {
-    setModalIsOpen(false);
+    openSettingsModal(false);
   };
 
   return (
     <Modal isOpen={modalIsOpen} contentLabel="Score Board" style={myStyle}>
+      <h1>Settings</h1>
       <div style={myStyle.closeBtn} onClick={closeModal}>&times;</div>
       <div style={myStyle.content}>
         <div style={myStyle.switchContainer}>

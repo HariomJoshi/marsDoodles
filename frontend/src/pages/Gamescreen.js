@@ -71,6 +71,12 @@ function Gamescreen() {
       <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
       <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
       <SePopup  isModalOpen={false} settingsOpen={settingsOpen} roomId={id} socket={socket}/>
+      <SePopup
+        isModalOpen={settingsOpen}
+        roomId={id}
+        socket={socket}
+        openSettingsModal={(isOpen) => setSettingsOpen(isOpen)}
+      />
       <MousePointerSharing socket={socket} roomId={id}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
@@ -87,7 +93,7 @@ function Gamescreen() {
               socket={socket}
               timer={timer}
             />
-            <button onClick={()=>{setSettingsOpen(true)}}>Settings</button>
+            <button onClick={() => setSettingsOpen(true)}>Settings</button>
           </div>
           <div className="drawingBoard">
             <Canvas

@@ -2,6 +2,19 @@ import React, { useEffect, useState } from 'react';
 
 const MousePointerSharing = ({ socket, roomId }) => {
   const [playerDetails, setPlayerDetails] = useState([]);
+  const [myPlayerIdx, setMyPlayerIdx] = useState(null);
+  const [toggleState, setToggleState] = useState(false)
+
+  useEffect(() => {
+    // Emit event to get the player's index
+    socket.emit("returnMyIdx", roomId);
+  
+    // Listen for the response and update the state
+    socket.on("returnMyIdx", (idx) => {
+      setMyPlayerIdx(idx);
+    });
+  }, [socket, roomId]);
+
 
   useEffect(() => {
     const initialPlayerDetails = Array(3).fill().map(() => ({
@@ -20,10 +33,32 @@ const MousePointerSharing = ({ socket, roomId }) => {
     };
   }, []);
 
+  useEffect(()=>{
+    socket.on("disableMouse", (idx) => {
+      console.log("disable mouse")
+      setPlayerDetails((prevDetails) => {
+        const newDetails = [...prevDetails];
+        // Disable mouse movement for the specified player
+        newDetails[idx] = { ...newDetails[idx], visible: false };
+        return newDetails;
+      });
+    });
+
+    socket.on("enableMouse", (idx) => {
+      console.log("enable mouse")
+      setPlayerDetails((prevDetails) => {
+        const newDetails = [...prevDetails];
+        // Enable mouse movement for the specified player
+        newDetails[idx] = { ...newDetails[idx], visible: true };
+        return newDetails;
+      });
+    });
+  },[socket])
+
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
     socket.emit('mouseMove', { x: clientX, y: clientY, roomId: roomId });
-    console.log(socket.id, e.clientX, e.clientY);
+    // console.log(socket.id, e.clientX, e.clientY);
   };
 
   useEffect(() => {
@@ -43,7 +78,7 @@ const MousePointerSharing = ({ socket, roomId }) => {
     <div className="mousePointerSharing">
       {playerDetails.map((player, index) => (
         <div key={index}>
-          {player.visible && (
+          {player.visible &&  myPlayerIdx !== index && player.id !== undefined && (
             <div
               style={{
                 position: 'absolute',

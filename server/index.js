@@ -357,6 +357,44 @@ io.on("connection", (socket) => {
       
   });
 
+  socket.on("disableMouse", (data)=>{
+    const {roomId} = data;
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      const idx = gameRooms[roomId].players.findIndex(
+        (player) => player.playerId === socket.id
+      );
+      if(idx !== -1){
+        io.in(roomId).emit("disableMouse",idx)
+      }
+    }
+   
+  })
+
+  socket.on("enableMouse", (data)=>{
+    const {roomId} = data;
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      const idx = gameRooms[roomId].players.findIndex(
+        (player) => player.playerId === socket.id
+      );
+      if(idx !== -1){
+        io.in(roomId).emit("enableMouse",idx)
+      }
+    }
+    
+  })
+
+  socket.on("returnMyIdx",(roomId)=>{
+    if(gameRooms[roomId] && gameRooms[roomId].players){
+      const idx = gameRooms[roomId].players.findIndex(
+        (player) => player.playerId === socket.id
+      );
+      if(idx !== -1){
+        socket.emit(idx);
+      }
+    }
+    
+  })
+
   // Handling setting drawing name event
   socket.on("setDrawingName", (data) => {
     const { roomId, drawingName } = data;
