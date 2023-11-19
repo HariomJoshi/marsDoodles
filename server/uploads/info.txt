@@ -1,0 +1,1 @@
+Temporary folder to store images until they are uploaded to cloudinary. DO NOT DELETE THIS FOLDER.

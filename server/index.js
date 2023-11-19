@@ -43,6 +43,11 @@ app.use(express.json());
 const db = require("./config/database");
 db.connect();
 
+// cloudinary connection
+require("./config/cloudinary").cloudinaryConnect();
+
+const cloudinary = require('cloudinary').v2;
+
 app.post("/api/v1/getLink" , async (req, res) => {
   try {
     // Get the image data from the request body
@@ -57,16 +62,22 @@ app.post("/api/v1/getLink" , async (req, res) => {
     const filePath = path.join(__dirname, "uploads", filename);
     // Save the file to the specified path
     fs.writeFileSync(filePath, imageBuffer);
-    res.json({ link: filePath });
+
+    cloudinary.uploader.upload(filePath, (error, result) => {
+      if (!error) {
+        fs.unlinkSync(filePath)
+        res.json({ link: result.secure_url });
+      } else {
+        console.error("Error uploading to Cloudinary:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
   } catch (error) {
     console.error("Error saving canvas image:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 })
 
-// cloudinary connection
-const cloudinary = require("./config/cloudinary");
-cloudinary.cloudinaryConnect();
 
 // Mount API routes
 const user = require("./routes/user");

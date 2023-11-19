@@ -20,6 +20,11 @@ h1 {
   align-items: center;
 }
 
+.rangeInput {
+  width: 100px; 
+}
+
+
 .labelInputContainer {
   color: white;
   display: flex;
