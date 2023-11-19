@@ -11,6 +11,7 @@ function OptionBar({
   socket,
   roomId,
   timer,
+  changeType
 }) {
   const [isItMyTurn, setIsItMyTurn] = useState(false);
   const [drawingName, setDrawingName] = useState("");
@@ -45,18 +46,19 @@ function OptionBar({
       <div className="controls">
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <label className="label">Line Width:</label>
+            <label className="label"></label>
             <input
-              className="input"
-              type="number"
+              className="rangeInput"
+              type="range"
               min="1"
+              max="60"
               onChange={(e) => onLineWidthChange(Number(e.target.value))}
             />
           </div>
         )}
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <label className="label">Line Color:</label>
+            <label className="label"></label>
             <input
               className="input"
               type="color"
@@ -66,7 +68,16 @@ function OptionBar({
         )}
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <label className="label">Line Dash:</label>
+            <button onClick={()=>{changeType("pencil")}}>Pencil</button>
+            <button onClick={()=>{changeType("circle")}}>Circle</button>
+            <button onClick={()=>{changeType("square")}}>Square</button>
+            <button onClick={()=>{changeType("rectangle")}}>Rectangle</button>
+            <button onClick={()=>{changeType("ellipse")}}>Ellipse</button>
+          </div>
+        )}
+        {isItMyTurn && (
+          <div className="labelInputContainer">
+            <label className="label"></label>
             <input
               className="input"
               type="text"
@@ -75,7 +86,7 @@ function OptionBar({
           </div>
         )}
         <div className="labelInputContainer">
-          <Clock socket={socket} initialTime={90} roomId={roomId}/>
+          <Clock socket={socket} initialTime={900000} roomId={roomId}/>
         </div>
       </div>
       {

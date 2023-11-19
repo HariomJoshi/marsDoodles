@@ -6,7 +6,6 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-
 // Create an Express app
 const app = express();
 
@@ -43,6 +42,27 @@ app.use(express.json());
 // Connect to the database
 const db = require("./config/database");
 db.connect();
+
+app.post("/api/v1/getLink" , async (req, res) => {
+  try {
+    // Get the image data from the request body
+    const { imageData } = req.body;
+    // Remove the "data:image/png;base64," prefix from the data URL
+    const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
+    // Create a buffer from the base64 data
+    const imageBuffer = Buffer.from(base64Data, "base64");
+    // Generate a unique filename 
+    const filename = `drawing_${Date.now()}.png`;
+    // Specify the path to save the file
+    const filePath = path.join(__dirname, "uploads", filename);
+    // Save the file to the specified path
+    fs.writeFileSync(filePath, imageBuffer);
+    res.json({ link: filePath });
+  } catch (error) {
+    console.error("Error saving canvas image:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
 
 // cloudinary connection
 const cloudinary = require("./config/cloudinary");
@@ -463,6 +483,7 @@ socket.on("nextTurn",(data)=>{
       gameRooms[roomId].rightAns = drawingName;
       if (drawingName !== "") {
         // Broadcast an event indicating the start of the game
+        io.sockets.in(roomId).emit("clearCanvas", gameRooms[roomId]);
         gameRooms[roomId].turnStartTime = Date.now();
         io.sockets.in(roomId).emit("startGame", gameRooms[roomId]);
         console.log("Game Started");
@@ -500,7 +521,7 @@ socket.on("nextTurn",(data)=>{
       }
       if (
         !flag &&
-        io.sockets.adapter.rooms.get(roomId).size === reqPlayers
+        io.sockets.adapter.rooms.get(roomId) && io.sockets.adapter.rooms.get(roomId).size === reqPlayers
       ) {
         const currPlayer =
           gameRooms[roomId].players[

@@ -32,6 +32,11 @@ function Gamescreen() {
   const navigate = useNavigate();
   const cookies = new Cookies()
   const [timer, setTimer] = useState(null);
+  const [objType, setObjType] = useState("pencil")
+
+  function changeType(type){
+    setObjType(type);
+  }
 
   useEffect(() => {
     socket.on("youHaveBeenKicked",()=>{
@@ -97,6 +102,7 @@ function Gamescreen() {
               roomId={id}
               socket={socket}
               timer={timer}
+              changeType={changeType}
             />
             <button onClick={() => setSettingsOpen(true)}>
               <AiOutlineSetting size={49}/> 
@@ -109,6 +115,7 @@ function Gamescreen() {
               selectedLineDash={selectedLineDash}
               roomId={id}
               socket={socket}
+              objType={objType}
             />
           </div>
           <div className="online-users-container">
