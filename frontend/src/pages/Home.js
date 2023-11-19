@@ -20,44 +20,19 @@ function Home({}) {
   const name = location.state;
 
   const handleJoinRoom = (roomId) => {
-    if(joinRoomId !== ""){
+    if (joinRoomId !== "") {
       const data = { userName: user, roomId: joinRoomId };
       socket.emit("joinUser", data);
       navigate(`/pages/game-screen/${joinRoomId}`, { state: name });
     }
-
-    // const link = `http://localhost:4000/api/v1/createRoom/${joinRoomId}`;
-    // axios
-    //   .post(link, {
-    //     type: createRoomType,
-    //     jwt,
-    //   })
-    //   .then(() => {
-    //     navigate(`/pages/game-screen/${joinRoomId}`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   };
 
   const handleCreateRoom = () => {
-    if(createRoomId !== ""){
+    if (createRoomId !== "") {
       const data = { userName: user, roomId: createRoomId };
       socket.emit("joinUser", data);
       navigate(`/pages/game-screen/${createRoomId}`, { state: name });
     }
-
-    // axios
-    //   .post(`http://localhost:4000/api/v1/createRoom/${createRoomId}`, {
-    //     type: createRoomType,
-    //     jwt,
-    //   })
-    //   .then(() => {
-    //     navigate(`/pages/game-screen/${createRoomId}`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   };
 
   const handleRefresh = () => {
@@ -90,10 +65,10 @@ function Home({}) {
   }, []);
 
   return (
-    <div>
+    <div className="home-container">
       <div className="top-bar">
         <div className="logo">
-          <h1 >
+          <h1>
             bit<span className="logo-highlight">2</span>byte
           </h1>
         </div>
@@ -103,7 +78,7 @@ function Home({}) {
             onClick={() => {
               setUser(null);
               cookies.remove("jwt_auth");
-              navigate("/")
+              navigate("/");
             }}
           >
             LogOut
@@ -114,7 +89,7 @@ function Home({}) {
       <div className="main-content">
         <div className="left-column">
           <div className="available-rooms">
-            <h2>Available Rooms</h2>
+            <h3>Available Rooms</h3>
             <button className="refresh-button" onClick={handleRefresh}>
               Refresh
             </button>
@@ -145,41 +120,69 @@ function Home({}) {
           </div>
         </div>
         <div className="right-column">
-          <div className="join-room-container">
-            <h2>Join Room</h2>
-            <div className="join-room">
-              <input
-                className="roomId-input"
-                type="text"
-                placeholder="Room ID"
-                value={joinRoomId}
-                onChange={(e) => setJoinRoomId(e.target.value)}
-              />
-              <button className="join-button" onClick={handleJoinRoom}>
-                Join
-              </button>
+          <div className="join-create-container">
+            <div className="join-room-container">
+              <h2>Join Room</h2>
+              <div className="join-room">
+                <input
+                  className="roomId-input"
+                  type="text"
+                  placeholder="Room ID"
+                  value={joinRoomId}
+                  onChange={(e) => setJoinRoomId(e.target.value)}
+                />
+                <button className="join-button" onClick={handleJoinRoom}>
+                  Join
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="create-room-container">
-            <h2>Create Room</h2>
-            <div className="create-room">
-              <select
-                className="roomId-input"
-                value={createRoomType}
-                onChange={(e) => setCreateRoomType(e.target.value)}
-              >
-                <option value="public">Public</option>
-                <option value="private">Private</option>
-              </select>
-              <input
-                type="text"
-                placeholder="Room ID"
-                value={createRoomId}
-                onChange={(e) => setCreateRoomId(e.target.value)}
-              />
-              <button className="create-join-button" onClick={handleCreateRoom}>
-                Create & Join
-              </button>
+            <div className="create-room-container">
+              <h2>Create Private Room</h2>
+              <div className="create-room">
+                <select
+                  className="roomId-input"
+                  value={createRoomType}
+                  onChange={(e) => setCreateRoomType(e.target.value)}
+                >
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Room ID"
+                  value={createRoomId}
+                  onChange={(e) => setCreateRoomId(e.target.value)}
+                />
+                <div className="invite-section">
+                  <label>
+                    Player 2:
+                    <input
+                      type="text"
+                      placeholder="Enter email to invite ..."
+                    />
+                    <button>Invite</button>
+                  </label>
+                </div>
+                <div className="invite-section">
+                  <label>
+                    Player 3:
+                    <input
+                      type="text"
+                      placeholder="Enter email to invite ..."
+                    />
+                    <button>Invite</button>
+                  </label>
+                </div>
+                <div className="generate-section">
+                  <input type="text" />
+                  <button
+                    className="create-join-button"
+                    onClick={handleCreateRoom}
+                  >
+                    Generate & copy
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

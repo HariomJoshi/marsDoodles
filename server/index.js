@@ -284,9 +284,8 @@ socket.on("nextTurn",(data)=>{
         // Update player's wordGuessed status and calculate score
         gameRooms[roomId].players[playerIndex].wordGuessed = true;
         const score =
-          100000 - (Date.now() - gameRooms[roomId].turnStartTime);
-        gameRooms[roomId].players[playerIndex].points +=
-          score > 0 ? score : 1;
+          90 - Math.floor((Date.now() - gameRooms[roomId].turnStartTime)/1000);
+        gameRooms[roomId].players[playerIndex].points += score
         console.log(
           "score: ",
           gameRooms[roomId].players[playerIndex].points

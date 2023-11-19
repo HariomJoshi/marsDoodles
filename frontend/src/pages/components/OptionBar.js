@@ -86,7 +86,7 @@ function OptionBar({
           </div>
         )}
         <div className="labelInputContainer">
-          <Clock socket={socket} initialTime={900000} roomId={roomId}/>
+          <Clock socket={socket} initialTime={90} roomId={roomId}/>
         </div>
       </div>
       {
