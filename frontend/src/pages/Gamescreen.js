@@ -1,5 +1,5 @@
 import "./Gamescreen.css";
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
@@ -28,34 +28,34 @@ function Gamescreen() {
   const [name, setName] = useState();
   const data = location.state;
   const navigate = useNavigate();
-  const cookies = new Cookies()
+  const cookies = new Cookies();
   const [timer, setTimer] = useState(null);
 
   useEffect(() => {
-    socket.on('gameTimerUpdate', (timerValue) => {
+    socket.on("gameTimerUpdate", (timerValue) => {
       setTimer(timerValue);
     });
-    socket.on('gameTimerExpired', () => {
-      console.log('Game timer expired');
+    socket.on("gameTimerExpired", () => {
+      console.log("Game timer expired");
     });
     return () => {
-      socket.off('gameTimerUpdate');
-      socket.off('gameTimerExpired');
+      socket.off("gameTimerUpdate");
+      socket.off("gameTimerExpired");
     };
   }, [socket]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!cookies.get("jwt_auth")) {
       navigate("/");
     }
-  })
+  });
 
-  useEffect(()=>{
-    if(data && data.name){
-      setName(data.name)
+  useEffect(() => {
+    if (data && data.name) {
+      setName(data.name);
     }
-  },[data])
-  
+  }, [data]);
+
   // useEffect(() => {
   //   socket.on("userUpdate", (data) => {
   //     setUsersData(data.players);
@@ -64,13 +64,13 @@ function Gamescreen() {
 
   return (
     <div className="ALL">
-      <CwPopup isModalOpen={false} roomId={id} socket={socket}/>
-      <EdPopup isModalOpen={true}  roomId={id} socket={socket}/>
-      <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <SePopup isModalOpen={true}  roomId={id} socket={socket}/>
-      <MousePointerSharing socket={socket} roomId={id}/>
+      <CwPopup isModalOpen={false} roomId={id} socket={socket} />
+      <EdPopup isModalOpen={true} roomId={id} socket={socket} />
+      <RlPopup isModalOpen={false} roomId={id} socket={socket} />
+      <SbPopup isModalOpen={false} roomId={id} socket={socket} />
+      <GePopup isModalOpen={false} roomId={id} socket={socket} />
+      <SePopup isModalOpen={true} roomId={id} socket={socket} />
+      <MousePointerSharing socket={socket} roomId={id} />
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">

@@ -4,81 +4,6 @@ import ScrollableModal from "../../modal/ScrollableModal";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
-const data = [
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-  {
-    score: 123,
-    rank: 12,
-    createdAt: "12/23/2023",
-    updatedAt: "12:23",
-  },
-];
-
 const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
   const [gamesHistory, setGamesHistory] = useState([]);
   console.log("Reached profile Modal " + isModalOpen);
@@ -88,17 +13,19 @@ const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
     // fetching all the games history and setting it
     axios
       .post("http://localhost:4000/api/v1/allGames", {
-        email: "hariomjoshi@gmail.com",
+        userEmail: "hariomjoshi@gmail.com",
         jwt,
+        // just for middleware purposes
       })
       .then((res) => {
-        console.log(res);
-        setGamesHistory(res);
+        // console.log(res.data.games);
+        setGamesHistory(res.data.games);
+        console.log(gamesHistory);
       })
       .catch((error) => {
         console.error("Error fetching data ", error);
       });
-  }, []);
+  }, [gamesHistory]);
 
   return (
     <>
@@ -116,11 +43,15 @@ const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
           </b>
           <div className="gamesHistory">
             <b>GAMES HISTORY</b>
-            {data.map((entry, index) => (
+            {gamesHistory.map((entry, index) => (
               <div className="oneEntry" key={index * 999}>
                 <div className="field">
                   <b> Date: </b>
-                  {entry.createdAt}
+                  {new Date(entry.createdAt).toISOString().split("T")[0]}
+                </div>
+                <div className="field">
+                  <b> Time: </b>
+                  {new Date(entry.createdAt).toTimeString().split(" ")[0]}
                 </div>
                 <div className="field">
                   <b> Score: </b>

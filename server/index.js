@@ -4,7 +4,10 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-
+const Filter = require("bad-words");
+const filter = new Filter();
+const words = require("./extra-words.json");
+filter.addWords(...words);
 // Create an Express app
 const app = express();
 
@@ -53,7 +56,6 @@ const maxRounds = 1;
 const gameRooms = {};
 const users = []; // for mouse pointer
 
-
 // Function to create a player object
 function createPlayer(
   playerId,
@@ -88,10 +90,7 @@ io.on("connection", (socket) => {
         // The socket ID is not in the room and the room exists
         // if player > threshold (min req to start the game)
         const noOfPlayersInRoom = io.sockets.adapter.rooms.get(roomId).size;
-        if (
-          noOfPlayersInRoom == reqPlayers &&
-          !gameRooms[roomId].gameStarted
-        ) {
+        if (noOfPlayersInRoom == reqPlayers && !gameRooms[roomId].gameStarted) {
           const playerIndex = gameRooms[roomId].players.findIndex(
             (player) => player.playerId === socket.id
           );
@@ -108,7 +107,6 @@ io.on("connection", (socket) => {
 
           // Add the player to the gameRooms
           gameRooms[roomId].players.push(player);
-
         }
       }
     } else {
@@ -116,9 +114,7 @@ io.on("connection", (socket) => {
       console.log(`Room ${roomId} doesn't exist, therefore creating one`); // connect with DB later
       socket.join(roomId);
       const player = createPlayer(socket.id, userName, 0, true, false);
-      console.log(
-        `Socket ID ${socket.id} has joined room ${roomId} as ADMIN`
-      );
+      console.log(`Socket ID ${socket.id} has joined room ${roomId} as ADMIN`);
       // Create a new game room with the first admin
       gameRooms[roomId] = {
         admin: player,
@@ -135,7 +131,6 @@ io.on("connection", (socket) => {
 
         currentPlayerIndex: 0,
         startTime: Date.now(),
-
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);
@@ -150,9 +145,7 @@ io.on("connection", (socket) => {
       );
       if (playerIndex === gameRooms[roomId].currentPlayerIndex) {
         // Broadcast the drawing data to other clients in the same room
-        socket.broadcast
-          .to(data.roomId)
-          .emit("drawOnWhiteboard", data);
+        socket.broadcast.to(data.roomId).emit("drawOnWhiteboard", data);
       }
     }
   });
@@ -187,7 +180,7 @@ io.on("connection", (socket) => {
   //          gameRooms[roomId].currentPlayerIndex
   //        ].playerId;
   //      // Emit an event to the current player to send drawing data
-  //      io.to(`${currPlayer}`).emit("sendDrawingData");   
+  //      io.to(`${currPlayer}`).emit("sendDrawingData");
   //      for (const player of gameRooms[roomId].players) {
   //        if(player.playerId !== currPlayer){
   //          io.to(player.playerId).emit("setDrawingControl",false)
@@ -224,142 +217,149 @@ io.on("connection", (socket) => {
   // Handling chat messages
   socket.on("message", (data) => {
     let obj = {};
-    const { message, roomId, name } = data;
-    if(gameRooms[roomId] && gameRooms[roomId].players){
-    if ( message === gameRooms[roomId].rightAns
-    ) {
-      console.log("Got ans");
-      const playerIndex = gameRooms[roomId].players.findIndex(
-        (player) => player.playerId === socket.id
-      );
-      if (
-        playerIndex !== gameRooms[roomId].currentPlayerIndex
-      ) {
-        // Broadcast a message indicating a correct guess
-        io.in(roomId).emit("messageResp", { message: "Guessed", user: name,id:socket.id });
-      }
+    let { message, roomId, name } = data;
+    const cleanMessage = filter.clean(message);
 
-      if (
-        playerIndex !== -1 &&
-        playerIndex !== gameRooms[roomId].currentPlayerIndex
-      ) {
-        // Update player's wordGuessed status and calculate score
-        gameRooms[roomId].players[playerIndex].wordGuessed = true;
-        const score =
-          100000 - (Date.now() - gameRooms[roomId].startTime);
-        gameRooms[roomId].players[playerIndex].points +=
-          score > 0 ? score : 1;
-        console.log(
-          "score: ",
-          gameRooms[roomId].players[playerIndex].points
-        );
-      }
-    } else {
-      if (
-        gameRooms[roomId] && gameRooms[roomId].players &&
-        message !== gameRooms[roomId].rightAns
-      ) {
+    if (cleanMessage !== message) {
+      // decrement the number of chance by one
+      // show popup
+      message = cleanMessage;
+    }
+    console.log("CleanMessage " + message);
+
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      if (message === gameRooms[roomId].rightAns) {
+        console.log("Got ans");
         const playerIndex = gameRooms[roomId].players.findIndex(
           (player) => player.playerId === socket.id
         );
-        // Broadcast chat messages (excluding the sender) if the message is not the correct answer
-        socket.broadcast
-          .to(roomId)
-          .emit("messageResp", { message, user: gameRooms[roomId].players[playerIndex].playerName, id:socket.id });
-      }
-
-    }
-    socket.broadcast.to(roomId).emit("messageResp", obj);
-    let flag = false;
-
-    for (const player of gameRooms[roomId].players) {
-      if (
-        gameRooms[roomId] &&
-        gameRooms[roomId].players[
-          gameRooms[roomId].currentPlayerIndex
-        ] &&
-        gameRooms[roomId].players[
-          gameRooms[roomId].currentPlayerIndex
-        ].playerId === player.playerId
-      ) {
-
-      if (player.playerId === socket.id) {
-        continue;
-      }
-      if (!player.wordGuessed) {
-        flag = true;
-        break;
-      }
-    }
-    if (!flag) {
-      
-      // Broadcast an event indicating the end of the game
-      io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
-      // next turn logic
-      // gameGuessed = false for all
-      // currentPlayerIndex++
-      // rightAns = null
-      for (const player of gameRooms[roomId].players) {
-        player.wordGuessed = false;
-      }
-      gameRooms[roomId].rightAns = null;
-      // round end
-      if(gameRooms[roomId].currentPlayerIndex < gameRooms[roomId].players.length-1){
-        gameRooms[roomId].currentPlayerIndex = ( gameRooms[roomId].currentPlayerIndex + 1 ) % gameRooms[roomId].players.length;
-        const currPlayer =
-          gameRooms[roomId].players[
-            gameRooms[roomId].currentPlayerIndex
-          ].playerId;
-        // Emit an event to the current player to send drawing data
-        io.to(`${currPlayer}`).emit("sendDrawingData");   
-        for (const player of gameRooms[roomId].players) {
-          if(player.playerId !== currPlayer){
-            io.to(player.playerId).emit("setDrawingControl",false)
-          }else{
-            io.to(`${currPlayer}`).emit("setDrawingControl",true)
-          }
-          player.wordGuessed = false;
+        if (playerIndex !== gameRooms[roomId].currentPlayerIndex) {
+          // Broadcast a message indicating a correct guess
+          io.in(roomId).emit("messageResp", {
+            message: "Guessed",
+            user: name,
+            id: socket.id,
+          });
         }
-        socket.to(roomId).emit("setDrawingControl",false)
-        // broadcast to everyone that the next player is choosing word (ADD)
-        }else {
-          console.log("else in endGame")
-        if(gameRooms[roomId].currRound === gameRooms[roomId].rounds){
-          io.in(roomId).emit("finalGameEnd",gameRooms[roomId]);
-          console.log("-*-*-GAME END-*-*-")
-        } else {
-          gameRooms[roomId].currRound++;
-          gameRooms[roomId].currentPlayerIndex = 0;
-          io.to(`${currPlayer}`).emit("sendDrawingData");
+
+        if (
+          playerIndex !== -1 &&
+          playerIndex !== gameRooms[roomId].currentPlayerIndex
+        ) {
+          // Update player's wordGuessed status and calculate score
+          gameRooms[roomId].players[playerIndex].wordGuessed = true;
+          const score = 100000 - (Date.now() - gameRooms[roomId].startTime);
+          gameRooms[roomId].players[playerIndex].points +=
+            score > 0 ? score : 1;
+          console.log("score: ", gameRooms[roomId].players[playerIndex].points);
+        }
+      } else {
+        if (
+          gameRooms[roomId] &&
+          gameRooms[roomId].players &&
+          message !== gameRooms[roomId].rightAns
+        ) {
+          const playerIndex = gameRooms[roomId].players.findIndex(
+            (player) => player.playerId === socket.id
+          );
+          // Broadcast chat messages (excluding the sender) if the message is not the correct answer
+          socket.broadcast.to(roomId).emit("messageResp", {
+            message,
+            user: gameRooms[roomId].players[playerIndex].playerName,
+            id: socket.id,
+          });
+        }
+      }
+      socket.broadcast.to(roomId).emit("messageResp", obj);
+      let flag = false;
+
+      for (const player of gameRooms[roomId].players) {
+        if (
+          gameRooms[roomId] &&
+          gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex] &&
+          gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex]
+            .playerId === player.playerId
+        ) {
+          if (player.playerId === socket.id) {
+            continue;
+          }
+          if (!player.wordGuessed) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          // Broadcast an event indicating the end of the game
+          io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+          // next turn logic
+          // gameGuessed = false for all
+          // currentPlayerIndex++
+          // rightAns = null
           for (const player of gameRooms[roomId].players) {
-            if(player.playerId !== currPlayer){
-              io.to(playerId).emit("setDrawingControl",false)
-            }else{
-              io.to(`${currPlayer}`).emit("setDrawingControl",true)
-            }
             player.wordGuessed = false;
           }
+          gameRooms[roomId].rightAns = null;
+          // round end
+          if (
+            gameRooms[roomId].currentPlayerIndex <
+            gameRooms[roomId].players.length - 1
+          ) {
+            gameRooms[roomId].currentPlayerIndex =
+              (gameRooms[roomId].currentPlayerIndex + 1) %
+              gameRooms[roomId].players.length;
+            const currPlayer =
+              gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex]
+                .playerId;
+            // Emit an event to the current player to send drawing data
+            io.to(`${currPlayer}`).emit("sendDrawingData");
+            for (const player of gameRooms[roomId].players) {
+              if (player.playerId !== currPlayer) {
+                io.to(player.playerId).emit("setDrawingControl", false);
+              } else {
+                io.to(`${currPlayer}`).emit("setDrawingControl", true);
+              }
+              player.wordGuessed = false;
+            }
+            socket.to(roomId).emit("setDrawingControl", false);
+            // broadcast to everyone that the next player is choosing word (ADD)
+          } else {
+            console.log("else in endGame");
+            if (gameRooms[roomId].currRound === gameRooms[roomId].rounds) {
+              io.in(roomId).emit("finalGameEnd", gameRooms[roomId]);
+              console.log("-*-*-GAME END-*-*-");
+            } else {
+              gameRooms[roomId].currRound++;
+              gameRooms[roomId].currentPlayerIndex = 0;
+              io.to(`${currPlayer}`).emit("sendDrawingData");
+              for (const player of gameRooms[roomId].players) {
+                if (player.playerId !== currPlayer) {
+                  io.to(playerId).emit("setDrawingControl", false);
+                } else {
+                  io.to(`${currPlayer}`).emit("setDrawingControl", true);
+                }
+                player.wordGuessed = false;
+              }
+            }
+          }
         }
       }
-    } 
-  }
+    }
   });
 
-  socket.on('mouseMove', (data) => {
+  socket.on("mouseMove", (data) => {
     // const {idx,name,x,y} = data;
-    const { x, y,roomId } = data;
-    if(gameRooms[roomId] && gameRooms[roomId].players){
+    const { x, y, roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
       const idx = gameRooms[roomId].players.findIndex(
         (player) => player.playerId === socket.id
       );
-      if(idx !== -1){
+      if (idx !== -1) {
         const name = gameRooms[roomId].players[idx].playerName;
         const id = gameRooms[roomId].players[idx].playerId;
         // Broadcast the mouse movement data to other clients in the same room
-        socket.broadcast.to(roomId).emit('mouseMove', { idx,name, x, y,id });
+        socket.broadcast.to(roomId).emit("mouseMove", { idx, name, x, y, id });
       }
-      }
-      
+    }
   });
 
   // Handling setting drawing name event
@@ -367,18 +367,14 @@ io.on("connection", (socket) => {
     const { roomId, drawingName } = data;
     if (
       gameRooms[roomId] &&
-      gameRooms[roomId].players[
-        gameRooms[roomId].currentPlayerIndex
-      ] &&
-      gameRooms[roomId].players[
-        gameRooms[roomId].currentPlayerIndex
-      ].playerId === socket.id
+      gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex] &&
+      gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex]
+        .playerId === socket.id
     ) {
-        socket.on('setUserData', (userData) => {
-          users[socket.id] = userData;
-          socket.broadcast.emit('userConnect', { id: socket.id, userData });
-        });
-
+      socket.on("setUserData", (userData) => {
+        users[socket.id] = userData;
+        socket.broadcast.emit("userConnect", { id: socket.id, userData });
+      });
 
       console.log(drawingName);
       gameRooms[roomId].rightAns = drawingName;
@@ -386,12 +382,17 @@ io.on("connection", (socket) => {
         // Broadcast an event indicating the start of the game
         io.sockets.in(roomId).emit("startGame", gameRooms[roomId]);
         console.log("Game Started");
-        socket.emit("setDrawingControl",true)
-        socket.to(roomId).emit("setDrawingControl",false)
-        const data = {pName:gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex].playerName, wSize:gameRooms[roomId].rightAns.length}
-        
+        socket.emit("setDrawingControl", true);
+        socket.to(roomId).emit("setDrawingControl", false);
+        const data = {
+          pName:
+            gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex]
+              .playerName,
+          wSize: gameRooms[roomId].rightAns.length,
+        };
+
         for (const player of gameRooms[roomId].players) {
-          io.to(player.playerId).emit("currentPlayerData",data)
+          io.to(player.playerId).emit("currentPlayerData", data);
         }
       }
     } else {
@@ -418,14 +419,10 @@ io.on("connection", (socket) => {
           break;
         }
       }
-      if (
-        !flag &&
-        io.sockets.adapter.rooms.get(roomId).size === reqPlayers
-      ) {
+      if (!flag && io.sockets.adapter.rooms.get(roomId).size === reqPlayers) {
         const currPlayer =
-          gameRooms[roomId].players[
-            gameRooms[roomId].currentPlayerIndex
-          ].playerId;
+          gameRooms[roomId].players[gameRooms[roomId].currentPlayerIndex]
+            .playerId;
         // Emit an event to the current player to send drawing data
         io.to(`${currPlayer}`).emit("sendDrawingData");
         // broadcast to everyone that the next player is choosing word (ADD)
