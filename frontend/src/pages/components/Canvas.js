@@ -31,7 +31,6 @@ function Canvas({
     border: "2px solid #3498db",
     borderRadius: "8px",
     backgroundColor: "#ecf0f1",
-
   };
 
   useEffect(() => {
