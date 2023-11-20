@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Clock from "./Clock";
 import "./OptionBar.css";
 import { useState } from "react";
+import { IoIosUndo, IoIosRedo } from "react-icons/io";
 
 function OptionBar({
   onColorChange,
@@ -17,6 +18,9 @@ function OptionBar({
   const [drawingName, setDrawingName] = useState("");
   const [wordSize, setWordSize] = useState("");
   const [playerName, setPlayerName] = useState("Player1");
+  const redo = () => {};
+
+  const undo = () => {};
 
   useEffect(() => {
     socket.emit("setDrawingName", {
@@ -25,24 +29,24 @@ function OptionBar({
     });
   }, [drawingName, roomId, socket]);
 
-  useEffect(()=>{
-    socket.on("setDrawingControl",(data)=>{
+  useEffect(() => {
+    socket.on("setDrawingControl", (data) => {
       setIsItMyTurn(data);
-    })
-    socket.on("currentPlayerData",(data)=>{
-      const {pName, wSize} = data;
+    });
+    socket.on("currentPlayerData", (data) => {
+      const { pName, wSize } = data;
       setPlayerName(pName);
-      setWordSize(wSize)
-    })
-  },[socket])
+      setWordSize(wSize);
+    });
+  }, [socket]);
 
   return (
     <div className="container">
-     <div className="logo">
-          <h1 >
-            bit<span className="logo-highlight">2</span>byte
-          </h1>
-        </div>
+      <div className="logo">
+        <h1>
+          bit<span className="logo-highlight">2</span>byte
+        </h1>
+      </div>
       <div className="controls">
         {isItMyTurn && (
           <div className="labelInputContainer">
@@ -86,20 +90,25 @@ function OptionBar({
           </div>
         )}
         <div className="labelInputContainer">
-          <Clock socket={socket} initialTime={90} roomId={roomId}/>
+          <Clock socket={socket} initialTime={90} roomId={roomId} />
         </div>
       </div>
-      {
-        !isItMyTurn && (
-          <div className="labelInputContainer">
-            It's {playerName}'s turn to draw
-          </div>
-        )
-      }
+      {!isItMyTurn && (
+        <div className="labelInputContainer">
+          It's {playerName}'s turn to draw
+        </div>
+      )}
 
       {!isItMyTurn && (
         <div className="labelInputContainer">
           Word size: <b>{wordSize}</b>
+        </div>
+      )}
+
+      {!isItMyTurn && (
+        <div className="undoAndRedo">
+          <IoIosUndo size={35} onClick={undo} />
+          <IoIosRedo size={35} onClick={redo} />
         </div>
       )}
     </div>

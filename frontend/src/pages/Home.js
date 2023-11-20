@@ -4,8 +4,11 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "./Home.css";
+import Modal from "react-modal";
+import ProfileModal from "./homescreencomp/popups/ProfileModal";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
+Modal.setAppElement("#root"); // binding the component to the app element
 
 function Home({}) {
   const [user, setUser] = useState(null);
@@ -13,6 +16,7 @@ function Home({}) {
   const [joinRoomId, setJoinRoomId] = useState("");
   const [createRoomType, setCreateRoomType] = useState("public");
   const [createRoomId, setCreateRoomId] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const cookies = new Cookies();
   const navigate = useNavigate();
   const jwt = cookies.get("jwt_auth");
@@ -64,6 +68,30 @@ function Home({}) {
       });
   }, []);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  // just for trial, gonnna delete it later
+  const addField = () => {
+    const link = "http://localhost:4000/api/v1/addGame";
+    axios
+      .post(link, {
+        score: 123,
+        rank: 12,
+        userEmail: "hariomjoshi@gmail.com",
+        jwt, // just for the middleware purposes
+      })
+      .then(() => {
+        console.log("Add successful");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="home-container">
       <div className="top-bar">
@@ -73,7 +101,14 @@ function Home({}) {
           </h1>
         </div>
         <div className="profile-button">
-          <button to="/profile">Profile</button>
+          {/* for now i am just passing name as userId but eventually it will be email id */}
+          <ProfileModal
+            userId={name.name}
+            isModalOpen={isModalOpen}
+            closeModal={closeModal}
+          />
+          {console.log(isModalOpen)}
+          <button onClick={openModal}>Profile</button>
           <button
             onClick={() => {
               setUser(null);
