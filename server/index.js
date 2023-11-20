@@ -397,6 +397,11 @@ socket.on("nextTurn",(data)=>{
       
   });
 
+  socket.on("clearRect",(roomId)=>{
+    console.log("received clear rect")
+    io.in(roomId).emit("disableMouse",roomId)
+  })
+
   socket.on("disableMouse", (data)=>{
     const {roomId} = data;
     if(gameRooms[roomId] && gameRooms[roomId].players){

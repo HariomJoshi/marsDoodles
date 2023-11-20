@@ -178,6 +178,7 @@
 
 .join-room,
 .create-room {
+  width: 300px;
   border: 1px solid #3498db;
   padding: 20px;
   background-color: #f0f0f0;

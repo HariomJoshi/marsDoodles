@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Clock from "./Clock";
+import { FaPencilAlt, FaMarker, FaPalette } from 'react-icons/fa';
 import "./OptionBar.css";
 import { useState } from "react";
 
@@ -60,20 +61,45 @@ function OptionBar({
           <div className="labelInputContainer">
             <label className="label"></label>
             <input
-              className="input"
-              type="color"
-              onChange={(e) => onColorChange(e.target.value)}
-            />
+            className="input colorInput"  
+            type="color"
+            onChange={(e) => onColorChange(e.target.value)}
+            style={{ width: '30px', height: '30px', padding: '0', borderRadius: '5px' }}
+          />
           </div>
         )}
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <button onClick={()=>{changeType("pencil")}}>Pencil</button>
-            <button onClick={()=>{changeType("circle")}}>Circle</button>
-            <button onClick={()=>{changeType("square")}}>Square</button>
-            <button onClick={()=>{changeType("rectangle")}}>Rectangle</button>
-            <button onClick={()=>{changeType("ellipse")}}>Ellipse</button>
-          </div>
+          <button
+          onClick={() => { changeType("marker") }}
+          style={{ fontSize: '20px', padding: '10px', margin:'10px'}} 
+        >
+          <FaMarker />
+        </button>
+
+        <button
+          onClick={() => { changeType("pencil") }}
+          style={{ fontSize: '20x', padding: '8px', margin:'10px' }}
+        >
+          <FaPencilAlt />
+        </button>
+
+        <button
+          onClick={() => { changeType("multicolour") }}
+          style={{ fontSize: '20px', padding: '10px', margin:'10px' }} 
+        >
+          <FaPalette />
+        </button>
+
+        <button
+          onClick={() => { changeType("eraser") }}
+          style={{ fontSize: '20px', padding: '10px', margin:'10px' }} 
+        >
+          Eraser
+        </button>
+
+        </div>
+        
         )}
         {isItMyTurn && (
           <div className="labelInputContainer">
@@ -86,7 +112,7 @@ function OptionBar({
           </div>
         )}
         <div className="labelInputContainer">
-          <Clock socket={socket} initialTime={90} roomId={roomId}/>
+          <Clock socket={socket} initialTime={9000000} roomId={roomId}/>
         </div>
       </div>
       {

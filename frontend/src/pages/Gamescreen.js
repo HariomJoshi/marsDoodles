@@ -32,7 +32,7 @@ function Gamescreen() {
   const navigate = useNavigate();
   const cookies = new Cookies()
   const [timer, setTimer] = useState(null);
-  const [objType, setObjType] = useState("pencil")
+  const [objType, setObjType] = useState("marker")
 
   function changeType(type){
     setObjType(type);

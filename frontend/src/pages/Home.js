@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import copy from "copy-to-clipboard";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -12,7 +13,11 @@ function Home({}) {
   const [rooms, setRooms] = useState([]);
   const [joinRoomId, setJoinRoomId] = useState("");
   const [createRoomType, setCreateRoomType] = useState("public");
-  const [createRoomId, setCreateRoomId] = useState("");
+  const [player2Invited, setPlayer2Invited] = useState("Invite");
+  const [player3Invited, setPlayer3Invited] = useState("Invite");
+  const [player2Mail, setPlayer2Mail] = useState();
+  const [player3Mail, setPlayer3Mail] = useState();
+  const [copyText, setCopyText] = useState("");
   const cookies = new Cookies();
   const navigate = useNavigate();
   const jwt = cookies.get("jwt_auth");
@@ -23,17 +28,69 @@ function Home({}) {
     if (joinRoomId !== "") {
       const data = { userName: user, roomId: joinRoomId };
       socket.emit("joinUser", data);
+      axios
+        .post(`http://localhost:4000/api/v1/createRoom/${roomId}`, {
+          jwt: jwt,
+          type: createRoomType,
+        })
+        .then((response) => {
+          console.log("Room created");
+        })
+        .catch((error) => {
+          console.log("Error creating room: ", error);
+        });
       navigate(`/pages/game-screen/${joinRoomId}`, { state: name });
     }
   };
 
   const handleCreateRoom = () => {
-    if (createRoomId !== "") {
-      const data = { userName: user, roomId: createRoomId };
-      socket.emit("joinUser", data);
-      navigate(`/pages/game-screen/${createRoomId}`, { state: name });
+    let ans = "x"
+      .repeat(25)
+      .replace(
+        /./g,
+        (c) =>
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"[
+            Math.floor(Math.random() * 72)
+          ]
+      );
+    setCopyText(ans);
+    console.log(ans);
+  };
+
+  const handleInvite = (email, no) => {
+    if (email !== "") {
+      axios
+        .post("http://localhost:4000/api/v1/sendInvitationMail", {
+          jwt: jwt,
+          link: copyText,
+          email: email,
+        })
+        .then((response) => {
+          console.log(no);
+          if (no === "2") {
+            console.log("Reached no 2");
+            setPlayer2Invited("Successful ✅");
+          } else if (no === "3") {
+            setPlayer3Invited("Successful ✅");
+          }
+          console.log("Email sent");
+        })
+        .catch((error) => {
+          if (no === "2") {
+            setPlayer2Invited("Failed ❌. Try again.");
+          }
+          if (no === "3") {
+            setPlayer3Invited("Failed ❌. Try again.");
+          }
+          console.log("Error fetching data: ", error);
+        });
     }
   };
+
+  useEffect(() => {
+    if (player2Invited) {
+    }
+  }, [player2Invited]);
 
   const handleRefresh = () => {
     axios
@@ -47,6 +104,13 @@ function Home({}) {
         console.error("Error fetching data:", error);
       });
   };
+
+  function joinFromSide(roomId) {
+    console.log(roomId);
+    const data = { userName: user, roomId: roomId };
+    // socket.emit("joinUser", data);
+    navigate(`/pages/game-screen/${roomId}`, { state: name });
+  }
 
   useEffect(() => {
     if (!cookies.get("jwt_auth")) {
@@ -111,7 +175,9 @@ function Home({}) {
                 </div>
                 <button
                   className="join-button"
-                  onClick={() => handleJoinRoom(room.roomId)}
+                  onClick={() => {
+                    joinFromSide(room.roomId);
+                  }}
                 >
                   Join
                 </button>
@@ -137,7 +203,7 @@ function Home({}) {
               </div>
             </div>
             <div className="create-room-container">
-              <h2>Create Private Room</h2>
+              <h2>Create Room</h2>
               <div className="create-room">
                 <select
                   className="roomId-input"
@@ -147,20 +213,21 @@ function Home({}) {
                   <option value="public">Public</option>
                   <option value="private">Private</option>
                 </select>
-                <input
-                  type="text"
-                  placeholder="Room ID"
-                  value={createRoomId}
-                  onChange={(e) => setCreateRoomId(e.target.value)}
-                />
                 <div className="invite-section">
                   <label>
                     Player 2:
                     <input
                       type="text"
                       placeholder="Enter email to invite ..."
+                      onChange={(e) => setPlayer2Mail(e.target.value)}
                     />
-                    <button>Invite</button>
+                    <button
+                      onClick={(e) => {
+                        handleInvite(player2Mail, "2");
+                      }}
+                    >
+                      {player2Invited}
+                    </button>
                   </label>
                 </div>
                 <div className="invite-section">
@@ -169,17 +236,24 @@ function Home({}) {
                     <input
                       type="text"
                       placeholder="Enter email to invite ..."
+                      onChange={(e) => setPlayer3Mail(e.target.value)}
                     />
-                    <button>Invite</button>
+                    <button
+                      onClick={(e) => {
+                        handleInvite(player3Mail, "3");
+                      }}
+                    >
+                      {player3Invited}
+                    </button>
                   </label>
                 </div>
                 <div className="generate-section">
-                  <input type="text" />
+                  <input type="text" defaultValue={copyText} />
                   <button
                     className="create-join-button"
                     onClick={handleCreateRoom}
                   >
-                    Generate & copy
+                    Generate
                   </button>
                 </div>
               </div>

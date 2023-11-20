@@ -8,6 +8,7 @@ exports.createRoom = async(req,res) => {
     try{
         const roomId = req.params.id;
         const {type} = req.body;
+        console.log(type)
         const {email,id} = req.user;
         
         const user = await User.findOne({email});
@@ -21,6 +22,7 @@ exports.createRoom = async(req,res) => {
                 roomId,admin:userID,participants,type
             });
 
+        console.log(`Room Created successfully with admin ${id}`)
         return res.status(200).json({
             success:true,
             message:`Room Created successfully with admin ${id}`
