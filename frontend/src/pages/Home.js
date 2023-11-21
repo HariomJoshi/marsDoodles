@@ -5,6 +5,7 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "./Home.css";
+import ProfileModal from "./homescreencomp/popups/ProfileModal";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -16,6 +17,7 @@ function Home({}) {
   const [player2Invited, setPlayer2Invited] = useState("Invite");
   const [player3Invited, setPlayer3Invited] = useState("Invite");
   const [player2Mail, setPlayer2Mail] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [player3Mail, setPlayer3Mail] = useState();
   const [copyText, setCopyText] = useState("");
   const cookies = new Cookies();
@@ -27,7 +29,6 @@ function Home({}) {
   const handleJoinRoom = (roomId) => {
     if (joinRoomId !== "") {
       const data = { userName: user, roomId: joinRoomId };
-      socket.emit("joinUser", data);
       axios
         .post(`http://localhost:4000/api/v1/createRoom/${roomId}`, {
           jwt: jwt,
@@ -128,6 +129,13 @@ function Home({}) {
       });
   }, []);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="home-container">
       <div className="top-bar">
@@ -137,7 +145,12 @@ function Home({}) {
           </h1>
         </div>
         <div className="profile-button">
-          <button to="/profile">Profile</button>
+          <ProfileModal
+            userId={name.name}
+            isModalOpen={isModalOpen}
+            closeModal={closeModal}
+          />
+          <button onClick={openModal}>Profile</button>
           <button
             onClick={() => {
               setUser(null);
