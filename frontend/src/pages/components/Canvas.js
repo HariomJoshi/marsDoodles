@@ -318,6 +318,7 @@ function Canvas({
         >
           Clear canvas
         </button>
+        {/* <button onClick={}>Rectangle</button> */}
       </div>
       <canvas
         style={{
