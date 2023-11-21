@@ -6,7 +6,15 @@ import Chat from "./components/Chat";
 import OptionBar from "./components/OptionBar";
 import Onlineusers from "./components/Onlineusers";
 import { useLocation, useParams } from "react-router-dom";
+import { AiOutlineSetting } from "react-icons/ai";
 import Cookies from "universal-cookie";
+import EdPopup from "./components/popups/EnterDetailsPopup";
+import CwPopup from "./components/popups/ChooseWordPopup";
+import RlPopup from "./components/popups/RoomLimitPopup";
+import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
+import GePopup from "./components/popups/GameEndPopup";
+import SePopup from "./components/popups/SettingsPopup";
+import MousePointerSharing from "./components/MousePointerSharing";
 const io = require("socket.io-client");
 const socket = io.connect("http://localhost:4000");
 
@@ -18,13 +26,23 @@ function Gamescreen() {
   const [selectedLineDash, setSelectedLineDash] = useState("");
   const [drawingName, setDrawingName] = useState("");
   const [usersData, setUsersData] = useState();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [name, setName] = useState();
   const data = location.state;
   const navigate = useNavigate();
   const cookies = new Cookies()
   const [timer, setTimer] = useState(null);
+  const [objType, setObjType] = useState("marker")
+
+  function changeType(type){
+    setObjType(type);
+  }
 
   useEffect(() => {
+    socket.on("youHaveBeenKicked",()=>{
+      console.log("i'm being kicked")
+      navigate("/home")
+    })
     socket.on('gameTimerUpdate', (timerValue) => {
       setTimer(timerValue);
     });
@@ -49,14 +67,27 @@ function Gamescreen() {
     }
   },[data])
 
-  useEffect(() => {
-    socket.on("userUpdate", (data) => {
-      setUsersData(data.players);
-    });
-  }, [socket, usersData]);
+  // useEffect(() => {
+  //   socket.on("userUpdate", (data) => {
+  //     setUsersData(data.players);
+  //   });
+  // }, [socket, usersData]);
 
   return (
     <div className="ALL">
+      <CwPopup isModalOpen={false} roomId={id} socket={socket}/>
+      <EdPopup isModalOpen={true}  roomId={id} socket={socket}/>
+      <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
+      <SePopup  isModalOpen={false} settingsOpen={settingsOpen} roomId={id} socket={socket}/>
+      <SePopup
+        isModalOpen={settingsOpen}
+        roomId={id}
+        socket={socket}
+        openSettingsModal={(isOpen) => setSettingsOpen(isOpen)}
+      />
+      <MousePointerSharing socket={socket} roomId={id}/>
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
@@ -71,7 +102,11 @@ function Gamescreen() {
               roomId={id}
               socket={socket}
               timer={timer}
+              changeType={changeType}
             />
+            <button onClick={() => setSettingsOpen(true)}>
+              <AiOutlineSetting size={49}/> 
+            </button>
           </div>
           <div className="drawingBoard">
             <Canvas
@@ -80,10 +115,11 @@ function Gamescreen() {
               selectedLineDash={selectedLineDash}
               roomId={id}
               socket={socket}
+              objType={objType}
             />
           </div>
           <div className="online-users-container">
-            <Onlineusers usersData={usersData}></Onlineusers>
+            <Onlineusers socket={socket} roomId={id}></Onlineusers>
           </div>
         </div>
         <div className="chat-section">

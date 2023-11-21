@@ -1,0 +1,15 @@
+.drawing-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .drawing-actions button {
+    padding: 8px 16px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .drawing-actions button:last-child {
+    margin-right: 0;
+  }

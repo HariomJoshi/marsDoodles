@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Clock from "./Clock";
+import { FaPencilAlt, FaMarker, FaPalette } from "react-icons/fa";
 import "./OptionBar.css";
 import { useState } from "react";
 
@@ -10,11 +11,13 @@ function OptionBar({
   transferRightAns,
   socket,
   roomId,
-  timer
+  timer,
+  changeType,
 }) {
-  const [isGameStarted, setIsGameStarted] = useState(false);
   const [isItMyTurn, setIsItMyTurn] = useState(false);
   const [drawingName, setDrawingName] = useState("");
+  const [wordSize, setWordSize] = useState("");
+  const [playerName, setPlayerName] = useState("Player1");
 
   useEffect(() => {
     socket.emit("setDrawingName", {
@@ -23,36 +26,95 @@ function OptionBar({
     });
   }, [drawingName, roomId, socket]);
 
+  useEffect(() => {
+    socket.on("setDrawingControl", (data) => {
+      setIsItMyTurn(data);
+    });
+    socket.on("currentPlayerData", (data) => {
+      const { pName, wSize } = data;
+      setPlayerName(pName);
+      setWordSize(wSize);
+    });
+  }, [socket]);
+
   return (
     <div className="container">
       <div className="logo">
-        <h1>bit2byte</h1>
+        <h1>
+          bit<span className="logo-highlight">2</span>byte
+        </h1>
       </div>
       <div className="controls">
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <label className="label">Line Width:</label>
+            <label className="label"></label>
             <input
-              className="input"
-              type="number"
+              className="rangeInput"
+              type="range"
               min="1"
+              max="60"
               onChange={(e) => onLineWidthChange(Number(e.target.value))}
             />
           </div>
         )}
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <label className="label">Line Color:</label>
+            <label className="label"></label>
             <input
-              className="input"
+              className="input colorInput"
               type="color"
               onChange={(e) => onColorChange(e.target.value)}
+              style={{
+                width: "30px",
+                height: "30px",
+                padding: "0",
+                borderRadius: "5px",
+              }}
             />
           </div>
         )}
         {isItMyTurn && (
           <div className="labelInputContainer">
-            <label className="label">Line Dash:</label>
+            <button
+              onClick={() => {
+                changeType("marker");
+              }}
+              style={{ fontSize: "20px", padding: "10px", margin: "10px" }}
+            >
+              <FaMarker />
+            </button>
+
+            <button
+              onClick={() => {
+                changeType("pencil");
+              }}
+              style={{ fontSize: "20x", padding: "8px", margin: "10px" }}
+            >
+              <FaPencilAlt />
+            </button>
+
+            <button
+              onClick={() => {
+                changeType("multicolour");
+              }}
+              style={{ fontSize: "20px", padding: "10px", margin: "10px" }}
+            >
+              <FaPalette />
+            </button>
+
+            <button
+              onClick={() => {
+                changeType("eraser");
+              }}
+              style={{ fontSize: "20px", padding: "10px", margin: "10px" }}
+            >
+              Eraser
+            </button>
+          </div>
+        )}
+        {isItMyTurn && (
+          <div className="labelInputContainer">
+            <label className="label"></label>
             <input
               className="input"
               type="text"
@@ -61,24 +123,18 @@ function OptionBar({
           </div>
         )}
         <div className="labelInputContainer">
-          <Clock socket={socket} initialTime={60}/>
+          <Clock socket={socket} initialTime={90} roomId={roomId} />
         </div>
       </div>
-
-      <div className="labelInputContainer">
-        <label className="label">Drawing: </label>
-        <input
-          className="input"
-          type="text"
-          onChange={(e) => {
-            setDrawingName(e.target.value);
-          }}
-        />
-      </div>
+      {!isItMyTurn && (
+        <div className="labelInputContainer">
+          It's {playerName}'s turn to draw
+        </div>
+      )}
 
       {!isItMyTurn && (
         <div className="labelInputContainer">
-          Word size: <b>{drawingName.length}</b>
+          Word size: <b>{wordSize}</b>
         </div>
       )}
     </div>

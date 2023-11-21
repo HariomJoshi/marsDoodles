@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { BASE_URL } from "./helper";
 
 function LoginPage() {
   let [passType, setPassType] = useState("password");
@@ -14,7 +15,7 @@ function LoginPage() {
   function submit(e) {
     e.preventDefault();
     axios
-      .post("http://localhost:4000/api/v1/login", {
+      .post(`${BASE_URL}/login`, {
         email: email,
         password: password,
       })
@@ -46,49 +47,51 @@ function LoginPage() {
 
   return (
     <div className="everyThing">
-      <div className="centerPartlogin">
-        <h1 className="login">Hey, hello! 👋</h1>
-        <form className="formElement" onSubmit={submit}>
-          <p className="lightText">
-            Enter the information you entered while registering
-          </p>
-          <legend className="login">Email: </legend>
-          <input
-            className="inp"
-            type="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-          <legend className="login">Password: </legend>
-          <input
-            className="inp"
-            type={passType}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-          <div className="showPassword">
-            <p className="lightText">Show password: </p>
+      <div className="enterDetails">
+        <div className="centerPartlogin">
+          <h1 className="login">Hey, hello! 👋</h1>
+          <form onSubmit={submit}>
+            <p className="lightText">
+              Enter the information you entered while registering
+            </p>
+            <legend className="login">Email: </legend>
             <input
-              className="checkbox"
-              type="checkbox"
-              onClick={() => {
-                passType == "password"
-                  ? setPassType("text")
-                  : setPassType("password");
+              className="inp"
+              type="email"
+              onChange={(e) => {
+                setEmail(e.target.value);
               }}
             />
-          </div>
-          <div className="register-link">
-            <p>
-              <Link to="/register">haven't registered yet? click here</Link>
-            </p>
-          </div>
-          <button type="submit" className="loginBtn" onClick={submit}>
-            Login
-          </button>
-        </form>
+            <legend className="login">Password: </legend>
+            <input
+              className="inp"
+              type={passType}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
+            <div className="showPassword">
+              <p className="lightText">Show password: </p>
+              <input
+                className="checkbox"
+                type="checkbox"
+                onClick={() => {
+                  passType == "password"
+                    ? setPassType("text")
+                    : setPassType("password");
+                }}
+              />
+            </div>
+            <div className="register-link">
+              <p>
+                <Link to="/register">haven't registered yet? click here</Link>
+              </p>
+            </div>
+            <button type="submit" className="loginBtn" onClick={submit}>
+              Login
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

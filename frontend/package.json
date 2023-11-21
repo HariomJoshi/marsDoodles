@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -11,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jwt-decode": "^3.1.0",
     "axios": "^1.6.0",
+    "copy-to-clipboard": "^3.3.3",
     "cors": "^2.8.5",
     "framer-motion": "^10.16.4",
     "jwt-decode": "^4.0.0",
@@ -18,11 +18,14 @@
     "nodemon": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.18.0",
     "react-scripts": "5.0.1",
+    "react-share": "^4.4.1",
+    "roughjs": "^4.6.5",
     "socket.io-client": "^4.7.2",
     "universal-cookie": "^6.1.1",
-
     "web-vitals": "^2.1.4"
   },
   "scripts": {

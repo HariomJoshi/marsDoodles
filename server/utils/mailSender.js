@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 const mailSender = async(userEmail,mailSubject,mailBody) => {
     try {
-
+        console.log(userEmail, " ", mailSubject, " ", mailBody)
         let transporter = nodemailer.createTransport({
             host:process.env.MAIL_HOST,
             auth:{
@@ -19,6 +19,7 @@ const mailSender = async(userEmail,mailSubject,mailBody) => {
         })
 
     } catch (error) {
+        console.log(error)
         console.log("Error occurred while sending mail (config/mailSender)");
     }
 }

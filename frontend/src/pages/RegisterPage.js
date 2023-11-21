@@ -2,6 +2,7 @@ import "./LoginPage.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "./helper";
 
 function RegisterPage() {
   let [passType, setPassType] = useState("password");
@@ -12,7 +13,7 @@ function RegisterPage() {
   function submit(e) {
     e.preventDefault();
     axios
-      .post("http://localhost:4000/api/v1/signup", {
+      .post(`${BASE_URL}/signup`, {
         name: name,
         email: email,
         password: password,
@@ -85,24 +86,6 @@ function RegisterPage() {
             </div>
             <button className="loginBtn">Register</button>
           </form>
-        </div>
-      </div>
-
-      <div className="sideText">
-        <div className="centerSquare">
-          <h1 id="message">
-            <div className="text">
-              Draw
-              <br /> and guess
-              <br /> BETTER
-              <br />
-            </div>{" "}
-            and easier{" "}
-          </h1>
-          <p className="subHeading">
-            Guess it or not
-            <br /> doesen't matter
-          </p>
         </div>
       </div>
     </div>
