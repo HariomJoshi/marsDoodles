@@ -3,7 +3,7 @@ const router = express.Router();
 require("dotenv").config();
 
 const { login, signup } = require("../controllers/Auth");
-const { auth } = require("../middlewares/auth");
+const { auth } = require("../middlewares/Auth");
 const {
   createRoom,
   joinRoom,
