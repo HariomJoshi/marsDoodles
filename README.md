@@ -1,6 +1,7 @@
 # MARSDOODLE
 [WEBSTER](https://sac.mnnit.ac.in/codesangam)  MNNIT 2023 project.
 
+You can play it here - https://bit2byte.netlify.app/
 
 ### ABOUT PROJECT:-
 What's That Doodle!! is a multiplayer drawing and guessing pictionary game.
