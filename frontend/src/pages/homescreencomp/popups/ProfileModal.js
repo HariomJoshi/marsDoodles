@@ -3,7 +3,7 @@ import "./profile.css";
 import ScrollableModal from "../Modals/ScrollableModal";
 import axios from "axios";
 import Cookies from "universal-cookie";
-
+import { BASE_URL } from "../../helper";
 const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
   const [gamesHistory, setGamesHistory] = useState([]);
   console.log("Reached profile Modal " + isModalOpen);
@@ -12,7 +12,7 @@ const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
   useEffect(() => {
     // fetching all the games history and setting it
     axios
-      .post("http://localhost:4000/api/v1/allGames", {
+      .post(`${BASE_URL}/allGames`, {
         userEmail: "hariomjoshi@gmail.com",
         jwt,
         // just for middleware purposes
