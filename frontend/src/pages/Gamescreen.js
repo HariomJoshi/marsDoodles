@@ -1,5 +1,5 @@
 import "./Gamescreen.css";
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Canvas from "./components/Canvas";
 import Chat from "./components/Chat";
@@ -14,9 +14,10 @@ import RlPopup from "./components/popups/RoomLimitPopup";
 import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
 import GePopup from "./components/popups/GameEndPopup";
 import SePopup from "./components/popups/SettingsPopup";
+import { BACKEND_URL } from "./helper.js";
 import MousePointerSharing from "./components/MousePointerSharing";
 const io = require("socket.io-client");
-const socket = io.connect("http://localhost:4000");
+const socket = io.connect(BACKEND_URL);
 
 function Gamescreen() {
   const { id } = useParams();
@@ -30,42 +31,42 @@ function Gamescreen() {
   const [name, setName] = useState();
   const data = location.state;
   const navigate = useNavigate();
-  const cookies = new Cookies()
+  const cookies = new Cookies();
   const [timer, setTimer] = useState(null);
-  const [objType, setObjType] = useState("marker")
+  const [objType, setObjType] = useState("marker");
 
-  function changeType(type){
+  function changeType(type) {
     setObjType(type);
   }
 
   useEffect(() => {
-    socket.on("youHaveBeenKicked",()=>{
-      console.log("i'm being kicked")
-      navigate("/home")
-    })
-    socket.on('gameTimerUpdate', (timerValue) => {
+    socket.on("youHaveBeenKicked", () => {
+      console.log("i'm being kicked");
+      navigate("/home");
+    });
+    socket.on("gameTimerUpdate", (timerValue) => {
       setTimer(timerValue);
     });
-    socket.on('gameTimerExpired', () => {
-      console.log('Game timer expired');
+    socket.on("gameTimerExpired", () => {
+      console.log("Game timer expired");
     });
     return () => {
-      socket.off('gameTimerUpdate');
-      socket.off('gameTimerExpired');
+      socket.off("gameTimerUpdate");
+      socket.off("gameTimerExpired");
     };
   }, [socket]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!cookies.get("jwt_auth")) {
       navigate("/");
     }
-  })
+  });
 
-  useEffect(()=>{
-    if(data && data.name){
-      setName(data.name)
+  useEffect(() => {
+    if (data && data.name) {
+      setName(data.name);
     }
-  },[data])
+  }, [data]);
 
   // useEffect(() => {
   //   socket.on("userUpdate", (data) => {
@@ -75,19 +76,24 @@ function Gamescreen() {
 
   return (
     <div className="ALL">
-      <CwPopup isModalOpen={false} roomId={id} socket={socket}/>
-      <EdPopup isModalOpen={true}  roomId={id} socket={socket}/>
-      <RlPopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <SbPopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <GePopup isModalOpen={false}  roomId={id} socket={socket}/>
-      <SePopup  isModalOpen={false} settingsOpen={settingsOpen} roomId={id} socket={socket}/>
+      <CwPopup isModalOpen={false} roomId={id} socket={socket} />
+      <EdPopup isModalOpen={true} roomId={id} socket={socket} />
+      <RlPopup isModalOpen={false} roomId={id} socket={socket} />
+      <SbPopup isModalOpen={false} roomId={id} socket={socket} />
+      <GePopup isModalOpen={false} roomId={id} socket={socket} />
+      <SePopup
+        isModalOpen={false}
+        settingsOpen={settingsOpen}
+        roomId={id}
+        socket={socket}
+      />
       <SePopup
         isModalOpen={settingsOpen}
         roomId={id}
         socket={socket}
         openSettingsModal={(isOpen) => setSettingsOpen(isOpen)}
       />
-      <MousePointerSharing socket={socket} roomId={id}/>
+      <MousePointerSharing socket={socket} roomId={id} />
       <div className="gamescreen-container">
         <div className="canvas-and-online-users-container">
           <div className="option-bar">
@@ -105,7 +111,7 @@ function Gamescreen() {
               changeType={changeType}
             />
             <button onClick={() => setSettingsOpen(true)}>
-              <AiOutlineSetting size={49}/> 
+              <AiOutlineSetting size={49} />
             </button>
           </div>
           <div className="drawingBoard">

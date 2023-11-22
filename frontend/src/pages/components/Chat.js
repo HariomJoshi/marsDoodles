@@ -19,7 +19,10 @@ function Chat({ roomId, socket, name }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() !== "") {
-      setChats((prevChats) => [...prevChats, { message, user: "You",id:socket.id }]);
+      setChats((prevChats) => [
+        ...prevChats,
+        { message, user: "You", id: socket.id },
+      ]);
       socket.emit("message", { message, roomId, name });
       setMessage("");
     }
@@ -44,6 +47,7 @@ function Chat({ roomId, socket, name }) {
               type="text"
               placeholder="Enter message"
               name="Name"
+              value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
                 // console.log(message);

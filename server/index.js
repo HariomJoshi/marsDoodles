@@ -270,7 +270,7 @@ io.on("connection", (socket) => {
       message = cleanMessage;
     }
     if (gameRooms[roomId] && gameRooms[roomId].players) {
-      if (message === gameRooms[roomId].rightAns) {
+      if (message.toLowerCase() === gameRooms[roomId].rightAns) {
         console.log("Got ans");
         const playerIndex = gameRooms[roomId].players.findIndex(
           (player) => player.playerId === socket.id
@@ -404,9 +404,10 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("clearRect", (roomId) => {
+  socket.on("clearRect", (data) => {
+    const { roomId } = data;
     console.log("received clear rect");
-    io.in(roomId).emit("disableMouse", roomId);
+    io.in(roomId).emit("clearRect", roomId);
   });
 
   socket.on("disableMouse", (data) => {
@@ -496,7 +497,7 @@ io.on("connection", (socket) => {
       });
 
       console.log(drawingName);
-      gameRooms[roomId].rightAns = drawingName;
+      gameRooms[roomId].rightAns = drawingName.toLowerCase();
       if (drawingName !== "") {
         // Broadcast an event indicating the start of the game
         io.sockets.in(roomId).emit("clearCanvas", gameRooms[roomId]);

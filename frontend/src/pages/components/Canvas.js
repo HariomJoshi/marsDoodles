@@ -15,13 +15,13 @@ function Canvas({
   email,
   objType,
 }) {
+  const img = new Image();
   const [x0, setx0] = useState("");
   const [y0, sety0] = useState("");
   const [x1, setx1] = useState("");
   const [y1, sety1] = useState("");
   const [url, setUrl] = useState("");
-  const [image, setImage] = useState();
-  const [textureImage, setTextureImage] = useState("");
+  const [imageData, setImageData] = useState("");
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -38,6 +38,14 @@ function Canvas({
     const canvas = canvasRef.current;
     ctxRef.current = canvas.getContext("2d");
     joinRoom();
+
+    // img.addEventListener("load", function () {
+    //   console.log("Image loaded successfully");
+    // });
+
+    // img.addEventListener("error", function () {
+    //   console.error("Error loading image");
+    // });
   }, []);
 
   useEffect(() => {
@@ -48,6 +56,10 @@ function Canvas({
   }, [selectedLineDash, selectedLineWidth, selectedColor, socket]);
 
   useEffect(() => {
+    socket.on("clearRect", (data) => {
+      console.log("Clear whiteboard received");
+      clear();
+    });
     socket.on("userJoined", (data) => {
       console.log(data);
     });
@@ -82,17 +94,6 @@ function Canvas({
         ctxRef.current.stroke();
         ctxRef.current.closePath();
       } else {
-        const img = new Image();
-
-        img.addEventListener("load", function () {
-          console.log("Image loaded successfully");
-          setTextureImage(img);
-        });
-
-        img.addEventListener("error", function () {
-          console.error("Error loading image");
-        });
-
         if (objType === "pencil") {
           img.src =
             "https://t4.ftcdn.net/jpg/03/71/65/29/360_F_371652941_9hxPir8cXeOqiEgPli6csDIxLmhhvIIv.jpg";
@@ -100,19 +101,15 @@ function Canvas({
           img.src =
             "https://cdn.pixabay.com/photo/2016/12/15/20/21/texture-1909992_640.jpg";
         }
-
-        console.log("Image object:", img);
-
-        // Assuming ctxRef.current is a valid context, you can continue with your drawing operations here.
         ctxRef.current.beginPath();
+        const pattern = ctxRef.current.createPattern(img, "repeat");
+        const x = x0;
+        const y = y0;
+        ctxRef.current.arc(x, y, 5, 0, 2 * Math.PI);
+        ctxRef.current.fillStyle = pattern;
+        ctxRef.current.fill();
+        ctxRef.current.closePath();
       }
-    });
-  }, [socket]);
-
-  useEffect(() => {
-    socket.on("clearRect", (data) => {
-      alert("hello");
-      clear();
     });
   }, [socket]);
 
@@ -132,36 +129,12 @@ function Canvas({
       sety0(e.nativeEvent.offsetY);
       ctxRef.current.moveTo(x0, y0);
     } else {
-      console.log("Attempting to load image for pencil...");
-
-      const img = new Image();
-
-      img.addEventListener("load", function () {
-        console.log("Image loaded successfully");
-        setTextureImage(img);
-      });
-
-      img.addEventListener("error", function () {
-        console.error("Error loading image");
-      });
-
       if (objType === "pencil") {
         img.src =
           "https://t4.ftcdn.net/jpg/03/71/65/29/360_F_371652941_9hxPir8cXeOqiEgPli6csDIxLmhhvIIv.jpg";
       } else if (objType === "multicolour") {
         img.src =
           "https://cdn.pixabay.com/photo/2016/12/15/20/21/texture-1909992_640.jpg";
-      }
-
-      console.log("Image object:", img);
-
-      ctxRef.current.beginPath();
-      if (textureImage) {
-        const pattern = ctxRef.current.createPattern(textureImage, "repeat");
-        ctxRef.current.arc(x1, y1, 5, 0, 2 * Math.PI);
-        ctxRef.current.fillStyle = pattern;
-        ctxRef.current.fill();
-        ctxRef.current.closePath();
       }
     }
   }
@@ -174,6 +147,7 @@ function Canvas({
   function onMouseMove(e) {
     if (objType === "marker") {
       ctxRef.current.strokeStyle = selectedColor;
+      ctxRef.current.lineWidth = selectedLineWidth;
       setx1(e.nativeEvent.offsetX);
       sety1(e.nativeEvent.offsetY);
       if (visible) {
@@ -216,16 +190,33 @@ function Canvas({
       setx0(x1);
       sety0(y1);
     } else if (visible) {
-      console.log(textureImage);
-      if (textureImage) {
-        const pattern = ctxRef.current.createPattern(textureImage, "repeat");
-        const x = e.nativeEvent.offsetX;
-        const y = e.nativeEvent.offsetY;
-        ctxRef.current.arc(x, y, 5, 0, 2 * Math.PI);
-        ctxRef.current.fillStyle = pattern;
-        ctxRef.current.fill();
-        ctxRef.current.closePath();
+      if (objType === "pencil") {
+        img.src =
+          "https://t4.ftcdn.net/jpg/03/71/65/29/360_F_371652941_9hxPir8cXeOqiEgPli6csDIxLmhhvIIv.jpg";
+      } else if (objType === "multicolour") {
+        img.src =
+          "https://cdn.pixabay.com/photo/2016/12/15/20/21/texture-1909992_640.jpg";
       }
+      ctxRef.current.beginPath();
+      const pattern = ctxRef.current.createPattern(img, "repeat");
+      const x = e.nativeEvent.offsetX;
+      const y = e.nativeEvent.offsetY;
+      ctxRef.current.arc(x, y, 5, 0, 2 * Math.PI);
+      ctxRef.current.fillStyle = pattern;
+      ctxRef.current.fill();
+      ctxRef.current.closePath();
+      socket.emit("drawingData", {
+        roomId,
+        x0: x,
+        x1,
+        y0: y,
+        y1,
+        lineDash: selectedLineDash,
+        lineWidth: selectedLineWidth,
+        color: selectedColor,
+        eraser: false,
+        objType: objType,
+      });
     }
   }
 
@@ -235,7 +226,7 @@ function Canvas({
         const canvas = canvasRef.current;
         const imageData = canvas.toDataURL("image/png");
         if (imageData) {
-          setImage(imageData);
+          setImageData(imageData);
         }
       };
 
@@ -312,7 +303,6 @@ function Canvas({
         </button>
         <button
           onClick={() => {
-            clear();
             socket.emit("clearRect", { roomId });
           }}
         >
