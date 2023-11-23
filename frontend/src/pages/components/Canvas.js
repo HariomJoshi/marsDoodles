@@ -282,9 +282,17 @@ function Canvas({
         </button>
         <button
           className="clear"
+          style={{
+            // backgroundColor: "#3498db",
+            color: "#ffffff",
+            border: "none",
+            // borderRadius: s"5px",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
           onClick={() => socket.emit("clearRect", { roomId })}
         >
-          Clear canvas
+          Clear Canvas
         </button>
         <AudioRecorder socket={socket} roomId={roomId} />
       </div>

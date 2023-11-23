@@ -5,6 +5,7 @@ const AudioRecorder = ({ socket, roomId }) => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [receivedAudio, setReceivedAudio] = useState(null);
+  const [isItMyTurn, setIsItMyTurn] = useState(false);
 
   useEffect(() => {
     // Set up audio stream
@@ -16,6 +17,9 @@ const AudioRecorder = ({ socket, roomId }) => {
     // Set up socket listeners for receiving audio
     socket.on("audioData", (data) => {
       setReceivedAudio({ audioUrl: data.audioUrl, key: Date.now() });
+    });
+    socket.on("setDrawingControl", (data) => {
+      setIsItMyTurn(data);
     });
   }, [mediaRecorder, isRecording, socket, receivedAudio]);
 
@@ -56,14 +60,39 @@ const AudioRecorder = ({ socket, roomId }) => {
   };
 
   return (
-    <div>
-      <button onClick={handleRecordToggle}>
-        {isRecording ? "Send Hint" : "Record Hint"}
-      </button>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {isItMyTurn && (
+        <button
+          style={{
+            padding: "10px",
+            fontSize: "16px",
+            backgroundColor: isRecording ? "#ff5252" : "#4caf50",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleRecordToggle}
+        >
+          {isRecording ? "DONE" : "Audio CLUE🎙️"}
+        </button>
+      )}
       {receivedAudio && (
-        <div>
-          <p>Received Audio:</p>
-          <audio key={receivedAudio.key} controls autoPlay>
+        <div style={{ marginLeft: "10px", fontSize: "12px", width: "100%" }}>
+          <audio
+            key={receivedAudio.key}
+            controls
+            autoPlay
+            style={{ width: "100%" }}
+            hidden
+          >
             <source src={receivedAudio.audioUrl} type="audio/wav" />
           </audio>
         </div>

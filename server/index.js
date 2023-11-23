@@ -211,7 +211,11 @@ io.on("connection", (socket) => {
       if (gameRooms[roomId].turnStartTime) {
         if (Date.now() - gameRooms[roomId].turnStartTime >= 90000) {
           // Broadcast an event indicating the end of the game
-          io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+          const d = {
+            playerInfo: gameRooms[roomId].players,
+            ans: gameRooms[roomId].rightAns,
+          };
+          io.sockets.in(roomId).emit("endGame", d);
           for (const player of gameRooms[roomId].players) {
             player.wordGuessed = false;
           }
@@ -341,7 +345,11 @@ io.on("connection", (socket) => {
       }
       if (!flag) {
         // Broadcast an event indicating the end of the game
-        io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+        const d = {
+          playerInfo: gameRooms[roomId].players,
+          ans: gameRooms[roomId].rightAns,
+        };
+        io.sockets.in(roomId).emit("endGame", d);
         // next turn logic
         // gameGuessed = false for all
         // currentPlayerIndex++
