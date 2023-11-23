@@ -98,7 +98,8 @@ function createPlayer(
   points = 0,
   isAdmin = false,
   wordGuessed = false,
-  isChatRestricted = false
+  isChatRestricted = false,
+  email = "none"
 ) {
   return {
     playerId: playerId,
@@ -107,6 +108,7 @@ function createPlayer(
     isAdmin: isAdmin,
     wordGuessed: false,
     isChatRestricted: false,
+    email: email,
     // timetaken: seconds
   };
 }
@@ -116,7 +118,7 @@ io.on("connection", (socket) => {
   // Handling user join event
   socket.on("joinUser", (data) => {
     console.log(data);
-    const { userName, roomId } = data;
+    const { userName, roomId, email } = data;
     const socketsInRoom = io.sockets.adapter.rooms.get(roomId);
     if (socketsInRoom) {
       if (socketsInRoom.has(socket.id)) {
@@ -136,7 +138,15 @@ io.on("connection", (socket) => {
           }
         } else {
           socket.join(roomId);
-          const player = createPlayer(socket.id, userName, 0, false, false);
+          const player = createPlayer(
+            socket.id,
+            userName,
+            0,
+            false,
+            false,
+            false,
+            email
+          );
           console.log(
             `Socket ID ${socket.id} has JOINED the room ${roomId} as PLAYER`
           );
@@ -149,9 +159,10 @@ io.on("connection", (socket) => {
       // The room doesn't exist
       console.log(`Room ${roomId} doesn't exist, therefore creating one`); // connect with DB later
       socket.join(roomId);
-      const player = createPlayer(socket.id, userName, 0, true, false);
+      const player = createPlayer(socket.id, userName, 0, true, false, email);
       console.log(`Socket ID ${socket.id} has joined room ${roomId} as ADMIN`);
       // Create a new game room with the first admin
+
       gameRooms[roomId] = {
         admin: player,
         players: [player],
@@ -167,6 +178,7 @@ io.on("connection", (socket) => {
         currentPlayerIndex: 0,
         startTime: Date.now(),
         turnStartTime: null,
+        email: email,
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);

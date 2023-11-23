@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 
 const ScrollableModal = ({ isOpen, closeModal, children }) => {
-  console.log("Reached scrollable modal " + isOpen);
+  // console.log("Reached scrollable modal " + isOpen);
   return (
     <Modal
       isOpen={isOpen}

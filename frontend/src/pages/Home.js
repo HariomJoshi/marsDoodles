@@ -152,6 +152,7 @@ function Home({}) {
             isModalOpen={isModalOpen}
             closeModal={closeModal}
           />
+
           <button onClick={openModal}>Profile</button>
           <button
             onClick={() => {

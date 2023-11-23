@@ -4,23 +4,26 @@ import ScrollableModal from "../Modals/ScrollableModal";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { BASE_URL } from "../../helper";
+import { jwtDecode } from "jwt-decode";
+
 const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
   const [gamesHistory, setGamesHistory] = useState([]);
-  console.log("Reached profile Modal " + isModalOpen);
   const cookies = new Cookies();
   const jwt = cookies.get("jwt_auth");
+  const decoded = jwtDecode(jwt);
+  // fetch code working fine
   useEffect(() => {
     // fetching all the games history and setting it
     axios
       .post(`${BASE_URL}/allGames`, {
-        userEmail: "hariomjoshi@gmail.com",
+        userEmail: decoded.email,
         jwt,
         // just for middleware purposes
       })
       .then((res) => {
-        // console.log(res.data.games);
         setGamesHistory(res.data.games);
-        console.log(gamesHistory);
+        // console.log(gamesHistory);
+        // post request to update players gamehistory
       })
       .catch((error) => {
         console.error("Error fetching data ", error);

@@ -4,6 +4,8 @@ import { FaShareSquare } from "react-icons/fa";
 import ShareButtons from "./ShareButtons";
 import "./Canvas.css";
 import { BASE_URL } from "../helper";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "universal-cookie";
 
 function Canvas({
   selectedColor,
@@ -28,8 +30,12 @@ function Canvas({
   const [eraser, setEraser] = useState(false);
   const data = { roomId, name, email };
 
+  const cookies = new Cookies();
+  const jwt = cookies.get("jwt_auth");
+  const decoded = jwtDecode(jwt);
+
   function joinRoom() {
-    const data = { userName: "user", roomId };
+    const data = { userName: "user", roomId, email: decoded.email };
     console.log(data);
     socket.emit("joinUser", data);
   }

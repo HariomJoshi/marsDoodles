@@ -22,6 +22,8 @@ Hide scrollbar in all browsers * {
   padding: 20px;
   background-color: #f0f0f0;
   flex-direction: column;
+  position: fixed;
+  background-color: #0c0c0c;
 }
 
 .profilepic {

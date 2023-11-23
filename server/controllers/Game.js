@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 exports.addGame = async (req, res) => {
   try {
-    const { score, rank, userEmail } = req.body;
+    const { score, rank, email } = req.body;
 
     let game = await Game.create({
       // creation of users
@@ -15,14 +15,14 @@ exports.addGame = async (req, res) => {
     // console.log("Object id " + game._id);
     const objId = new mongoose.Types.ObjectId(game._id);
     //checking if the users exists or not
-    const user = await User.findOne({ email: userEmail });
+    const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: `User not found with email: ${userEmail}`,
+        message: `User not found with email: ${email}`,
       });
     }
-    await User.updateOne({ email: userEmail }, { $push: { games: objId } });
+    await User.updateOne({ email: email }, { $push: { games: objId } });
     return res.status(200).json({
       success: true,
       message: `Game added successfully`,
@@ -42,7 +42,7 @@ exports.addGame = async (req, res) => {
 exports.getAllGames = async (req, res) => {
   try {
     const { userEmail } = req.body;
-    console.log("Email is: " + userEmail);
+    // console.log("Email is: " + userEmail);
     const user = await User.findOne({
       email: userEmail,
     }).populate({
@@ -57,7 +57,7 @@ exports.getAllGames = async (req, res) => {
       });
     }
 
-    console.log(user);
+    // console.log(user);
     res.status(200).json({
       games: user.games,
     });
