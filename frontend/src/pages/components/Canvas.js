@@ -1,9 +1,10 @@
-import { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineDownload } from "react-icons/ai";
 import { FaShareSquare } from "react-icons/fa";
 import ShareButtons from "./ShareButtons";
 import "./Canvas.css";
 import { BASE_URL } from "../helper";
+import AudioRecorder from "./AudioSharing";
 
 function Canvas({
   selectedColor,
@@ -38,14 +39,6 @@ function Canvas({
     const canvas = canvasRef.current;
     ctxRef.current = canvas.getContext("2d");
     joinRoom();
-
-    // img.addEventListener("load", function () {
-    //   console.log("Image loaded successfully");
-    // });
-
-    // img.addEventListener("error", function () {
-    //   console.error("Error loading image");
-    // });
   }, []);
 
   useEffect(() => {
@@ -277,46 +270,26 @@ function Canvas({
   }
 
   return (
-    <div>
-      <div>
-        <button
-          onClick={getLink}
-          style={{
-            background: "#4CAF50", // Green color
-            color: "white",
-            padding: "10px 15px",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginRight: "10px", // Add some margin to separate the buttons
-          }}
-        >
+    <div className="canvas-container">
+      <div className="canvas-controls">
+        <button className="generate" onClick={getLink}>
           <FaShareSquare style={{ marginRight: "5px" }} />
           Generate
         </button>
         <ShareButtons shareUrl={url} />
-        <button
-          onClick={download}
-          style={{ background: "none", border: "none", cursor: "pointer" }}
-        >
+        <button className="clear" onClick={download}>
           <AiOutlineDownload size={24} color="#fff" />
         </button>
         <button
-          onClick={() => {
-            socket.emit("clearRect", { roomId });
-          }}
+          className="clear"
+          onClick={() => socket.emit("clearRect", { roomId })}
         >
           Clear canvas
         </button>
-        {/* <button onClick={}>Rectangle</button> */}
+        <AudioRecorder socket={socket} roomId={roomId} />
       </div>
       <canvas
-        style={{
-          display: "flex",
-          border: "2px solid #3498db",
-          borderRadius: "8px",
-          backgroundColor: "#ecf0f1",
-        }}
+        className="canvas"
         ref={canvasRef}
         height={window.innerHeight}
         width={window.innerWidth}

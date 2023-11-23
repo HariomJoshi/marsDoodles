@@ -172,6 +172,14 @@ io.on("connection", (socket) => {
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);
   });
 
+  socket.on("audioData", (data) => {
+    const { audioBlob, audioUrl, room } = data;
+
+    // Broadcast the received audio to all users in the room
+    socket.to(room).emit("audioData", { audioBlob, audioUrl });
+    console.log(data);
+  });
+
   // Handling drawing data event
   socket.on("drawingData", (data) => {
     const { roomId } = data;
