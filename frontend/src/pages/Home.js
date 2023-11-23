@@ -139,138 +139,172 @@ function Home({}) {
   };
 
   return (
-    <div className="home-container">
-      <div className="top-bar">
-        <div className="logo">
-          <h1>
-            bit<span className="logo-highlight">2</span>byte
-          </h1>
-        </div>
-        <div className="profile-button">
-          <ProfileModal
-            userId={name.name}
-            isModalOpen={isModalOpen}
-            closeModal={closeModal}
-          />
-
-          <button onClick={openModal}>Profile</button>
-          <button
-            onClick={() => {
-              setUser(null);
-              cookies.remove("jwt_auth");
-              navigate("/");
-            }}
-          >
-            LogOut
-          </button>
-        </div>
+    <div className="home-page">
+      <div class="profile-modal">
+        <ProfileModal
+          userId={name.name}
+          isModalOpen={isModalOpen}
+          closeModal={closeModal}
+        />
       </div>
 
-      <div className="main-content">
-        <div className="left-column">
-          <div className="available-rooms">
-            <h3>Available Rooms</h3>
-            <button className="refresh-button" onClick={handleRefresh}>
-              Refresh
+      <div className="home-container">
+        <div className="glassStyle top-bar">
+          <div>
+            <h1
+              className="glassStyle"
+              style={{ padding: "5px 10px", color: "red" }}
+            >
+              bit<span className="logo-highlight">2</span>byte
+            </h1>
+          </div>
+
+          <div className="profile-button">
+            <button
+              style={{ padding: "10px", margin: "5px" }}
+              className="create-join-button"
+              onClick={openModal}
+            >
+              Profile
+            </button>
+            <button
+              style={{ padding: "10px", margin: "5px" }}
+              className="create-join-button"
+              onClick={() => {
+                setUser(null);
+                cookies.remove("jwt_auth");
+                navigate("/");
+              }}
+            >
+              LogOut
             </button>
           </div>
-          <div className="room-list">
-            {rooms.map((room) => (
-              <div className="room" key={room._id}>
-                <div className="room-info">
-                  <p className="room-label">Room ID:</p>
-                  <p className="room-data">{room.roomId}</p>
-                </div>
-                <div className="room-info">
-                  <p className="room-label">Type:</p>
-                  <p className="room-data">{room.type}</p>
-                </div>
-                <div className="room-info">
-                  <p className="room-label">Admin:</p>
-                  <p className="room-data">{room.admin}</p>
-                </div>
-                <button
-                  className="join-button"
-                  onClick={() => {
-                    joinFromSide(room.roomId);
-                  }}
-                >
-                  Join
-                </button>
-              </div>
-            ))}
-          </div>
         </div>
-        <div className="right-column">
-          <div className="join-create-container">
-            <div className="join-room-container">
-              <h2>Join Room</h2>
-              <div className="join-room">
-                <input
-                  className="roomId-input"
-                  type="text"
-                  placeholder="Room ID"
-                  value={joinRoomId}
-                  onChange={(e) => setJoinRoomId(e.target.value)}
-                />
-                <button className="join-button" onClick={handleJoinRoom}>
-                  Join
-                </button>
-              </div>
+
+        <div className="main-content">
+          <div className="left-column">
+            <div className="glassStyle available-rooms">
+              <h3 style={{ color: "#dc2408" }}>Available Rooms</h3>
+              <button className="refresh-button" onClick={handleRefresh}>
+                Refresh
+              </button>
             </div>
-            <div className="create-room-container">
-              <h2>Create Room</h2>
-              <div className="create-room">
-                <select
-                  className="roomId-input"
-                  value={createRoomType}
-                  onChange={(e) => setCreateRoomType(e.target.value)}
-                >
-                  <option value="public">Public</option>
-                  <option value="private">Private</option>
-                </select>
-                <div className="invite-section">
-                  <label>
-                    Player 2:
-                    <input
-                      type="text"
-                      placeholder="Enter email to invite ..."
-                      onChange={(e) => setPlayer2Mail(e.target.value)}
-                    />
-                    <button
-                      onClick={(e) => {
-                        handleInvite(player2Mail, "2");
-                      }}
-                    >
-                      {player2Invited}
-                    </button>
-                  </label>
-                </div>
-                <div className="invite-section">
-                  <label>
-                    Player 3:
-                    <input
-                      type="text"
-                      placeholder="Enter email to invite ..."
-                      onChange={(e) => setPlayer3Mail(e.target.value)}
-                    />
-                    <button
-                      onClick={(e) => {
-                        handleInvite(player3Mail, "3");
-                      }}
-                    >
-                      {player3Invited}
-                    </button>
-                  </label>
-                </div>
-                <div className="generate-section">
-                  <input type="text" defaultValue={copyText} />
+            <div className="glassStyle room-list">
+              {rooms.map((room) => (
+                <div className="glassStyle room" key={room._id}>
+                  <div className="room-info">
+                    <p className="room-label">Room ID:</p>
+                    <p className="room-data">{room.roomId}</p>
+                  </div>
+                  <div className="room-info">
+                    <p className="room-label">Type:</p>
+                    <p className="room-data">{room.type}</p>
+                  </div>
+                  <div className="room-info">
+                    <p className="room-label">Admin:</p>
+                    <p className="room-data">{room.admin}</p>
+                  </div>
                   <button
-                    className="create-join-button"
-                    onClick={handleCreateRoom}
+                    className="join-button"
+                    onClick={() => {
+                      joinFromSide(room.roomId);
+                    }}
                   >
-                    Generate
+                    Join
                   </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="right-column">
+            <div className="join-create-container">
+              <div className="join-room-container">
+                <h2
+                  style={{ marginBottom: "10px", width: "80%" }}
+                  className="glassStyle"
+                >
+                  Join Room
+                </h2>
+                <div className="join-room">
+                  <input
+                    className="glassStyle roomId-input"
+                    type="text"
+                    placeholder="Room ID"
+                    value={joinRoomId}
+                    onChange={(e) => setJoinRoomId(e.target.value)}
+                  />
+                  <button className="join-button" onClick={handleJoinRoom}>
+                    Join
+                  </button>
+                </div>
+              </div>
+              <div className="create-room-container">
+                <h2
+                  style={{ marginBottom: "10px", width: "80%" }}
+                  className="glassStyle"
+                >
+                  Create Room
+                </h2>
+                <div className="glassStyle create-room">
+                  <select
+                    className="glassStyle roomId-input"
+                    value={createRoomType}
+                    onChange={(e) => setCreateRoomType(e.target.value)}
+                  >
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                  </select>
+                  <div className="invite-section">
+                    <label>
+                      Player 2:
+                      <input
+                        className="glassStyle"
+                        type="text"
+                        placeholder="Enter email to invite ..."
+                        onChange={(e) => setPlayer2Mail(e.target.value)}
+                      />
+                      <button
+                        className="create-join-button"
+                        onClick={(e) => {
+                          handleInvite(player2Mail, "2");
+                        }}
+                      >
+                        {player2Invited}
+                      </button>
+                    </label>
+                  </div>
+                  <div className="invite-section">
+                    <label>
+                      Player 3:
+                      <input
+                        className="glassStyle"
+                        type="text"
+                        placeholder="Enter email to invite ..."
+                        onChange={(e) => setPlayer3Mail(e.target.value)}
+                      />
+                      <button
+                        className="create-join-button"
+                        onClick={(e) => {
+                          handleInvite(player3Mail, "3");
+                        }}
+                      >
+                        {player3Invited}
+                      </button>
+                    </label>
+                  </div>
+                  <div className="generate-section">
+                    <input
+                      className="glassStyle"
+                      type="text"
+                      defaultValue={copyText}
+                    />
+                    <button
+                      className="create-join-button"
+                      onClick={handleCreateRoom}
+                    >
+                      Generate
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

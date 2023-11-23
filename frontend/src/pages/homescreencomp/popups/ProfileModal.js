@@ -41,11 +41,11 @@ const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
               src={`https://robohash.org/${userEmail}.png`}
             />
           </div>
-          <b style={{ fontSize: "40px", fontFamily: "revert-layer" }}>
-            {userEmail}
-          </b>
+          <hr />
+          <b style={{ fontSize: "30px" }}>{decoded.email}</b>
+          <hr />
+          <b style={{ position: "center", margin: "3%" }}>GAMES HISTORY</b>
           <div className="gamesHistory">
-            <b>GAMES HISTORY</b>
             {gamesHistory.map((entry, index) => (
               <div className="oneEntry" key={index * 999}>
                 <div className="field">

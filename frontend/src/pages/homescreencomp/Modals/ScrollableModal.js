@@ -10,9 +10,13 @@ const ScrollableModal = ({ isOpen, closeModal, children }) => {
       contentLabel="Modal"
       style={{
         overlay: {
-          backgroundColor: "rgba(0, 0, 0, 0.6)", // Add overlay color
+          backgroundColor: "rgba(0, 0, 0, 0.7)", // Add overlay color
         },
+        // here do the changes to make it translucent
         content: {
+          overflowY: "auto",
+          maxHeight: "90%",
+          padding: "0",
           top: "20%",
           left: "30%",
           right: "auto",
@@ -21,11 +25,22 @@ const ScrollableModal = ({ isOpen, closeModal, children }) => {
           width: "60%",
           height: "90%",
           backgroundColor: "white",
+          display: "flex",
+          flexDirection: "column",
+          // opacity: "0.8",
+          backgroundColor:
+            "rgba(255, 255, 255, 0.2)" /* Semi-transparent white background */,
+          backdropFilter:
+            "blur(10px)" /* Apply a blur effect to simulate frosted glass */,
+          borderRadius:
+            "8px" /* Optional: add rounded corners for a softer look */,
+          boxShadow:
+            "0 4px 8px rgba(0, 0, 0, 0.1)" /* Add a subtle box shadow */,
         },
       }}
     >
       {children}
-      <button onClick={closeModal}>Close Modal</button>
+      {/* <button onClick={closeModal}>Close Modal</button> */}
     </Modal>
   );
 };

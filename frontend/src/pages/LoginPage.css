@@ -33,7 +33,7 @@
   position: absolute;
   background: rgba(228, 214, 214, 0.8);
   border-radius: 10px;
-  box-shadow: 0px 5px 10px 20px black;
+  box-shadow: 0px 5px 10px 10px rgb(4, 3, 3);
   width: 25%;
   height: 50%;
   backdrop-filter: saturate(500%) blur(10px);
@@ -43,6 +43,7 @@
   justify-content: center;
   /* padding-left: 5%; */
 }
+
 .centerPartSignup {
   top: 20%;
   left: 37.5%;
@@ -66,10 +67,10 @@
   justify-content: center;
 }
 .centerSquare .text {
-  color: rgb(5, 5, 5);
+  color: rgb(89, 84, 84);
 }
 .centerSquare .subHeading {
-  color: rgb(253, 248, 248);
+  color: rgb(122, 113, 113);
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   margin-top: 4%;
 }
@@ -119,17 +120,8 @@ hr {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   border-radius: 8px;
   border-style: none;
-  background-image: linear-gradient(
-    to bottom right,
-    rgb(188, 210, 240),
-    rgb(1, 64, 251)
-  );
-  color: aliceblue;
+  background-color: #d65946;
 }
 .loginBtn:hover {
-  background-image: linear-gradient(
-    to bottom right,
-    rgb(19, 62, 119),
-    rgb(56, 25, 106)
-  );
+  background-color: #c02810;
 }
