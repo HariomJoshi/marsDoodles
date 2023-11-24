@@ -607,6 +607,11 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("newState", (data) => {
+    const { roomId, imageData } = data;
+    socket.to(roomId).emit("newState", data);
+  });
+
   // Handling user disconnect event
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated
@@ -626,7 +631,6 @@ io.on("connection", (socket) => {
     }
   });
 });
-
 // Activate the server and listen on the specified PORT
 server.listen(PORT, () => {
   console.log(`marsDoodles is live at ${PORT}`);
