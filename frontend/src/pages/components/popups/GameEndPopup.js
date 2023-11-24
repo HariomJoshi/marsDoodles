@@ -6,6 +6,7 @@ import Cookies from "universal-cookie";
 import { BASE_URL } from "../../helper";
 import axios from "axios";
 
+
 const GePopup = ({ isModalOpen, socket, roomId }) => {
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
@@ -142,6 +143,8 @@ const GePopup = ({ isModalOpen, socket, roomId }) => {
   return (
     <Modal
       isOpen={modalIsOpen}
+      shouldCloseOnOverlayClick={false}
+
       onRequestClose={closeModal}
       contentLabel="Score Board"
       style={myStyle}

@@ -14,10 +14,14 @@ import RlPopup from "./components/popups/RoomLimitPopup";
 import SbPopup from "./components/popups/ScoreBoardDIsplayPopup";
 import GePopup from "./components/popups/GameEndPopup";
 import SePopup from "./components/popups/SettingsPopup";
+
 import VoilaitonPopup from "./components/popups/VoilationPopup";
+
+import { BACKEND_URL } from "./helper.js";
+
 import MousePointerSharing from "./components/MousePointerSharing";
 const io = require("socket.io-client");
-const socket = io.connect("http://localhost:4000");
+const socket = io.connect(BACKEND_URL);
 
 function Gamescreen() {
   const { id } = useParams();
@@ -81,7 +85,9 @@ function Gamescreen() {
       <RlPopup isModalOpen={false} roomId={id} socket={socket} />
       <SbPopup isModalOpen={false} roomId={id} socket={socket} />
       <GePopup isModalOpen={false} roomId={id} socket={socket} />
+
       <VoilaitonPopup isModalOpen={false} roomId={id} socket={socket} />
+
       <SePopup
         isModalOpen={false}
         settingsOpen={settingsOpen}

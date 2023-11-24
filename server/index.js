@@ -196,6 +196,14 @@ io.on("connection", (socket) => {
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);
   });
 
+  socket.on("audioData", (data) => {
+    const { audioBlob, audioUrl, room } = data;
+
+    // Broadcast the received audio to all users in the room
+    socket.to(room).emit("audioData", { audioBlob, audioUrl });
+    console.log(data);
+  });
+
   // Handling drawing data event
   socket.on("drawingData", (data) => {
     const { roomId } = data;
@@ -229,7 +237,11 @@ io.on("connection", (socket) => {
       if (gameRooms[roomId].turnStartTime) {
         if (Date.now() - gameRooms[roomId].turnStartTime >= 90000) {
           // Broadcast an event indicating the end of the game
-          io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+          const d = {
+            playerInfo: gameRooms[roomId].players,
+            ans: gameRooms[roomId].rightAns,
+          };
+          io.sockets.in(roomId).emit("endGame", d);
           for (const player of gameRooms[roomId].players) {
             player.wordGuessed = false;
           }
@@ -307,7 +319,7 @@ io.on("connection", (socket) => {
       message = cleanMessage;
     }
     if (gameRooms[roomId] && gameRooms[roomId].players) {
-      if (message === gameRooms[roomId].rightAns) {
+      if (message.toLowerCase() === gameRooms[roomId].rightAns) {
         console.log("Got ans");
         const playerIndex = gameRooms[roomId].players.findIndex(
           (player) => player.playerId === socket.id
@@ -370,7 +382,11 @@ io.on("connection", (socket) => {
       }
       if (!flag) {
         // Broadcast an event indicating the end of the game
-        io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+        const d = {
+          playerInfo: gameRooms[roomId].players,
+          ans: gameRooms[roomId].rightAns,
+        };
+        io.sockets.in(roomId).emit("endGame", d);
         // next turn logic
         // gameGuessed = false for all
         // currentPlayerIndex++
@@ -441,9 +457,10 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("clearRect", (roomId) => {
+  socket.on("clearRect", (data) => {
+    const { roomId } = data;
     console.log("received clear rect");
-    io.in(roomId).emit("disableMouse", roomId);
+    io.in(roomId).emit("clearRect", roomId);
   });
 
   socket.on("disableMouse", (data) => {
@@ -533,7 +550,7 @@ io.on("connection", (socket) => {
       });
 
       console.log(drawingName);
-      gameRooms[roomId].rightAns = drawingName;
+      gameRooms[roomId].rightAns = drawingName.toLowerCase();
       if (drawingName !== "") {
         // Broadcast an event indicating the start of the game
         io.sockets.in(roomId).emit("clearCanvas", gameRooms[roomId]);
@@ -594,6 +611,44 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("makeCircle", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeCircle", data);
+    }
+  });
+  socket.on("makeSquare", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeSquare", data);
+    }
+  });
+  socket.on("makeRectangle", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeRectangle", data);
+    }
+  });
+  socket.on("makeEllipse", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      console.log(data);
+      io.sockets.in(roomId).emit("makeEllipse", data);
+    }
+  });
+  socket.on("makeTrapezium", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      console.log(data);
+      io.sockets.in(roomId).emit("makeTrapezium", data);
+    }
+  });
+
+  socket.on("newState", (data) => {
+    const { roomId, imageData } = data;
+    socket.to(roomId).emit("newState", data);
+  });
+
   // Handling user disconnect event
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated
@@ -618,7 +673,6 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("undoResp");
   });
 });
-
 // Activate the server and listen on the specified PORT
 server.listen(PORT, () => {
   console.log(`marsDoodles is live at ${PORT}`);

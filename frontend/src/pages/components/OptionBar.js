@@ -3,10 +3,14 @@ import Clock from "./Clock";
 import { FaPencilAlt, FaMarker, FaPalette } from "react-icons/fa";
 import "./OptionBar.css";
 import { useState } from "react";
+
 import {
   IoArrowUndoCircleSharp,
   IoArrowRedoCircleSharp,
 } from "react-icons/io5";
+
+import AudioRecorder from "./AudioSharing";
+
 
 function OptionBar({
   onColorChange,
