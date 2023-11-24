@@ -574,6 +574,39 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("makeCircle", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeCircle", data);
+    }
+  });
+  socket.on("makeSquare", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeSquare", data);
+    }
+  });
+  socket.on("makeRectangle", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeRectangle", data);
+    }
+  });
+  socket.on("makeEllipse", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      console.log(data);
+      io.sockets.in(roomId).emit("makeEllipse", data);
+    }
+  });
+  socket.on("makeTrapezium", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      console.log(data);
+      io.sockets.in(roomId).emit("makeTrapezium", data);
+    }
+  });
+
   // Handling user disconnect event
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated

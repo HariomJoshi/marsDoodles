@@ -5,6 +5,7 @@ import ShareButtons from "./ShareButtons";
 import "./Canvas.css";
 import { BASE_URL } from "../helper";
 import AudioRecorder from "./AudioSharing";
+import MfPopup from "./popups/MakeFigurePopup";
 
 function Canvas({
   selectedColor,
@@ -28,6 +29,7 @@ function Canvas({
   const [visible, setVisible] = useState(false);
   const [eraser, setEraser] = useState(false);
   const data = { roomId, name, email };
+  const [isOpen, setIsOpen] = useState(false);
 
   function joinRoom() {
     const data = { userName: "user", roomId };
@@ -47,6 +49,91 @@ function Canvas({
     ctxRef.current.lineWidth = selectedLineWidth;
     ctxRef.current.strokeStyle = selectedColor;
   }, [selectedLineDash, selectedLineWidth, selectedColor, socket]);
+
+  useEffect(() => {
+    const offsetX = 217;
+    const offsetY = 1;
+    socket.on("makeCircle", (data) => {
+      const { xCoordinate, yCoordinate, radius } = data;
+      ctxRef.current.beginPath();
+      ctxRef.current.lineWidth = selectedLineWidth;
+      ctxRef.current.strokeStyle = selectedColor;
+      ctxRef.current.arc(
+        (parseInt(xCoordinate) + parseInt(offsetX)).toString(),
+        (parseInt(yCoordinate) + parseInt(offsetY)).toString(),
+        radius,
+        0,
+        2 * Math.PI
+      );
+      ctxRef.current.stroke();
+      ctxRef.current.closePath();
+    });
+    socket.on("makeSquare", (data) => {
+      const { xCoordinate, yCoordinate, sideLength } = data;
+      ctxRef.current.beginPath();
+      ctxRef.current.lineWidth = selectedLineWidth;
+      ctxRef.current.strokeStyle = selectedColor;
+      ctxRef.current.strokeRect(
+        (parseInt(xCoordinate) + parseInt(offsetX)).toString(),
+        (parseInt(yCoordinate) + parseInt(offsetY)).toString(),
+        sideLength,
+        sideLength
+      );
+      ctxRef.current.stroke();
+      ctxRef.current.closePath();
+    });
+    socket.on("makeRectangle", (data) => {
+      const { xCoordinate, yCoordinate, height, width } = data;
+      ctxRef.current.beginPath();
+      ctxRef.current.lineWidth = selectedLineWidth;
+      ctxRef.current.strokeStyle = selectedColor;
+      ctxRef.current.strokeRect(
+        (parseInt(xCoordinate) + parseInt(offsetX)).toString(),
+        (parseInt(yCoordinate) + parseInt(offsetY)).toString(),
+        width,
+        height
+      );
+      ctxRef.current.stroke();
+      ctxRef.current.closePath();
+    });
+    socket.on("makeEllipse", (data) => {
+      console.log("Ellipse : ", data);
+      const { xCoordinate, yCoordinate, majorAxis, minorAxis } = data;
+      ctxRef.current.beginPath();
+      ctxRef.current.ellipse(
+        (parseInt(xCoordinate) + parseInt(offsetX)).toString(),
+        (parseInt(yCoordinate) + parseInt(offsetY)).toString(),
+        majorAxis,
+        minorAxis,
+        0,
+        0,
+        2 * Math.PI
+      );
+      ctxRef.current.stroke();
+      ctxRef.current.closePath();
+    });
+    socket.on("makeTrapezium", (data) => {
+      const { x1, x2, y1, y2, x3, y3, x4, y4 } = data;
+      const X1 = parseInt(x1) + parseInt(offsetX);
+      const X2 = parseInt(x2) + parseInt(offsetX);
+      const X3 = parseInt(x3) + parseInt(offsetX);
+      const X4 = parseInt(x4) + parseInt(offsetX);
+      const Y1 = parseInt(y1) + parseInt(offsetY);
+      const Y2 = parseInt(y2) + parseInt(offsetY);
+      const Y3 = parseInt(y3) + parseInt(offsetY);
+      const Y4 = parseInt(y4) + parseInt(offsetY);
+      ctxRef.current.lineWidth = selectedLineWidth;
+      ctxRef.current.strokeStyle = selectedColor;
+      ctxRef.current.beginPath();
+      ctxRef.current.moveTo(X1, Y1);
+      ctxRef.current.lineTo(X2, Y2);
+      ctxRef.current.lineTo(X3, Y3);
+      ctxRef.current.lineTo(X4, Y4);
+      ctxRef.current.lineTo(X1, Y1);
+      ctxRef.current.stroke();
+      ctxRef.current.closePath();
+    });
+  }, [socket]);
 
   useEffect(() => {
     socket.on("clearRect", (data) => {
