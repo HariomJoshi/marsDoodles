@@ -98,7 +98,9 @@ function createPlayer(
   points = 0,
   isAdmin = false,
   wordGuessed = false,
-  isChatRestricted = false
+  isChatRestricted = false,
+  email = "none",
+  voilations = 3
 ) {
   return {
     playerId: playerId,
@@ -107,6 +109,8 @@ function createPlayer(
     isAdmin: isAdmin,
     wordGuessed: false,
     isChatRestricted: false,
+    email: email,
+    voilations: voilations,
     // timetaken: seconds
   };
 }
@@ -116,7 +120,7 @@ io.on("connection", (socket) => {
   // Handling user join event
   socket.on("joinUser", (data) => {
     console.log(data);
-    const { userName, roomId } = data;
+    const { userName, roomId, email } = data;
     const socketsInRoom = io.sockets.adapter.rooms.get(roomId);
     if (socketsInRoom) {
       if (socketsInRoom.has(socket.id)) {
@@ -136,7 +140,16 @@ io.on("connection", (socket) => {
           }
         } else {
           socket.join(roomId);
-          const player = createPlayer(socket.id, userName, 0, false, false);
+          const player = createPlayer(
+            socket.id,
+            userName,
+            0,
+            false,
+            false,
+            false,
+            email,
+            3
+          );
           console.log(
             `Socket ID ${socket.id} has JOINED the room ${roomId} as PLAYER`
           );
@@ -149,9 +162,19 @@ io.on("connection", (socket) => {
       // The room doesn't exist
       console.log(`Room ${roomId} doesn't exist, therefore creating one`); // connect with DB later
       socket.join(roomId);
-      const player = createPlayer(socket.id, userName, 0, true, false);
+      const player = createPlayer(
+        socket.id,
+        userName,
+        0,
+        true,
+        false,
+        false,
+        email,
+        3
+      );
       console.log(`Socket ID ${socket.id} has joined room ${roomId} as ADMIN`);
       // Create a new game room with the first admin
+
       gameRooms[roomId] = {
         admin: player,
         players: [player],
@@ -167,9 +190,18 @@ io.on("connection", (socket) => {
         currentPlayerIndex: 0,
         startTime: Date.now(),
         turnStartTime: null,
+        email: email,
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);
+  });
+
+  socket.on("audioData", (data) => {
+    const { audioBlob, audioUrl, room } = data;
+
+    // Broadcast the received audio to all users in the room
+    socket.to(room).emit("audioData", { audioBlob, audioUrl });
+    console.log(data);
   });
 
   // Handling drawing data event
@@ -198,12 +230,18 @@ io.on("connection", (socket) => {
   // // timer runs out and not all players guess the correct answer
   socket.on("nextTurn", (data) => {
     console.log("NEXT TURN");
+
     const { roomId } = data;
+    io.to(roomId).emit("clearRect", {});
     if (gameRooms[roomId] && gameRooms[roomId].players) {
       if (gameRooms[roomId].turnStartTime) {
         if (Date.now() - gameRooms[roomId].turnStartTime >= 90000) {
           // Broadcast an event indicating the end of the game
-          io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+          const d = {
+            playerInfo: gameRooms[roomId].players,
+            ans: gameRooms[roomId].rightAns,
+          };
+          io.sockets.in(roomId).emit("endGame", d);
           for (const player of gameRooms[roomId].players) {
             player.wordGuessed = false;
           }
@@ -266,11 +304,22 @@ io.on("connection", (socket) => {
     const cleanMessage = filter.clean(message);
     if (cleanMessage !== message) {
       // decrement the number of chance by one
+
+      gameRooms[roomId].players.map((player) => {
+        if (socket.id === player.playerId) {
+          player.voilations -= 1;
+          io.to(`${socket.id}`).emit("voilation", {
+            chancesLeft: player.voilations,
+          });
+        }
+      });
+
+      // show popup to a specific person
       // show popup
       message = cleanMessage;
     }
     if (gameRooms[roomId] && gameRooms[roomId].players) {
-      if (message === gameRooms[roomId].rightAns) {
+      if (message.toLowerCase() === gameRooms[roomId].rightAns) {
         console.log("Got ans");
         const playerIndex = gameRooms[roomId].players.findIndex(
           (player) => player.playerId === socket.id
@@ -333,7 +382,11 @@ io.on("connection", (socket) => {
       }
       if (!flag) {
         // Broadcast an event indicating the end of the game
-        io.sockets.in(roomId).emit("endGame", gameRooms[roomId].players);
+        const d = {
+          playerInfo: gameRooms[roomId].players,
+          ans: gameRooms[roomId].rightAns,
+        };
+        io.sockets.in(roomId).emit("endGame", d);
         // next turn logic
         // gameGuessed = false for all
         // currentPlayerIndex++
@@ -404,9 +457,10 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("clearRect", (roomId) => {
+  socket.on("clearRect", (data) => {
+    const { roomId } = data;
     console.log("received clear rect");
-    io.in(roomId).emit("disableMouse", roomId);
+    io.in(roomId).emit("clearRect", roomId);
   });
 
   socket.on("disableMouse", (data) => {
@@ -496,7 +550,7 @@ io.on("connection", (socket) => {
       });
 
       console.log(drawingName);
-      gameRooms[roomId].rightAns = drawingName;
+      gameRooms[roomId].rightAns = drawingName.toLowerCase();
       if (drawingName !== "") {
         // Broadcast an event indicating the start of the game
         io.sockets.in(roomId).emit("clearCanvas", gameRooms[roomId]);
@@ -557,6 +611,44 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("makeCircle", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeCircle", data);
+    }
+  });
+  socket.on("makeSquare", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeSquare", data);
+    }
+  });
+  socket.on("makeRectangle", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      io.sockets.in(roomId).emit("makeRectangle", data);
+    }
+  });
+  socket.on("makeEllipse", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      console.log(data);
+      io.sockets.in(roomId).emit("makeEllipse", data);
+    }
+  });
+  socket.on("makeTrapezium", (data) => {
+    const { roomId } = data;
+    if (gameRooms[roomId] && gameRooms[roomId].players) {
+      console.log(data);
+      io.sockets.in(roomId).emit("makeTrapezium", data);
+    }
+  });
+
+  socket.on("newState", (data) => {
+    const { roomId, imageData } = data;
+    socket.to(roomId).emit("newState", data);
+  });
+
   // Handling user disconnect event
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated
@@ -575,8 +667,12 @@ io.on("connection", (socket) => {
       }
     }
   });
-});
 
+  socket.on("undo", (data) => {
+    const { roomId } = data;
+    io.to(roomId).emit("undoResp");
+  });
+});
 // Activate the server and listen on the specified PORT
 server.listen(PORT, () => {
   console.log(`marsDoodles is live at ${PORT}`);

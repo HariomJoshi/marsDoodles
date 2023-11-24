@@ -4,11 +4,20 @@ import { FaPencilAlt, FaMarker, FaPalette } from "react-icons/fa";
 import "./OptionBar.css";
 import { useState } from "react";
 
+import {
+  IoArrowUndoCircleSharp,
+  IoArrowRedoCircleSharp,
+} from "react-icons/io5";
+
+import AudioRecorder from "./AudioSharing";
+
+
 function OptionBar({
   onColorChange,
   onLineWidthChange,
   onLineDashChange,
   transferRightAns,
+  onUndo,
   socket,
   roomId,
   timer,
@@ -18,7 +27,15 @@ function OptionBar({
   const [drawingName, setDrawingName] = useState("");
   const [wordSize, setWordSize] = useState("");
   const [playerName, setPlayerName] = useState("Player1");
-
+  const undo = () => {
+    // undo function here
+    console.log("undo");
+    socket.emit("undo", { roomId });
+  };
+  const redo = () => {
+    // redo function here
+    console.log("redo");
+  };
   useEffect(() => {
     socket.emit("setDrawingName", {
       roomId,

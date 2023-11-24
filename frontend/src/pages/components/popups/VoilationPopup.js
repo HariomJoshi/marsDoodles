@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 
-const EdPopup = ({ isModalOpen, socket, roomId }) => {
+const VoilaitonPopup = ({ isModalOpen, socket, roomId }) => {
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
-  const [userName, setUserName] = useState("");
+  const [voilations, setVoilations] = useState(3);
 
   const myStyle = {
     overlay: {
@@ -68,32 +68,47 @@ const EdPopup = ({ isModalOpen, socket, roomId }) => {
     setModalIsOpen(false);
   };
 
+  //   socket.on("roomLimitExceeded",()=>{
+  //     console.log("roomLimitExceeded")
+  //     setModalIsOpen(true)
+  //   })
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (userName.trim() !== "") {
-      socket.emit("getUserName", { name: userName, roomId });
-      setModalIsOpen(false);
-    }
+    setModalIsOpen(false);
   };
+
+  socket.on("voilation", (data) => {
+    const { chancesLeft } = data;
+    setVoilations(chancesLeft);
+    console.log("Voilation in chat " + voilations);
+    setModalIsOpen(true);
+  });
 
   return (
     <Modal
       isOpen={modalIsOpen}
-      shouldCloseOnOverlayClick={false}
       onRequestClose={closeModal}
       contentLabel="Example Modal"
       style={myStyle}
     >
       <form onSubmit={handleFormSubmit} style={myStyle.form}>
-        <h1>Name your Avatar</h1>
-        <input
-          type="text"
-          onChange={(e) => {
-            setUserName(e.target.value);
-          }}
-          style={myStyle.input}
-          placeholder="Enter your name"
-        />
+        <h1>Voilation in the chat</h1>
+        {voilations > 0 ? (
+          <h3>You have {voilations} voilations remaining</h3>
+        ) : (
+          <h3>You have been chat restricted</h3>
+          //   () => {
+          //     <>
+          //       <h3>You have been chat restricted</h3>;
+          //       {/* {socket.emit("chatRestrict", {
+          //           id: socket.id,
+          //           roomId: roomId,
+          //         })} */}
+          //     </>;
+          //   }
+        )}
+
         <button type="submit" style={myStyle.button}>
           Okay
         </button>
@@ -102,4 +117,4 @@ const EdPopup = ({ isModalOpen, socket, roomId }) => {
   );
 };
 
-export default EdPopup;
+export default VoilaitonPopup;
