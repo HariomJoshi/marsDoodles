@@ -22,24 +22,7 @@ const GePopup = ({ isModalOpen, socket, roomId }) => {
     );
     console.log(jwt);
     if (room.email === decoded.email) {
-      // checking for admin email
-      const link = `${BASE_URL}/addGame`;
-      axios
-        .post(link, {
-          score: room.players[0].points,
-          rank: 1,
-          email: decoded.email,
-          jwt,
-          // for middleware purposes
-        })
-        .then(() => {
-          console.log("Add successful");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      // player is not admin, he is one of the room members
+      // iterating players array and checking for members
       room.players.map((player) => {
         if (player.email === decoded.email) {
           const link = `${BASE_URL}/addGame`;
@@ -64,6 +47,7 @@ const GePopup = ({ isModalOpen, socket, roomId }) => {
   useEffect(() => {
     const handleFinalGameEnd = (data) => {
       setPlayers(data.players);
+      console.log(data);
       updateHistory(data);
       setModalIsOpen(true);
     };

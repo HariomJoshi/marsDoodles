@@ -140,7 +140,7 @@ function Home({}) {
 
   return (
     <div className="home-page">
-      <div class="profile-modal">
+      <div className="profile-modal">
         <ProfileModal
           userId={name.name}
           isModalOpen={isModalOpen}

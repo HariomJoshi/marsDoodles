@@ -22,7 +22,7 @@ Hide scrollbar in all browsers * {
   height: 100%;
   width: 100%;
   align-items: center;
-  background-color: white;
+  /* background-color: white; */
   flex-direction: column;
   position: fixed;
   opacity: 1;
@@ -32,6 +32,7 @@ Hide scrollbar in all browsers * {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   max-height: 100%;
+  border: 1px solid #df1111;
 }
 
 .profilepic {
@@ -62,11 +63,10 @@ Hide scrollbar in all browsers * {
   justify-content: space-around;
   margin-bottom: 10px;
   /* padding: 10px; */
-  border: 1px solid #ccc;
+  border: 1px solid #df1111;
   /* border-radius: 5px; */
-  border-style: dotted;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* background-color: #fff; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   background-color: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 8px;

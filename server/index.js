@@ -99,7 +99,8 @@ function createPlayer(
   isAdmin = false,
   wordGuessed = false,
   isChatRestricted = false,
-  email = "none"
+  email = "none",
+  voilations = 3
 ) {
   return {
     playerId: playerId,
@@ -109,6 +110,7 @@ function createPlayer(
     wordGuessed: false,
     isChatRestricted: false,
     email: email,
+    voilations: voilations,
     // timetaken: seconds
   };
 }
@@ -145,7 +147,8 @@ io.on("connection", (socket) => {
             false,
             false,
             false,
-            email
+            email,
+            3
           );
           console.log(
             `Socket ID ${socket.id} has JOINED the room ${roomId} as PLAYER`
@@ -159,7 +162,16 @@ io.on("connection", (socket) => {
       // The room doesn't exist
       console.log(`Room ${roomId} doesn't exist, therefore creating one`); // connect with DB later
       socket.join(roomId);
-      const player = createPlayer(socket.id, userName, 0, true, false, email);
+      const player = createPlayer(
+        socket.id,
+        userName,
+        0,
+        true,
+        false,
+        false,
+        email,
+        3
+      );
       console.log(`Socket ID ${socket.id} has joined room ${roomId} as ADMIN`);
       // Create a new game room with the first admin
 
@@ -210,7 +222,9 @@ io.on("connection", (socket) => {
   // // timer runs out and not all players guess the correct answer
   socket.on("nextTurn", (data) => {
     console.log("NEXT TURN");
+
     const { roomId } = data;
+    io.to(roomId).emit("clearRect", {});
     if (gameRooms[roomId] && gameRooms[roomId].players) {
       if (gameRooms[roomId].turnStartTime) {
         if (Date.now() - gameRooms[roomId].turnStartTime >= 90000) {
@@ -278,6 +292,17 @@ io.on("connection", (socket) => {
     const cleanMessage = filter.clean(message);
     if (cleanMessage !== message) {
       // decrement the number of chance by one
+
+      gameRooms[roomId].players.map((player) => {
+        if (socket.id === player.playerId) {
+          player.voilations -= 1;
+          io.to(`${socket.id}`).emit("voilation", {
+            chancesLeft: player.voilations,
+          });
+        }
+      });
+
+      // show popup to a specific person
       // show popup
       message = cleanMessage;
     }
@@ -586,6 +611,11 @@ io.on("connection", (socket) => {
         break;
       }
     }
+  });
+
+  socket.on("undo", (data) => {
+    const { roomId } = data;
+    io.to(roomId).emit("undoResp");
   });
 });
 

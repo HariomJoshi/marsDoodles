@@ -28,7 +28,7 @@ function Canvas({
   const ctxRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const [eraser, setEraser] = useState(false);
-  const data = { roomId, name, email };
+  // we are declaring array and using it as stack for undo and redo operations
 
   const cookies = new Cookies();
   const jwt = cookies.get("jwt_auth");
@@ -58,8 +58,8 @@ function Canvas({
       console.log(data);
     });
     socket.on("drawOnWhiteboard", (data) => {
-      console.log("received");
-      console.log(data);
+      // console.log("received");/
+      // console.log(data);
       const { x0, x1, y0, y1, lineDash, lineWidth, color, eraser, objType } =
         data;
       if (eraser) {
@@ -117,7 +117,7 @@ function Canvas({
 
   useEffect(() => {
     socket.on("clearRect", (data) => {
-      alert("hello");
+      // alert("hello");
       clear();
     });
   }, [socket]);
