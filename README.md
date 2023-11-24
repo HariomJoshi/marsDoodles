@@ -1,6 +1,7 @@
 # MARSDOODLE
 [WEBSTER](https://sac.mnnit.ac.in/codesangam)  MNNIT 2023 project.
 
+You can play it here - https://bit2byte.netlify.app/
 
 ### ABOUT PROJECT:-
 What's That Doodle!! is a multiplayer drawing and guessing pictionary game.
@@ -10,15 +11,20 @@ A normal game consists of a few rounds, where every round a player has to draw t
 ### BASIC
 - LOGIN AND SIGNUP 
 - GAMESCREEN TO PLAY
-- HOME SCREEN TO VIEW AVAILABLE PUBLIC ROOM OR TO JOIN AND ALSO TO CREATE ROOMS
+- HOME SCREEN TO VIEW AVAILABLE PUBLIC ROOM
+- JOIN PUBLIC ROOM
+- CREATE PUBLIC OR PRIVATE ROOMS
 - GAME RULE SIMILIAR TO SCRIBBLE.IO
 - CURRENTLY ONLINE PLAYERS ON THE ROOM VISIBLE
-
-### ADVANCE 
 - REALTIME WHITEBOARD SHARING WITH ROOM MEMBER
 - CHAT BOX
 - HAVING OPTION TO CHANGE COLOR OF PENCIL
-- ABLE TO UNDO AND REDO ACTION
+- ADMIN CAN CHAT RESTRICT OR KICK A USER
+- GENERATE YOUR DRAWING AND SAVE IT OR SHARE IT ON SOCIALS
+  
+### ADVANCE 
+- WORD FILTERING IN CHATS
+
 
 
 
@@ -30,7 +36,7 @@ A normal game consists of a few rounds, where every round a player has to draw t
 
 - <a href="https://github.com/ArpitRathore2020">ARPIT RATHORE <a> (2023CA21) 
 
-## Tech Stack
+## Technologies Used
 
 *Client:* React, CSS, webSocket
 

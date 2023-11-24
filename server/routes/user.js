@@ -10,6 +10,7 @@ const {
   getAllPublicRooms,
 } = require("../controllers/Room");
 const mailSender = require("../utils/mailSender");
+const { getAllGames, addGame } = require("../controllers/Game");
 
 router.post("/login", login);
 router.post("/signup", signup);
@@ -97,5 +98,8 @@ router.post("/sendInvitationMail", auth, async (req, res) => {
     console.log(err);
   }
 });
+
+router.post("/allGames", auth, getAllGames);
+router.post("/addGame", auth, addGame);
 
 module.exports = router;

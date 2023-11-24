@@ -4,8 +4,13 @@ import { FaShareSquare } from "react-icons/fa";
 import ShareButtons from "./ShareButtons";
 import "./Canvas.css";
 import { BASE_URL } from "../helper";
+
+import { jwtDecode } from "jwt-decode";
+import Cookies from "universal-cookie";
+
 import AudioRecorder from "./AudioSharing";
 import MfPopup from "./popups/MakeFigurePopup";
+
 
 function Canvas({
   selectedColor,
@@ -28,13 +33,20 @@ function Canvas({
   const ctxRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const [eraser, setEraser] = useState(false);
+
+  const cookies = new Cookies();
+  const jwt = cookies.get("jwt_auth");
+  const decoded = jwtDecode(jwt);
+=
   const data = { roomId, name, email };
   const [isOpen, setIsOpen] = useState(false);
+  // using an array for undo and redo operations
   const [canvasState, setCanvasState] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
 
+
   function joinRoom() {
-    const data = { userName: "user", roomId };
+    const data = { userName: "user", roomId, email: decoded.email };
     console.log(data);
     socket.emit("joinUser", data);
   }
@@ -157,8 +169,8 @@ function Canvas({
       console.log(data);
     });
     socket.on("drawOnWhiteboard", (data) => {
-      console.log("received");
-      console.log(data);
+      // console.log("received");/
+      // console.log(data);
       const { x0, x1, y0, y1, lineDash, lineWidth, color, eraser, objType } =
         data;
       if (eraser) {
@@ -205,6 +217,14 @@ function Canvas({
       }
     });
   }, [socket]);
+
+  useEffect(() => {
+    socket.on("clearRect", (data) => {
+      // alert("hello");
+      clear();
+    });
+  }, [socket]);
+
 
   function onMouseDown(e) {
     saveCanvasState();

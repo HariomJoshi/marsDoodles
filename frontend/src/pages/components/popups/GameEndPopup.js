@@ -1,16 +1,65 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "universal-cookie";
+import { BASE_URL } from "../../helper";
+import axios from "axios";
+
 
 const GePopup = ({ isModalOpen, socket, roomId }) => {
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(isModalOpen);
   const [players, setPlayers] = useState([]);
+  const [data, setData] = useState({});
+  const cookies = new Cookies();
+  const jwt = cookies.get("jwt_auth");
+  const decoded = jwtDecode(jwt);
+  // email is decoded.email
 
-  socket.on("finalGameEnd", (data) => {
-    setPlayers(data.players);
-    setModalIsOpen(true);
-  });
+  const updateHistory = (room) => {
+    console.log(
+      "roomEmail: " + room.email + " Decoded email: " + decoded.email
+    );
+    console.log(jwt);
+    if (room.email === decoded.email) {
+      // iterating players array and checking for members
+      room.players.map((player) => {
+        if (player.email === decoded.email) {
+          const link = `${BASE_URL}/addGame`;
+          axios
+            .post(link, {
+              score: player.points,
+              rank: 1, // hard coding it for now
+              email: decoded.email,
+              jwt,
+            })
+            .then(() => {
+              console.log("Add successful");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
+    }
+    // now we have to just post our data to database
+  };
+  useEffect(() => {
+    const handleFinalGameEnd = (data) => {
+      setPlayers(data.players);
+      console.log(data);
+      updateHistory(data);
+      setModalIsOpen(true);
+    };
+
+    socket.on("finalGameEnd", handleFinalGameEnd);
+
+    // Clean up the event handler when the component is unmounted
+    return () => {
+      socket.off("finalGameEnd", handleFinalGameEnd);
+    };
+  }, []);
 
   const myStyle = {
     overlay: {
@@ -95,6 +144,7 @@ const GePopup = ({ isModalOpen, socket, roomId }) => {
     <Modal
       isOpen={modalIsOpen}
       shouldCloseOnOverlayClick={false}
+
       onRequestClose={closeModal}
       contentLabel="Score Board"
       style={myStyle}

@@ -98,7 +98,9 @@ function createPlayer(
   points = 0,
   isAdmin = false,
   wordGuessed = false,
-  isChatRestricted = false
+  isChatRestricted = false,
+  email = "none",
+  voilations = 3
 ) {
   return {
     playerId: playerId,
@@ -107,6 +109,8 @@ function createPlayer(
     isAdmin: isAdmin,
     wordGuessed: false,
     isChatRestricted: false,
+    email: email,
+    voilations: voilations,
     // timetaken: seconds
   };
 }
@@ -116,7 +120,7 @@ io.on("connection", (socket) => {
   // Handling user join event
   socket.on("joinUser", (data) => {
     console.log(data);
-    const { userName, roomId } = data;
+    const { userName, roomId, email } = data;
     const socketsInRoom = io.sockets.adapter.rooms.get(roomId);
     if (socketsInRoom) {
       if (socketsInRoom.has(socket.id)) {
@@ -136,7 +140,16 @@ io.on("connection", (socket) => {
           }
         } else {
           socket.join(roomId);
-          const player = createPlayer(socket.id, userName, 0, false, false);
+          const player = createPlayer(
+            socket.id,
+            userName,
+            0,
+            false,
+            false,
+            false,
+            email,
+            3
+          );
           console.log(
             `Socket ID ${socket.id} has JOINED the room ${roomId} as PLAYER`
           );
@@ -149,9 +162,19 @@ io.on("connection", (socket) => {
       // The room doesn't exist
       console.log(`Room ${roomId} doesn't exist, therefore creating one`); // connect with DB later
       socket.join(roomId);
-      const player = createPlayer(socket.id, userName, 0, true, false);
+      const player = createPlayer(
+        socket.id,
+        userName,
+        0,
+        true,
+        false,
+        false,
+        email,
+        3
+      );
       console.log(`Socket ID ${socket.id} has joined room ${roomId} as ADMIN`);
       // Create a new game room with the first admin
+
       gameRooms[roomId] = {
         admin: player,
         players: [player],
@@ -167,6 +190,7 @@ io.on("connection", (socket) => {
         currentPlayerIndex: 0,
         startTime: Date.now(),
         turnStartTime: null,
+        email: email,
       };
     }
     io.sockets.in(roomId).emit("userUpdate", gameRooms[roomId]);
@@ -206,7 +230,9 @@ io.on("connection", (socket) => {
   // // timer runs out and not all players guess the correct answer
   socket.on("nextTurn", (data) => {
     console.log("NEXT TURN");
+
     const { roomId } = data;
+    io.to(roomId).emit("clearRect", {});
     if (gameRooms[roomId] && gameRooms[roomId].players) {
       if (gameRooms[roomId].turnStartTime) {
         if (Date.now() - gameRooms[roomId].turnStartTime >= 90000) {
@@ -278,6 +304,17 @@ io.on("connection", (socket) => {
     const cleanMessage = filter.clean(message);
     if (cleanMessage !== message) {
       // decrement the number of chance by one
+
+      gameRooms[roomId].players.map((player) => {
+        if (socket.id === player.playerId) {
+          player.voilations -= 1;
+          io.to(`${socket.id}`).emit("voilation", {
+            chancesLeft: player.voilations,
+          });
+        }
+      });
+
+      // show popup to a specific person
       // show popup
       message = cleanMessage;
     }
@@ -629,6 +666,11 @@ io.on("connection", (socket) => {
         break;
       }
     }
+  });
+
+  socket.on("undo", (data) => {
+    const { roomId } = data;
+    io.to(roomId).emit("undoResp");
   });
 });
 // Activate the server and listen on the specified PORT
