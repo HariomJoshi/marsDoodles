@@ -60,10 +60,10 @@ const ProfileModal = ({ userEmail, isModalOpen, closeModal }) => {
                   <b> Score: </b>
                   {entry.score}
                 </div>
-                <div className="field">
+                {/* <div className="field">
                   <b> Rank: </b>
                   {entry.rank}
-                </div>
+                </div> */}
               </div>
             ))}
           </div>

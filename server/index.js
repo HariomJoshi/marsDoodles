@@ -644,11 +644,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("newState", (data) => {
-    const { roomId, imageData } = data;
-    socket.to(roomId).emit("newState", data);
-  });
-
   // Handling user disconnect event
   socket.on("disconnect", () => {
     // Loop through gameRooms to find the room where the user is associated
@@ -666,11 +661,6 @@ io.on("connection", (socket) => {
         break;
       }
     }
-  });
-
-  socket.on("undo", (data) => {
-    const { roomId } = data;
-    io.to(roomId).emit("undoResp");
   });
 });
 // Activate the server and listen on the specified PORT
