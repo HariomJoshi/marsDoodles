@@ -53,6 +53,7 @@ const cloudinary = require("cloudinary").v2;
 
 app.post("/api/v1/getLink", async (req, res) => {
   try {
+    console.log("inside");
     // Get the image data from the request body
     const { imageData } = req.body;
     // Remove the "data:image/png;base64," prefix from the data URL
@@ -68,7 +69,7 @@ app.post("/api/v1/getLink", async (req, res) => {
 
     cloudinary.uploader.upload(filePath, (error, result) => {
       if (!error) {
-        fs.unlinkSync(filePath);
+        // fs.unlinkSync(filePath);
         res.json({ link: result.secure_url });
       } else {
         console.error("Error uploading to Cloudinary:", error);
