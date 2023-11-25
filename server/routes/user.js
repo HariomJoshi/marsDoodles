@@ -17,6 +17,7 @@ router.post("/signup", signup);
 router.post("/createRoom/:id", auth, createRoom);
 router.post("/joinRoom/:id", auth, joinRoom);
 router.post("/getAllPublicRooms", auth, getAllPublicRooms);
+
 router.post("/sendInvitationMail", auth, async (req, res) => {
   try {
     const { link, email } = req.body;
