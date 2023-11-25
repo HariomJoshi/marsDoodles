@@ -5,11 +5,11 @@
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
-h3{
-  color: rgb(52,152,219);
+h3 {
+  color: rgb(52, 152, 219);
 }
 
 .ALL {
@@ -43,13 +43,13 @@ h3{
   margin-top: 10px;
   height: 50%;
   flex: 1;
-  background-color: #1a1a1a; 
+  background-color: #1a1a1a;
   border: 1px solid #333;
 }
 
 .chat-section {
   width: 30%;
-  background-color: #1a1a1a; 
+  background-color: #1a1a1a;
   border: 1px solid #333;
-  color: #fff; 
+  color: #fff;
 }

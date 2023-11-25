@@ -11,7 +11,6 @@ import Cookies from "universal-cookie";
 import AudioRecorder from "./AudioSharing";
 import MfPopup from "./popups/MakeFigurePopup";
 
-
 function Canvas({
   selectedColor,
   selectedLineWidth,
@@ -37,13 +36,12 @@ function Canvas({
   const cookies = new Cookies();
   const jwt = cookies.get("jwt_auth");
   const decoded = jwtDecode(jwt);
-=
+
   const data = { roomId, name, email };
   const [isOpen, setIsOpen] = useState(false);
   // using an array for undo and redo operations
   const [canvasState, setCanvasState] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
-
 
   function joinRoom() {
     const data = { userName: "user", roomId, email: decoded.email };
@@ -147,17 +145,6 @@ function Canvas({
       ctxRef.current.stroke();
       ctxRef.current.closePath();
     });
-    socket.on("newState", (data) => {
-      const { imageData } = data;
-      console.log(data);
-      ctxRef.current.clearRect(
-        0,
-        0,
-        ctxRef.current.canvas.width,
-        ctxRef.current.canvas.height
-      );
-      ctxRef.current.putImageData(imageData, 0, 0);
-    });
   }, [socket]);
 
   useEffect(() => {
@@ -225,9 +212,7 @@ function Canvas({
     });
   }, [socket]);
 
-
   function onMouseDown(e) {
-    saveCanvasState();
     setVisible(true);
     if (objType === "marker") {
       ctxRef.current.strokeStyle = selectedColor;
@@ -334,66 +319,6 @@ function Canvas({
     }
   }
 
-  const saveCanvasState = () => {
-    setCanvasState((prevCanvasState) => {
-      const newCanvasState = [...prevCanvasState.slice(0, currentPosition + 1)];
-      const currentCanvasState = ctxRef.current.getImageData(
-        0,
-        0,
-        ctxRef.current.canvas.width,
-        ctxRef.current.canvas.height
-      );
-      newCanvasState.push(currentCanvasState);
-      return newCanvasState;
-    });
-
-    setCurrentPosition((prevPosition) => prevPosition + 1);
-  };
-
-  function undo() {
-    if (currentPosition > 0) {
-      setCurrentPosition((prevPosition) => prevPosition - 1);
-      const imageData = canvasState[currentPosition - 1];
-      ctxRef.current.clearRect(
-        0,
-        0,
-        ctxRef.current.canvas.width,
-        ctxRef.current.canvas.height
-      );
-      ctxRef.current.putImageData(imageData, 0, 0);
-      const data = { imageData, roomId };
-      emit(data);
-    }
-  }
-  function redo() {
-    if (currentPosition < canvasState.length - 1) {
-      setCurrentPosition((prevPosition) => prevPosition + 1);
-      const imageData = canvasState[currentPosition + 1];
-      const data = { imageData, roomId };
-      emit(data);
-      ctxRef.current.putImageData(imageData, 0, 0);
-    }
-  }
-
-  function emit(data) {
-    socket.emit("newState", data);
-  }
-
-  const MyComponent = () => {
-    useEffect(() => {
-      const saveDrawing = () => {
-        const canvas = canvasRef.current;
-        const imageData = canvas.toDataURL("image/png");
-        if (imageData) {
-          setImageData(imageData);
-        }
-      };
-
-      const intervalId = setInterval(saveDrawing, 500);
-      return () => clearInterval(intervalId);
-    }, []);
-  };
-
   function captureCanvasImage() {
     const canvas = canvasRef.current;
     const imageData = canvas.toDataURL("image/png");
@@ -461,8 +386,6 @@ function Canvas({
           Clear Canvas
         </button>
         <AudioRecorder socket={socket} roomId={roomId} />
-        <button onClick={undo}>Undo</button>
-        <button onClick={redo}>Redo</button>
       </div>
       <canvas
         className="canvas"
